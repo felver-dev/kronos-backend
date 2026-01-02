@@ -10,10 +10,10 @@ type PaginationDTO struct {
 
 // ErrorDTO représente une erreur dans les réponses API
 type ErrorDTO struct {
-	Code    string      `json:"code,omitempty"`    // Code d'erreur (optionnel)
-	Message string      `json:"message"`           // Message d'erreur
-	Field   string      `json:"field,omitempty"`   // Champ concerné (optionnel)
-	Details interface{} `json:"details,omitempty"` // Détails supplémentaires (optionnel)
+	Code    string `json:"code,omitempty"`    // Code d'erreur (optionnel)
+	Message string `json:"message"`           // Message d'erreur
+	Field   string `json:"field,omitempty"`   // Champ concerné (optionnel)
+	Details any    `json:"details,omitempty"` // Détails supplémentaires (optionnel)
 }
 
 // ValidationErrorDTO représente une erreur de validation de champ

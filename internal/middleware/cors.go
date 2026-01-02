@@ -11,14 +11,14 @@ func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Autoriser toutes les origines (en production, spécifier les domaines autorisés)
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		
+
 		// Autoriser l'envoi de cookies et credentials
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		
+
 		// En-têtes autorisés dans les requêtes
-		c.Writer.Header().Set("Access-Control-Allow-Headers", 
+		c.Writer.Header().Set("Access-Control-Allow-Headers",
 			"Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		
+
 		// Méthodes HTTP autorisées
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
 
@@ -32,4 +32,3 @@ func CORSMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
-

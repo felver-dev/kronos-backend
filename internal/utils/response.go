@@ -8,17 +8,17 @@ import (
 
 // Response est la structure standard pour toutes les réponses JSON
 type Response struct {
-	Success bool        `json:"success"`           // Indique si l'opération a réussi
-	Message string      `json:"message,omitempty"` // Message optionnel
-	Data    interface{} `json:"data,omitempty"`    // Données de la réponse
-	Error   interface{} `json:"error,omitempty"`   // Erreur si échec
+	Success bool   `json:"success"`           // Indique si l'opération a réussi
+	Message string `json:"message,omitempty"` // Message optionnel
+	Data    any    `json:"data,omitempty"`    // Données de la réponse
+	Error   any    `json:"error,omitempty"`   // Erreur si échec
 }
 
 // PaginatedResponse est la structure pour les réponses paginées
 type PaginatedResponse struct {
-	Success    bool        `json:"success"`
-	Data       interface{} `json:"data"`
-	Pagination Pagination  `json:"pagination"`
+	Success    bool       `json:"success"`
+	Data       any        `json:"data"`
+	Pagination Pagination `json:"pagination"`
 }
 
 // Pagination contient les informations de pagination
@@ -30,7 +30,7 @@ type Pagination struct {
 }
 
 // SuccessResponse envoie une réponse de succès (200 OK)
-func SuccessResponse(c *gin.Context, data interface{}, message string) {
+func SuccessResponse(c *gin.Context, data any, message string) {
 	c.JSON(http.StatusOK, Response{
 		Success: true,
 		Message: message,
@@ -39,7 +39,7 @@ func SuccessResponse(c *gin.Context, data interface{}, message string) {
 }
 
 // CreatedResponse envoie une réponse de création (201 Created)
-func CreatedResponse(c *gin.Context, data interface{}, message string) {
+func CreatedResponse(c *gin.Context, data any, message string) {
 	c.JSON(http.StatusCreated, Response{
 		Success: true,
 		Message: message,
@@ -48,7 +48,7 @@ func CreatedResponse(c *gin.Context, data interface{}, message string) {
 }
 
 // ErrorResponse envoie une réponse d'erreur avec un code HTTP personnalisé
-func ErrorResponse(c *gin.Context, statusCode int, message string, err interface{}) {
+func ErrorResponse(c *gin.Context, statusCode int, message string, err any) {
 	c.JSON(statusCode, Response{
 		Success: false,
 		Message: message,
@@ -57,7 +57,7 @@ func ErrorResponse(c *gin.Context, statusCode int, message string, err interface
 }
 
 // PaginatedSuccessResponse envoie une réponse paginée de succès
-func PaginatedSuccessResponse(c *gin.Context, data interface{}, pagination Pagination) {
+func PaginatedSuccessResponse(c *gin.Context, data any, pagination Pagination) {
 	c.JSON(http.StatusOK, PaginatedResponse{
 		Success:    true,
 		Data:       data,
