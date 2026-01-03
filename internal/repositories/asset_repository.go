@@ -145,4 +145,3 @@ func (r *assetCategoryRepository) Update(category *models.AssetCategory) error {
 func (r *assetCategoryRepository) Delete(id uint) error {
 	return database.DB.Delete(&models.AssetCategory{}, id).Error
 }
-
