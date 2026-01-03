@@ -42,8 +42,8 @@ type TicketSLA struct {
 	CreatedAt    time.Time  `json:"created_at"`
 	UpdatedAt    time.Time  `json:"updated_at"`
 
-	// Relations
-	Ticket Ticket `gorm:"foreignKey:TicketID;constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé (1:1)
+	// Relations - GORM utilisera automatiquement les champs existants
+	Ticket Ticket `gorm:"constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé (1:1)
 	SLA    SLA    `gorm:"foreignKey:SLAID" json:"sla,omitempty"`                                    // SLA associé
 }
 

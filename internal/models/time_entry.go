@@ -22,8 +22,8 @@ type TimeEntry struct {
 	UpdatedAt     time.Time      `json:"updated_at"`
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"-"` // Soft delete
 
-	// Relations
-	Ticket      Ticket `gorm:"foreignKey:TicketID;constraint:OnDelete:CASCADE" json:"-"` // Ticket associé
+	// Relations - GORM utilisera automatiquement les champs existants
+	Ticket      Ticket `gorm:"constraint:OnDelete:CASCADE" json:"-"` // Ticket associé
 	User        User   `gorm:"foreignKey:UserID" json:"user,omitempty"`                  // Utilisateur
 	ValidatedBy *User  `gorm:"foreignKey:ValidatedByID" json:"validated_by,omitempty"`   // Validateur (optionnel)
 }

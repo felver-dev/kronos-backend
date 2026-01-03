@@ -16,11 +16,9 @@ type Incident struct {
 	CreatedAt      time.Time  `json:"created_at"`
 	UpdatedAt      time.Time  `json:"updated_at"`
 
-	// Relations - TicketID est déjà défini ci-dessus, donc on utilise foreignKey:TicketID
-	Ticket Ticket `gorm:"foreignKey:TicketID;constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé (1:1)
-
-	// Relations HasMany (définies dans les autres modèles)
-	// LinkedAssets []Asset `gorm:"many2many:incident_assets;" json:"-"`
+	// Relations - GORM utilisera automatiquement le champ TicketID comme clé étrangère
+	// Ne pas spécifier foreignKey pour éviter la duplication de colonne
+	Ticket Ticket `gorm:"constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé (1:1)
 }
 
 // TableName spécifie le nom de la table

@@ -17,8 +17,8 @@ type Delay struct {
 	CreatedAt       time.Time  `json:"created_at"`
 	UpdatedAt       time.Time  `json:"updated_at"`
 
-	// Relations
-	Ticket       Ticket            `gorm:"foreignKey:TicketID;constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé (1:1)
+	// Relations - GORM utilisera automatiquement les champs existants
+	Ticket       Ticket            `gorm:"constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé (1:1)
 	User         User              `gorm:"foreignKey:UserID" json:"user,omitempty"`                                    // Technicien
 	Justification *DelayJustification `gorm:"foreignKey:DelayID;constraint:OnDelete:CASCADE" json:"justification,omitempty"` // Justification (1:1, optionnel)
 }

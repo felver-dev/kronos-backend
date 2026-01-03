@@ -136,14 +136,14 @@ func runMigrationsWithRetry(retryCount int) error {
 	// Réactiver les contraintes
 	_, _ = sqlDB.Exec("SET FOREIGN_KEY_CHECKS = 1")
 	log.Println("✅ Table tickets créée")
-	
+
 	// Ensuite créer TicketAttachment qui dépend de Ticket
 	log.Println("🔄 Création de la table ticket_attachments...")
 	if err := database.DB.AutoMigrate(&models.TicketAttachment{}); err != nil {
 		return fmt.Errorf("erreur lors de la création de la table ticket_attachments: %w", err)
 	}
 	log.Println("✅ Table ticket_attachments créée")
-	
+
 	// Ensuite créer les autres tables de tickets qui dépendent de Ticket
 	log.Println("🔄 Création des autres tables de tickets...")
 	if err := database.DB.AutoMigrate(

@@ -40,8 +40,8 @@ type ServiceRequest struct {
 	CreatedAt         time.Time  `json:"created_at"`
 	UpdatedAt         time.Time  `json:"updated_at"`
 
-	// Relations
-	Ticket      Ticket            `gorm:"foreignKey:TicketID;constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé (1:1)
+	// Relations - GORM utilisera automatiquement les champs existants
+	Ticket      Ticket            `gorm:"constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé (1:1)
 	Type        ServiceRequestType `gorm:"foreignKey:TypeID" json:"type,omitempty"`                              // Type de demande
 	ValidatedBy  *User            `gorm:"foreignKey:ValidatedByID" json:"validated_by,omitempty"`                 // Validateur (optionnel)
 }

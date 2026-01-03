@@ -18,8 +18,8 @@ type Change struct {
 	CreatedAt        time.Time  `json:"created_at"`
 	UpdatedAt        time.Time  `json:"updated_at"`
 
-	// Relations
-	Ticket     Ticket  `gorm:"foreignKey:TicketID;constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé (1:1)
+	// Relations - GORM utilisera automatiquement le champ TicketID existant
+	Ticket     Ticket  `gorm:"constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé (1:1)
 	Responsible *User  `gorm:"foreignKey:ResponsibleID" json:"responsible,omitempty"`                     // Responsable du changement (optionnel)
 }
 
