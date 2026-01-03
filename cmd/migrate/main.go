@@ -7,6 +7,7 @@ import (
 	"github.com/mcicare/itsm-backend/config"
 	"github.com/mcicare/itsm-backend/database"
 	"github.com/mcicare/itsm-backend/migrations"
+	"gorm.io/gorm/logger"
 )
 
 func main() {
@@ -22,6 +23,10 @@ func main() {
 		log.Fatalf("❌ Erreur de connexion à la base de données: %v", err)
 	}
 	defer database.Close()
+
+	// Réduire le niveau de logging pendant les migrations pour éviter le spam
+	// On garde seulement les erreurs
+	database.DB.Logger = logger.Default.LogMode(logger.Error)
 
 	// Exécuter les migrations
 	if err := migrations.RunMigrations(); err != nil {
