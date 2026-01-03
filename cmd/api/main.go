@@ -2,9 +2,7 @@ package main
 
 import (
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mcicare/itsm-backend/config"
@@ -21,231 +19,122 @@ func main() {
 
 	// Se connecter à la base de données
 	if err := database.Connect(); err != nil {
-		log.Fatalf("Erreur de connexion à la base de données: %v", err)
+		log.Fatalf("❌ Erreur de connexion à la base de données: %v", err)
 	}
 	defer database.Close()
 
-	// Initialiser les repositories
-	repos := initializeRepositories()
+	// Initialiser tous les repositories
+	roleRepo := repositories.NewRoleRepository()
+	userRepo := repositories.NewUserRepository()
+	userSessionRepo := repositories.NewUserSessionRepository()
+	ticketRepo := repositories.NewTicketRepository()
+	ticketCommentRepo := repositories.NewTicketCommentRepository()
+	ticketHistoryRepo := repositories.NewTicketHistoryRepository()
+	ticketAssetRepo := repositories.NewTicketAssetRepository()
+	incidentRepo := repositories.NewIncidentRepository()
+	serviceRequestRepo := repositories.NewServiceRequestRepository()
+	serviceRequestTypeRepo := repositories.NewServiceRequestTypeRepository()
+	changeRepo := repositories.NewChangeRepository()
+	timeEntryRepo := repositories.NewTimeEntryRepository()
+	delayRepo := repositories.NewDelayRepository()
+	delayJustificationRepo := repositories.NewDelayJustificationRepository()
+	assetRepo := repositories.NewAssetRepository()
+	assetCategoryRepo := repositories.NewAssetCategoryRepository()
+	slaRepo := repositories.NewSLARepository()
+	ticketSLARepo := repositories.NewTicketSLARepository()
+	notificationRepo := repositories.NewNotificationRepository()
+	knowledgeArticleRepo := repositories.NewKnowledgeArticleRepository()
+	knowledgeCategoryRepo := repositories.NewKnowledgeCategoryRepository()
+	projectRepo := repositories.NewProjectRepository()
+	dailyDeclarationRepo := repositories.NewDailyDeclarationRepository()
+	weeklyDeclarationRepo := repositories.NewWeeklyDeclarationRepository()
 
-	// Initialiser les services
-	svcs := initializeServices(repos)
+	// Initialiser tous les services
+	authService := services.NewAuthService(userRepo, userSessionRepo)
+	userService := services.NewUserService(userRepo, roleRepo)
+	ticketService := services.NewTicketService(ticketRepo, userRepo, ticketCommentRepo, ticketHistoryRepo)
+	incidentService := services.NewIncidentService(incidentRepo, ticketRepo, ticketAssetRepo, assetRepo)
+	serviceRequestService := services.NewServiceRequestService(serviceRequestRepo, serviceRequestTypeRepo, ticketRepo, userRepo)
+	changeService := services.NewChangeService(changeRepo, ticketRepo, userRepo)
+	timeEntryService := services.NewTimeEntryService(timeEntryRepo, ticketRepo, userRepo)
+	delayService := services.NewDelayService(delayRepo, delayJustificationRepo, userRepo)
+	assetService := services.NewAssetService(assetRepo, assetCategoryRepo, userRepo)
+	slaService := services.NewSLAService(slaRepo, ticketSLARepo, ticketRepo)
+	notificationService := services.NewNotificationService(notificationRepo, userRepo)
+	knowledgeArticleService := services.NewKnowledgeArticleService(knowledgeArticleRepo, knowledgeCategoryRepo, userRepo)
+	projectService := services.NewProjectService(projectRepo, userRepo)
+	dailyDeclarationService := services.NewDailyDeclarationService(dailyDeclarationRepo, timeEntryRepo, userRepo)
+	weeklyDeclarationService := services.NewWeeklyDeclarationService(weeklyDeclarationRepo, userRepo)
+	performanceService := services.NewPerformanceService(
+		ticketRepo,
+		timeEntryRepo,
+		delayRepo,
+		userRepo,
+	)
+	reportService := services.NewReportService(
+		ticketRepo,
+		slaRepo,
+		userRepo,
+	)
 
-	// Initialiser les handlers
-	handlers := initializeHandlers(svcs)
+	// Initialiser tous les handlers
+	authHandler := handlers.NewAuthHandler(authService)
+	userHandler := handlers.NewUserHandler(userService)
+	ticketHandler := handlers.NewTicketHandler(ticketService)
+	incidentHandler := handlers.NewIncidentHandler(incidentService)
+	changeHandler := handlers.NewChangeHandler(changeService)
+	serviceRequestHandler := handlers.NewServiceRequestHandler(serviceRequestService)
+	timeEntryHandler := handlers.NewTimeEntryHandler(timeEntryService)
+	delayHandler := handlers.NewDelayHandler(delayService)
+	assetHandler := handlers.NewAssetHandler(assetService)
+	slaHandler := handlers.NewSLAHandler(slaService)
+	notificationHandler := handlers.NewNotificationHandler(notificationService)
+	knowledgeArticleHandler := handlers.NewKnowledgeArticleHandler(knowledgeArticleService)
+	projectHandler := handlers.NewProjectHandler(projectService)
+	dailyDeclarationHandler := handlers.NewDailyDeclarationHandler(dailyDeclarationService)
+	weeklyDeclarationHandler := handlers.NewWeeklyDeclarationHandler(weeklyDeclarationService)
+	performanceHandler := handlers.NewPerformanceHandler(performanceService)
+	reportHandler := handlers.NewReportHandler(reportService)
 
-	// Configurer le routeur Gin
+	// Créer la structure Handlers
+	appHandlers := &routes.Handlers{
+		AuthHandler:              authHandler,
+		UserHandler:              userHandler,
+		TicketHandler:            ticketHandler,
+		IncidentHandler:          incidentHandler,
+		ChangeHandler:            changeHandler,
+		ServiceRequestHandler:    serviceRequestHandler,
+		TimeEntryHandler:         timeEntryHandler,
+		DelayHandler:             delayHandler,
+		AssetHandler:             assetHandler,
+		SLAHandler:               slaHandler,
+		NotificationHandler:      notificationHandler,
+		KnowledgeArticleHandler:  knowledgeArticleHandler,
+		ProjectHandler:           projectHandler,
+		DailyDeclarationHandler:  dailyDeclarationHandler,
+		WeeklyDeclarationHandler: weeklyDeclarationHandler,
+		PerformanceHandler:       performanceHandler,
+		ReportHandler:            reportHandler,
+	}
+
+	// Configurer Gin
+	if config.AppConfig.AppEnv == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
+	// Créer le routeur
 	router := gin.Default()
 
-	// Configurer toutes les routes
-	routes.SetupRoutes(router, handlers)
+	// Configurer les routes
+	routes.SetupRoutes(router, appHandlers)
 
-	// Démarrer le serveur HTTP
-	port := config.AppConfig.AppPort
-	if port == "" {
-		port = "8080"
-	}
+	// Démarrer le serveur
+	port := ":" + config.AppConfig.AppPort
+	log.Printf("🚀 Serveur démarré sur le port %s", config.AppConfig.AppPort)
+	log.Printf("📡 API disponible sur http://localhost%s/api/v1", port)
+	log.Printf("💚 Health check: http://localhost%s/health", port)
 
-	// Gérer l'arrêt gracieux
-	go func() {
-		if err := router.Run(":" + port); err != nil {
-			log.Fatalf("Erreur lors du démarrage du serveur: %v", err)
-		}
-	}()
-
-	log.Printf("🚀 Serveur démarré sur le port %s", port)
-	log.Printf("📚 API disponible sur http://localhost:%s/api/v1", port)
-
-	// Attendre un signal d'arrêt
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-
-	log.Println("🛑 Arrêt du serveur...")
-}
-
-// Repositories contient toutes les instances de repositories
-type Repositories struct {
-	UserRepository               repositories.UserRepository
-	RoleRepository               repositories.RoleRepository
-	TicketRepository             repositories.TicketRepository
-	TicketCommentRepository      repositories.TicketCommentRepository
-	TicketHistoryRepository      repositories.TicketHistoryRepository
-	IncidentRepository           repositories.IncidentRepository
-	ChangeRepository             repositories.ChangeRepository
-	ServiceRequestRepository     repositories.ServiceRequestRepository
-	ServiceRequestTypeRepository repositories.ServiceRequestTypeRepository
-	TimeEntryRepository          repositories.TimeEntryRepository
-	DelayRepository              repositories.DelayRepository
-	DelayJustificationRepository repositories.DelayJustificationRepository
-	AssetRepository              repositories.AssetRepository
-	AssetCategoryRepository      repositories.AssetCategoryRepository
-	SLARepository                repositories.SLARepository
-	TicketSLARepository          repositories.TicketSLARepository
-	NotificationRepository       repositories.NotificationRepository
-	KnowledgeArticleRepository   repositories.KnowledgeArticleRepository
-	KnowledgeCategoryRepository  repositories.KnowledgeCategoryRepository
-	ProjectRepository            repositories.ProjectRepository
-	DailyDeclarationRepository   repositories.DailyDeclarationRepository
-	WeeklyDeclarationRepository  repositories.WeeklyDeclarationRepository
-	UserSessionRepository        repositories.UserSessionRepository
-	TicketAssetRepository        repositories.TicketAssetRepository
-}
-
-// initializeRepositories initialise tous les repositories
-func initializeRepositories() *Repositories {
-	return &Repositories{
-		UserRepository:               repositories.NewUserRepository(),
-		RoleRepository:               repositories.NewRoleRepository(),
-		TicketRepository:             repositories.NewTicketRepository(),
-		TicketCommentRepository:      repositories.NewTicketCommentRepository(),
-		TicketHistoryRepository:      repositories.NewTicketHistoryRepository(),
-		IncidentRepository:           repositories.NewIncidentRepository(),
-		ChangeRepository:             repositories.NewChangeRepository(),
-		ServiceRequestRepository:     repositories.NewServiceRequestRepository(),
-		ServiceRequestTypeRepository: repositories.NewServiceRequestTypeRepository(),
-		TimeEntryRepository:          repositories.NewTimeEntryRepository(),
-		DelayRepository:              repositories.NewDelayRepository(),
-		DelayJustificationRepository: repositories.NewDelayJustificationRepository(),
-		AssetRepository:              repositories.NewAssetRepository(),
-		AssetCategoryRepository:      repositories.NewAssetCategoryRepository(),
-		SLARepository:                repositories.NewSLARepository(),
-		TicketSLARepository:          repositories.NewTicketSLARepository(),
-		NotificationRepository:       repositories.NewNotificationRepository(),
-		KnowledgeArticleRepository:   repositories.NewKnowledgeArticleRepository(),
-		KnowledgeCategoryRepository:  repositories.NewKnowledgeCategoryRepository(),
-		ProjectRepository:            repositories.NewProjectRepository(),
-		DailyDeclarationRepository:   repositories.NewDailyDeclarationRepository(),
-		WeeklyDeclarationRepository:  repositories.NewWeeklyDeclarationRepository(),
-		UserSessionRepository:        repositories.NewUserSessionRepository(),
-		TicketAssetRepository:        repositories.NewTicketAssetRepository(),
-	}
-}
-
-// Services contient toutes les instances de services
-type Services struct {
-	AuthService              services.AuthService
-	UserService              services.UserService
-	TicketService            services.TicketService
-	IncidentService          services.IncidentService
-	ChangeService            services.ChangeService
-	ServiceRequestService    services.ServiceRequestService
-	TimeEntryService         services.TimeEntryService
-	DelayService             services.DelayService
-	AssetService             services.AssetService
-	SLAService               services.SLAService
-	NotificationService      services.NotificationService
-	KnowledgeArticleService  services.KnowledgeArticleService
-	ProjectService           services.ProjectService
-	DailyDeclarationService  services.DailyDeclarationService
-	WeeklyDeclarationService services.WeeklyDeclarationService
-	PerformanceService       services.PerformanceService
-	ReportService            services.ReportService
-}
-
-// initializeServices initialise tous les services
-func initializeServices(repos *Repositories) *Services {
-	return &Services{
-		AuthService: services.NewAuthService(repos.UserRepository, repos.UserSessionRepository),
-		UserService: services.NewUserService(repos.UserRepository, repos.RoleRepository),
-		TicketService: services.NewTicketService(
-			repos.TicketRepository,
-			repos.UserRepository,
-			repos.TicketCommentRepository,
-			repos.TicketHistoryRepository,
-		),
-		IncidentService: services.NewIncidentService(
-			repos.IncidentRepository,
-			repos.TicketRepository,
-			repos.TicketAssetRepository,
-			repos.AssetRepository,
-		),
-		ChangeService: services.NewChangeService(
-			repos.ChangeRepository,
-			repos.TicketRepository,
-			repos.UserRepository,
-		),
-		ServiceRequestService: services.NewServiceRequestService(
-			repos.ServiceRequestRepository,
-			repos.ServiceRequestTypeRepository,
-			repos.TicketRepository,
-			repos.UserRepository,
-		),
-		TimeEntryService: services.NewTimeEntryService(
-			repos.TimeEntryRepository,
-			repos.TicketRepository,
-			repos.UserRepository,
-		),
-		DelayService: services.NewDelayService(
-			repos.DelayRepository,
-			repos.DelayJustificationRepository,
-			repos.UserRepository,
-		),
-		AssetService: services.NewAssetService(
-			repos.AssetRepository,
-			repos.AssetCategoryRepository,
-			repos.UserRepository,
-		),
-		SLAService: services.NewSLAService(
-			repos.SLARepository,
-			repos.TicketSLARepository,
-			repos.TicketRepository,
-		),
-		NotificationService: services.NewNotificationService(
-			repos.NotificationRepository,
-			repos.UserRepository,
-		),
-		KnowledgeArticleService: services.NewKnowledgeArticleService(
-			repos.KnowledgeArticleRepository,
-			repos.KnowledgeCategoryRepository,
-			repos.UserRepository,
-		),
-		ProjectService: services.NewProjectService(
-			repos.ProjectRepository,
-			repos.UserRepository,
-		),
-		DailyDeclarationService: services.NewDailyDeclarationService(
-			repos.DailyDeclarationRepository,
-			repos.TimeEntryRepository,
-			repos.UserRepository,
-		),
-		WeeklyDeclarationService: services.NewWeeklyDeclarationService(
-			repos.WeeklyDeclarationRepository,
-			repos.UserRepository,
-		),
-		PerformanceService: services.NewPerformanceService(
-			repos.TicketRepository,
-			repos.TimeEntryRepository,
-			repos.DelayRepository,
-			repos.UserRepository,
-		),
-		ReportService: services.NewReportService(
-			repos.TicketRepository,
-			repos.SLARepository,
-			repos.UserRepository,
-		),
-	}
-}
-
-// initializeHandlers initialise tous les handlers
-func initializeHandlers(svcs *Services) *routes.Handlers {
-	return &routes.Handlers{
-		AuthHandler:              handlers.NewAuthHandler(svcs.AuthService),
-		UserHandler:              handlers.NewUserHandler(svcs.UserService),
-		TicketHandler:            handlers.NewTicketHandler(svcs.TicketService),
-		IncidentHandler:          handlers.NewIncidentHandler(svcs.IncidentService),
-		ChangeHandler:            handlers.NewChangeHandler(svcs.ChangeService),
-		ServiceRequestHandler:    handlers.NewServiceRequestHandler(svcs.ServiceRequestService),
-		TimeEntryHandler:         handlers.NewTimeEntryHandler(svcs.TimeEntryService),
-		DelayHandler:             handlers.NewDelayHandler(svcs.DelayService),
-		AssetHandler:             handlers.NewAssetHandler(svcs.AssetService),
-		SLAHandler:               handlers.NewSLAHandler(svcs.SLAService),
-		NotificationHandler:      handlers.NewNotificationHandler(svcs.NotificationService),
-		KnowledgeArticleHandler:  handlers.NewKnowledgeArticleHandler(svcs.KnowledgeArticleService),
-		ProjectHandler:           handlers.NewProjectHandler(svcs.ProjectService),
-		DailyDeclarationHandler:  handlers.NewDailyDeclarationHandler(svcs.DailyDeclarationService),
-		WeeklyDeclarationHandler: handlers.NewWeeklyDeclarationHandler(svcs.WeeklyDeclarationService),
-		PerformanceHandler:       handlers.NewPerformanceHandler(svcs.PerformanceService),
-		ReportHandler:            handlers.NewReportHandler(svcs.ReportService),
+	if err := http.ListenAndServe(port, router); err != nil {
+		log.Fatalf("❌ Erreur lors du démarrage du serveur: %v", err)
 	}
 }
