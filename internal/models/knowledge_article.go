@@ -9,18 +9,18 @@ import (
 // KnowledgeCategory représente une catégorie d'article de la base de connaissances
 // Table: knowledge_categories
 type KnowledgeCategory struct {
-	ID          uint   `gorm:"primaryKey" json:"id"`
-	Name        string `gorm:"type:varchar(255);not null" json:"name"`
-	Description string `gorm:"type:text" json:"description,omitempty"`
-	ParentID    *uint  `gorm:"index" json:"parent_id,omitempty"` // Catégorie parente (optionnel)
-	IsActive    bool   `gorm:"default:true;index" json:"is_active"`
+	ID          uint      `gorm:"primaryKey" json:"id"`
+	Name        string    `gorm:"type:varchar(255);not null" json:"name"`
+	Description string    `gorm:"type:text" json:"description,omitempty"`
+	ParentID    *uint     `gorm:"index" json:"parent_id,omitempty"` // Catégorie parente (optionnel)
+	IsActive    bool      `gorm:"default:true;index" json:"is_active"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 
 	// Relations
-	Parent   *KnowledgeCategory `gorm:"foreignKey:ParentID" json:"parent,omitempty"` // Catégorie parente (optionnel)
+	Parent   *KnowledgeCategory  `gorm:"foreignKey:ParentID" json:"parent,omitempty"`   // Catégorie parente (optionnel)
 	Children []KnowledgeCategory `gorm:"foreignKey:ParentID" json:"children,omitempty"` // Catégories enfants
-	Articles []KnowledgeArticle  `gorm:"foreignKey:CategoryID" json:"-"`              // Articles de cette catégorie
+	Articles []KnowledgeArticle  `gorm:"foreignKey:CategoryID" json:"-"`                // Articles de cette catégorie
 }
 
 // TableName spécifie le nom de la table
@@ -37,14 +37,14 @@ type KnowledgeArticle struct {
 	CategoryID  uint           `gorm:"not null;index" json:"category_id"`
 	AuthorID    uint           `gorm:"not null;index" json:"author_id"`
 	IsPublished bool           `gorm:"default:false;index" json:"is_published"` // Si l'article est publié
-	ViewCount   int            `gorm:"default:0" json:"view_count"`              // Nombre de vues
+	ViewCount   int            `gorm:"default:0" json:"view_count"`             // Nombre de vues
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"-"` // Soft delete
 
 	// Relations
-	Category    KnowledgeCategory `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // Catégorie
-	Author      User              `gorm:"foreignKey:AuthorID" json:"author,omitempty"`      // Auteur
+	Category    KnowledgeCategory            `gorm:"foreignKey:CategoryID" json:"category,omitempty"`                               // Catégorie
+	Author      User                         `gorm:"foreignKey:AuthorID" json:"author,omitempty"`                                   // Auteur
 	Attachments []KnowledgeArticleAttachment `gorm:"foreignKey:ArticleID;constraint:OnDelete:CASCADE" json:"attachments,omitempty"` // Pièces jointes
 }
 
@@ -73,4 +73,3 @@ type KnowledgeArticleAttachment struct {
 func (KnowledgeArticleAttachment) TableName() string {
 	return "knowledge_article_attachments"
 }
-
