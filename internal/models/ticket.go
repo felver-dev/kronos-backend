@@ -27,9 +27,9 @@ type Ticket struct {
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"-"` // Soft delete
 
 	// Relations
-	AssignedTo *User `gorm:"foreignKey:AssignedToID" json:"assigned_to,omitempty"` // Utilisateur assigné
-	CreatedBy  User  `gorm:"foreignKey:CreatedByID" json:"created_by"`             // Créateur du ticket
-	PrimaryImage  *TicketAttachment `gorm:"foreignKey:PrimaryImageID" json:"-"`     // Image principale (optionnel)
+	AssignedTo   *User             `gorm:"foreignKey:AssignedToID" json:"assigned_to,omitempty"` // Utilisateur assigné
+	CreatedBy    User              `gorm:"foreignKey:CreatedByID" json:"created_by"`             // Créateur du ticket
+	PrimaryImage *TicketAttachment `gorm:"foreignKey:PrimaryImageID" json:"-"`                   // Image principale (optionnel)
 
 	// Relations HasMany (définies dans les autres modèles)
 	// Comments    []TicketComment `gorm:"foreignKey:TicketID" json:"-"`
