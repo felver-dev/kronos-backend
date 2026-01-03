@@ -18,7 +18,6 @@ type TicketAttachment struct {
 	FileSize      *int           `gorm:"type:int" json:"file_size,omitempty"`               // Taille en bytes (optionnel)
 	MimeType      string         `gorm:"type:varchar(100)" json:"mime_type,omitempty"`
 	IsImage       bool           `gorm:"default:false;index" json:"is_image"`    // TRUE si c'est une image
-	IsPrimary     bool           `gorm:"default:false;index" json:"is_primary"`  // TRUE pour l'image principale
 	DisplayOrder  int            `gorm:"default:0" json:"display_order"`         // Ordre d'affichage (pour les galeries)
 	Description   string         `gorm:"type:text" json:"description,omitempty"` // Description optionnelle
 	CreatedAt     time.Time      `json:"created_at"`

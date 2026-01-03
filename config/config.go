@@ -2,49 +2,86 @@ package config
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 )
 
 // Config contient toute la configuration de l'application
 type Config struct {
-	// Application
-	AppName string
-	AppEnv  string // development, production
-	AppPort string
-	AppURL  string
+	Database DatabaseConfig
+	Server   ServerConfig
+	App      ApplicationConfig
 
-	// Base de données MySQL
-	DBHost      string
-	DBPort      string
-	DBUser      string
-	DBPassword  string
-	DBName      string
-	DBCharset   string
-	DBParseTime bool
-	DBLoc       string
-
-	// JWT
+	// Champs de compatibilité pour l'accès direct (deprecated, utiliser Database/Server/App)
+	DBHost                   string
+	DBPort                   string
+	DBUser                   string
+	DBPassword               string
+	DBName                   string
+	DBCharset                string
+	DBParseTime              bool
+	DBLoc                    string
+	AppEnv                   string
+	AppPort                  string
+	AppName                  string
+	AppURL                   string
 	JWTSecret                string
 	JWTExpirationHours       int
 	JWTRefreshExpirationDays int
+	UploadDir                string
+	MaxUploadSize            int64
+	AllowedImageTypes        []string
+	AvatarMaxSize            int64
+	AvatarDir                string
+	TicketAttachmentsDir     string
+}
 
-	// Uploads
-	UploadDir         string
-	MaxUploadSize     int64 // en bytes
-	AllowedImageTypes []string
+// DatabaseConfig contient les paramètres de connexion à la base de données
+type DatabaseConfig struct {
+	Host            string
+	Port            string
+	User            string
+	Password        string
+	Name            string
+	Charset         string
+	ParseTime       bool
+	Loc             string
+	MaxOpenConns    int
+	MaxIdleConns    int
+	ConnMaxLifetime time.Duration
+	ConnMaxIdleTime time.Duration
+}
 
-	// Avatars
-	AvatarMaxSize int64 // en bytes
-	AvatarDir     string
+// ServerConfig contient la configuration du serveur HTTP
+type ServerConfig struct {
+	Port         string
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+	IdleTimeout  time.Duration
+}
 
-	// Tickets
-	TicketAttachmentsDir string
+// ApplicationConfig contient la configuration générale de l'application
+type ApplicationConfig struct {
+	Name                     string
+	Environment              string
+	URL                      string
+	LogLevel                 string
+	JWTSecret                string
+	JWTExpirationHours       int
+	JWTRefreshExpirationDays int
+	UploadDir                string
+	MaxUploadSize            int64
+	AllowedImageTypes        []string
+	AvatarMaxSize            int64
+	AvatarDir                string
+	TicketAttachmentsDir     string
 }
 
 // AppConfig est l'instance globale de configuration
@@ -84,52 +121,130 @@ func loadEnvFile() {
 	}
 }
 
-// LoadConfig charge la configuration depuis les variables d'environnement
-func LoadConfig() {
+// Load charge la configuration depuis les variables d'environnement
+func Load() (*Config, error) {
 	// Charger le fichier .env si présent
 	loadEnvFile()
 
-	AppConfig = &Config{
-		// Application
-		AppName: getEnv("APP_NAME", "ITSM Backend"),
-		AppEnv:  getEnv("APP_ENV", "development"),
-		AppPort: getEnv("APP_PORT", "8080"),
-		AppURL:  getEnv("APP_URL", "http://localhost:8080"),
+	env := getEnv("APP_ENV", "development")
 
-		// Base de données
-		DBHost:      getEnv("DB_HOST", "127.0.0.1"),
-		DBPort:      getEnv("DB_PORT", "3306"),
-		DBUser:      getEnv("DB_USER", "root"),
-		DBPassword:  getEnv("DB_PASSWORD", ""),
-		DBName:      getEnv("DB_NAME", "itsm_db"),
-		DBCharset:   getEnv("DB_CHARSET", "utf8mb4"),
-		DBParseTime: getEnvBool("DB_PARSE_TIME", true),
-		DBLoc:       getEnv("DB_LOC", "Local"),
+	config := &Config{
+		Database: DatabaseConfig{
+			Host:            getEnv("DB_HOST", "127.0.0.1"),
+			Port:            getEnv("DB_PORT", "3306"),
+			User:            getEnv("DB_USER", "root"),
+			Password:        getEnv("DB_PASSWORD", ""),
+			Name:            getEnv("DB_NAME", "itsm_db"),
+			Charset:         getEnv("DB_CHARSET", "utf8mb4"),
+			ParseTime:       getEnvBool("DB_PARSE_TIME", true),
+			Loc:             getEnv("DB_LOC", "Local"),
+			MaxOpenConns:    getEnvAsInt("DB_MAX_OPEN_CONNS", 100),
+			MaxIdleConns:    getEnvAsInt("DB_MAX_IDLE_CONNS", 10),
+			ConnMaxLifetime: getEnvAsDuration("DB_CONN_MAX_LIFETIME", 5*time.Minute),
+			ConnMaxIdleTime: getEnvAsDuration("DB_CONN_MAX_IDLE_TIME", 10*time.Minute),
+		},
+		Server: ServerConfig{
+			Port:         getEnv("APP_PORT", "8080"),
+			ReadTimeout:  getEnvAsDuration("SERVER_READ_TIMEOUT", 15*time.Second),
+			WriteTimeout: getEnvAsDuration("SERVER_WRITE_TIMEOUT", 15*time.Second),
+			IdleTimeout:  getEnvAsDuration("SERVER_IDLE_TIMEOUT", 60*time.Second),
+		},
+		App: ApplicationConfig{
+			Name:                     getEnv("APP_NAME", "ITSM Backend"),
+			Environment:              env,
+			URL:                      getEnv("APP_URL", "http://localhost:8080"),
+			LogLevel:                 getEnv("LOG_LEVEL", getDefaultLogLevel(env)),
+			JWTSecret:                getEnv("JWT_SECRET", "your-super-secret-jwt-key-change-in-production"),
+			JWTExpirationHours:       getEnvAsInt("JWT_EXPIRATION_HOURS", 24),
+			JWTRefreshExpirationDays: getEnvAsInt("JWT_REFRESH_EXPIRATION_DAYS", 7),
+			UploadDir:                getEnv("UPLOAD_DIR", "./uploads"),
+			MaxUploadSize:            getEnvAsInt64("MAX_UPLOAD_SIZE", 10485760), // 10 MB
+			AllowedImageTypes:        getEnvSlice("ALLOWED_IMAGE_TYPES", []string{"jpg", "jpeg", "png", "gif", "webp"}),
+			AvatarMaxSize:            getEnvAsInt64("AVATAR_MAX_SIZE", 2097152), // 2 MB
+			AvatarDir:                getEnv("AVATAR_DIR", "./uploads/users"),
+			TicketAttachmentsDir:     getEnv("TICKET_ATTACHMENTS_DIR", "./uploads/tickets"),
+		},
+	}
 
-		// JWT
-		JWTSecret:                getEnv("JWT_SECRET", "your-super-secret-jwt-key-change-in-production"),
-		JWTExpirationHours:       getEnvInt("JWT_EXPIRATION_HOURS", 24),
-		JWTRefreshExpirationDays: getEnvInt("JWT_REFRESH_EXPIRATION_DAYS", 7),
+	// Remplir les champs de compatibilité pour l'accès direct
+	config.DBHost = config.Database.Host
+	config.DBPort = config.Database.Port
+	config.DBUser = config.Database.User
+	config.DBPassword = config.Database.Password
+	config.DBName = config.Database.Name
+	config.DBCharset = config.Database.Charset
+	config.DBParseTime = config.Database.ParseTime
+	config.DBLoc = config.Database.Loc
+	config.AppEnv = config.App.Environment
+	config.AppPort = config.Server.Port
+	config.AppName = config.App.Name
+	config.AppURL = config.App.URL
+	config.JWTSecret = config.App.JWTSecret
+	config.JWTExpirationHours = config.App.JWTExpirationHours
+	config.JWTRefreshExpirationDays = config.App.JWTRefreshExpirationDays
+	config.UploadDir = config.App.UploadDir
+	config.MaxUploadSize = config.App.MaxUploadSize
+	config.AllowedImageTypes = config.App.AllowedImageTypes
+	config.AvatarMaxSize = config.App.AvatarMaxSize
+	config.AvatarDir = config.App.AvatarDir
+	config.TicketAttachmentsDir = config.App.TicketAttachmentsDir
 
-		// Uploads
-		UploadDir:         getEnv("UPLOAD_DIR", "./uploads"),
-		MaxUploadSize:     getEnvInt64("MAX_UPLOAD_SIZE", 10485760), // 10 MB
-		AllowedImageTypes: getEnvSlice("ALLOWED_IMAGE_TYPES", []string{"jpg", "jpeg", "png", "gif", "webp"}),
-
-		// Avatars
-		AvatarMaxSize: getEnvInt64("AVATAR_MAX_SIZE", 2097152), // 2 MB
-		AvatarDir:     getEnv("AVATAR_DIR", "./uploads/users"),
-
-		// Tickets
-		TicketAttachmentsDir: getEnv("TICKET_ATTACHMENTS_DIR", "./uploads/tickets"),
+	if err := config.Validate(); err != nil {
+		return nil, fmt.Errorf("configuration invalide: %w", err)
 	}
 
 	// Créer les dossiers d'upload si nécessaire
-	createDirs()
+	createDirs(config)
 
 	// Log de la configuration de la base de données (sans le mot de passe)
 	log.Printf("📊 Configuration DB: Host=%s, Port=%s, User=%s, Database=%s",
-		AppConfig.DBHost, AppConfig.DBPort, AppConfig.DBUser, AppConfig.DBName)
+		config.Database.Host, config.Database.Port, config.Database.User, config.Database.Name)
+
+	return config, nil
+}
+
+// LoadConfig charge la configuration depuis les variables d'environnement (compatibilité)
+func LoadConfig() {
+	cfg, err := Load()
+	if err != nil {
+		log.Fatalf("❌ Erreur lors du chargement de la configuration: %v", err)
+	}
+	AppConfig = cfg
+}
+
+// Validate vérifie que la configuration est valide
+func (c *Config) Validate() error {
+	if c.Database.Host == "" {
+		return fmt.Errorf("DB_HOST ne peut pas être vide")
+	}
+	if c.Database.Port == "" {
+		return fmt.Errorf("DB_PORT ne peut pas être vide")
+	}
+	if c.Database.User == "" {
+		return fmt.Errorf("DB_USER ne peut pas être vide")
+	}
+	if c.Database.Name == "" {
+		return fmt.Errorf("DB_NAME ne peut pas être vide")
+	}
+	if c.Server.Port == "" {
+		return fmt.Errorf("APP_PORT ne peut pas être vide")
+	}
+	if c.App.JWTSecret == "" || c.App.JWTSecret == "your-super-secret-jwt-key-change-in-production" {
+		if c.IsProduction() {
+			return fmt.Errorf("JWT_SECRET doit être défini en production")
+		}
+	}
+	return nil
+}
+
+// IsDevelopment retourne true si l'application est en mode développement
+func (c *Config) IsDevelopment() bool {
+	return c.App.Environment == "dev" || c.App.Environment == "development"
+}
+
+// IsProduction retourne true si l'application est en mode production
+func (c *Config) IsProduction() bool {
+	return c.App.Environment == "production" || c.App.Environment == "prod"
 }
 
 // getEnv récupère une variable d'environnement ou retourne la valeur par défaut
@@ -140,24 +255,43 @@ func getEnv(key, defaultValue string) string {
 	return defaultValue
 }
 
-// getEnvInt récupère une variable d'environnement comme entier
-func getEnvInt(key string, defaultValue int) int {
-	if value := os.Getenv(key); value != "" {
-		if intValue, err := strconv.Atoi(value); err == nil {
-			return intValue
-		}
+// getEnvAsInt récupère une variable d'environnement comme entier
+func getEnvAsInt(key string, defaultValue int) int {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
 	}
-	return defaultValue
+	intValue, err := strconv.Atoi(value)
+	if err != nil {
+		return defaultValue
+	}
+	return intValue
 }
 
-// getEnvInt64 récupère une variable d'environnement comme int64
-func getEnvInt64(key string, defaultValue int64) int64 {
-	if value := os.Getenv(key); value != "" {
-		if intValue, err := strconv.ParseInt(value, 10, 64); err == nil {
-			return intValue
-		}
+// getEnvAsInt64 récupère une variable d'environnement comme int64
+func getEnvAsInt64(key string, defaultValue int64) int64 {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
 	}
-	return defaultValue
+	intValue, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return defaultValue
+	}
+	return intValue
+}
+
+// getEnvAsDuration récupère une variable d'environnement comme durée
+func getEnvAsDuration(key string, defaultValue time.Duration) time.Duration {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	duration, err := time.ParseDuration(value)
+	if err != nil {
+		return defaultValue
+	}
+	return duration
 }
 
 // getEnvBool récupère une variable d'environnement comme booléen
@@ -189,12 +323,26 @@ func getEnvSlice(key string, defaultValue []string) []string {
 	return defaultValue
 }
 
+// getDefaultLogLevel retourne le niveau de log par défaut selon l'environnement
+func getDefaultLogLevel(env string) string {
+	switch env {
+	case "dev", "development":
+		return "debug"
+	case "staging":
+		return "info"
+	case "production", "prod":
+		return "warn"
+	default:
+		return "info"
+	}
+}
+
 // createDirs crée les dossiers nécessaires pour les uploads
-func createDirs() {
+func createDirs(cfg *Config) {
 	dirs := []string{
-		AppConfig.UploadDir,
-		AppConfig.AvatarDir,
-		AppConfig.TicketAttachmentsDir,
+		cfg.App.UploadDir,
+		cfg.App.AvatarDir,
+		cfg.App.TicketAttachmentsDir,
 	}
 
 	for _, dir := range dirs {

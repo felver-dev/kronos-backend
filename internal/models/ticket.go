@@ -18,7 +18,7 @@ type Ticket struct {
 	Priority       string         `gorm:"type:varchar(50);default:'medium'" json:"priority"`              // low, medium, high, critical
 	AssignedToID   *uint          `gorm:"index" json:"assigned_to_id,omitempty"`                          // ID utilisateur assigné (optionnel)
 	CreatedByID    uint           `gorm:"not null;index" json:"created_by_id"`
-	PrimaryImageID *uint          `json:"primary_image_id,omitempty"`               // ID de l'image principale (optionnel)
+	PrimaryImageID *uint          `gorm:"index" json:"primary_image_id,omitempty"`  // ID de l'image principale (optionnel)
 	EstimatedTime  *int           `gorm:"type:int" json:"estimated_time,omitempty"` // Temps estimé en minutes (optionnel)
 	ActualTime     *int           `gorm:"type:int" json:"actual_time,omitempty"`    // Temps réel en minutes (calculé)
 	CreatedAt      time.Time      `json:"created_at"`
@@ -27,9 +27,9 @@ type Ticket struct {
 	DeletedAt      gorm.DeletedAt `gorm:"index" json:"-"` // Soft delete
 
 	// Relations
-	AssignedTo   *User             `gorm:"foreignKey:AssignedToID" json:"assigned_to,omitempty"` // Utilisateur assigné
-	CreatedBy    User              `gorm:"foreignKey:CreatedByID" json:"created_by"`             // Créateur du ticket
-	// PrimaryImage *TicketAttachment `gorm:"foreignKey:PrimaryImageID" json:"-"`                   // Image principale (optionnel) - Commenté pour éviter dépendance circulaire lors des migrations
+	AssignedTo   *User             `gorm:"foreignKey:AssignedToID" json:"assigned_to,omitempty"`     // Utilisateur assigné
+	CreatedBy    User              `gorm:"foreignKey:CreatedByID" json:"created_by"`                 // Créateur du ticket
+	PrimaryImage *TicketAttachment `gorm:"foreignKey:PrimaryImageID" json:"primary_image,omitempty"` // Image principale (optionnel)
 
 	// Relations HasMany (définies dans les autres modèles)
 	// Comments    []TicketComment `gorm:"foreignKey:TicketID" json:"-"`

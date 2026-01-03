@@ -42,7 +42,7 @@ type WeeklyDeclarationTask struct {
 
 	// Relations - GORM utilisera automatiquement les champs existants
 	Declaration WeeklyDeclaration `gorm:"foreignKey:DeclarationID;constraint:OnDelete:CASCADE" json:"-"` // Déclaration associée
-	Ticket      Ticket           `gorm:"constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé
+	Ticket      Ticket           `gorm:"foreignKey:TicketID;constraint:OnDelete:CASCADE" json:"ticket,omitempty"` // Ticket associé
 }
 
 // TableName spécifie le nom de la table

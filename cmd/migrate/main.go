@@ -6,13 +6,12 @@ import (
 
 	"github.com/mcicare/itsm-backend/config"
 	"github.com/mcicare/itsm-backend/database"
-	"github.com/mcicare/itsm-backend/migrations"
-	"gorm.io/gorm/logger"
 )
 
 func main() {
 	// Parse des flags
 	seed := flag.Bool("seed", false, "Exécuter le seeding des données initiales après les migrations")
+	reset := flag.Bool("reset", false, "Supprimer et recréer toutes les tables (ATTENTION: supprime toutes les données!)")
 	flag.Parse()
 
 	// Charger la configuration
@@ -24,19 +23,25 @@ func main() {
 	}
 	defer database.Close()
 
-	// Désactiver complètement le logging pendant les migrations pour éviter le spam
-	database.DB.Logger = logger.Default.LogMode(logger.Silent)
+	// Reset si demandé
+	if *reset {
+		log.Println("🔄 Réinitialisation de la base de données...")
+		if err := database.ResetDatabase(); err != nil {
+			log.Fatalf("❌ Erreur lors de la réinitialisation: %v", err)
+		}
+		log.Println("✅ Base de données réinitialisée")
+		return
+	}
 
 	// Exécuter les migrations
-	if err := migrations.RunMigrations(); err != nil {
+	if err := database.AutoMigrate(); err != nil {
 		log.Fatalf("❌ Erreur lors des migrations: %v", err)
 	}
 
 	// Exécuter le seeding si demandé
 	if *seed {
-		if err := migrations.SeedData(); err != nil {
-			log.Fatalf("❌ Erreur lors du seeding: %v", err)
-		}
+		// TODO: Implémenter le seeding si nécessaire
+		log.Println("ℹ️  Le seeding n'est pas encore implémenté")
 	}
 
 	log.Println("✨ Migrations terminées avec succès!")
