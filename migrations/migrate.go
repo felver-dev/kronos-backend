@@ -1,8 +1,13 @@
 package migrations
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
+	"strings"
 
+	_ "github.com/go-sql-driver/mysql" // Driver MySQL
+	"github.com/mcicare/itsm-backend/config"
 	"github.com/mcicare/itsm-backend/database"
 	"github.com/mcicare/itsm-backend/internal/models"
 )
@@ -10,6 +15,16 @@ import (
 // RunMigrations exécute toutes les migrations pour créer les tables
 func RunMigrations() error {
 	log.Println("🔄 Démarrage des migrations...")
+
+	// Vérifier que la connexion est valide
+	sqlDB, err := database.DB.DB()
+	if err != nil {
+		return fmt.Errorf("erreur lors de la récupération de l'instance SQL: %w", err)
+	}
+
+	if err := sqlDB.Ping(); err != nil {
+		return fmt.Errorf("la connexion à la base de données n'est pas valide: %w", err)
+	}
 
 	// Tables de base (authentification et utilisateurs)
 	if err := database.DB.AutoMigrate(
@@ -19,6 +34,29 @@ func RunMigrations() error {
 		&models.User{},
 		&models.UserSession{},
 	); err != nil {
+		// Si l'erreur est "table doesn't exist in engine", la base est corrompue
+		// Il faut supprimer et recréer la base de données
+		if strings.Contains(strings.ToLower(err.Error()), "doesn't exist in engine") {
+			log.Println("⚠️  Détection d'une incohérence dans la base de données")
+			log.Println("🔄 Suppression et recréation de la base de données...")
+			
+			// Fermer la connexion actuelle
+			database.Close()
+			
+			// Supprimer et recréer la base de données
+			if err := recreateDatabase(); err != nil {
+				return fmt.Errorf("erreur lors de la recréation de la base de données: %w", err)
+			}
+			
+			// Se reconnecter
+			if err := database.Connect(); err != nil {
+				return fmt.Errorf("erreur lors de la reconnexion: %w", err)
+			}
+			
+			// Réessayer les migrations
+			log.Println("🔄 Nouvelle tentative de migration...")
+			return RunMigrations()
+		}
 		return err
 	}
 	log.Println("✅ Tables d'authentification et utilisateurs créées")
@@ -178,5 +216,42 @@ func SeedData() error {
 	}
 
 	log.Println("✅ Données initiales insérées avec succès!")
+	return nil
+}
+
+// recreateDatabase supprime et recrée la base de données
+func recreateDatabase() error {
+	// Se connecter sans base de données spécifiée
+	dsnWithoutDB := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=%s&parseTime=%t&loc=%s",
+		config.AppConfig.DBUser,
+		config.AppConfig.DBPassword,
+		config.AppConfig.DBHost,
+		config.AppConfig.DBPort,
+		config.AppConfig.DBCharset,
+		config.AppConfig.DBParseTime,
+		config.AppConfig.DBLoc,
+	)
+
+	// Utiliser database/sql pour supprimer et recréer
+	db, err := sql.Open("mysql", dsnWithoutDB)
+	if err != nil {
+		return fmt.Errorf("erreur de connexion: %w", err)
+	}
+	defer db.Close()
+
+	// Supprimer la base de données si elle existe
+	dropQuery := fmt.Sprintf("DROP DATABASE IF EXISTS %s", config.AppConfig.DBName)
+	if _, err := db.Exec(dropQuery); err != nil {
+		return fmt.Errorf("erreur lors de la suppression de la base: %w", err)
+	}
+	log.Printf("🗑️  Base de données '%s' supprimée", config.AppConfig.DBName)
+
+	// Recréer la base de données
+	createQuery := fmt.Sprintf("CREATE DATABASE %s CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", config.AppConfig.DBName)
+	if _, err := db.Exec(createQuery); err != nil {
+		return fmt.Errorf("erreur lors de la création de la base: %w", err)
+	}
+	log.Printf("✅ Base de données '%s' recréée", config.AppConfig.DBName)
+
 	return nil
 }
