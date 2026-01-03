@@ -29,7 +29,7 @@ type Ticket struct {
 	// Relations
 	AssignedTo   *User             `gorm:"foreignKey:AssignedToID" json:"assigned_to,omitempty"` // Utilisateur assigné
 	CreatedBy    User              `gorm:"foreignKey:CreatedByID" json:"created_by"`             // Créateur du ticket
-	PrimaryImage *TicketAttachment `gorm:"foreignKey:PrimaryImageID" json:"-"`                   // Image principale (optionnel)
+	// PrimaryImage *TicketAttachment `gorm:"foreignKey:PrimaryImageID" json:"-"`                   // Image principale (optionnel) - Commenté pour éviter dépendance circulaire lors des migrations
 
 	// Relations HasMany (définies dans les autres modèles)
 	// Comments    []TicketComment `gorm:"foreignKey:TicketID" json:"-"`

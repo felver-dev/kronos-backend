@@ -15,7 +15,7 @@ type UserSession struct {
 	IPAddress        string    `gorm:"type:varchar(45)" json:"ip_address,omitempty"` // Adresse IP (IPv4 ou IPv6)
 	UserAgent        string    `gorm:"type:text" json:"user_agent,omitempty"`        // User-Agent du navigateur
 	CreatedAt        time.Time `json:"created_at"`
-	LastActivity     time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"last_activity"` // Dernière activité
+	LastActivity     time.Time `json:"last_activity"` // Dernière activité
 
 	// Relations
 	User User `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE" json:"user,omitempty"`

@@ -24,9 +24,8 @@ func main() {
 	}
 	defer database.Close()
 
-	// Réduire le niveau de logging pendant les migrations pour éviter le spam
-	// On garde seulement les erreurs
-	database.DB.Logger = logger.Default.LogMode(logger.Error)
+	// Désactiver complètement le logging pendant les migrations pour éviter le spam
+	database.DB.Logger = logger.Default.LogMode(logger.Silent)
 
 	// Exécuter les migrations
 	if err := migrations.RunMigrations(); err != nil {

@@ -1,8 +1,10 @@
 package config
 
 import (
+	"bytes"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -48,10 +50,44 @@ type Config struct {
 // AppConfig est l'instance globale de configuration
 var AppConfig *Config
 
+// loadEnvFile charge le fichier .env en gérant le BOM UTF-8
+func loadEnvFile() {
+	wd, _ := os.Getwd()
+	envPaths := []string{
+		filepath.Join(wd, ".env"),
+		".env",
+		filepath.Join(wd, "..", ".env"),
+		"../.env",
+	}
+
+	for _, path := range envPaths {
+		if _, err := os.Stat(path); err == nil {
+			// Lire le fichier
+			content, err := os.ReadFile(path)
+			if err != nil {
+				continue
+			}
+
+			// Supprimer le BOM UTF-8 s'il existe
+			content = bytes.TrimPrefix(content, []byte("\xef\xbb\xbf"))
+
+			// Parser et charger dans les variables d'environnement
+			envMap, err := godotenv.UnmarshalBytes(content)
+			if err == nil {
+				for key, value := range envMap {
+					os.Setenv(key, value)
+				}
+				log.Printf("✅ Fichier .env chargé depuis: %s", path)
+				return
+			}
+		}
+	}
+}
+
 // LoadConfig charge la configuration depuis les variables d'environnement
 func LoadConfig() {
-	// Charger le fichier .env si présent (ignoré si le fichier n'existe pas)
-	godotenv.Load()
+	// Charger le fichier .env si présent
+	loadEnvFile()
 
 	AppConfig = &Config{
 		// Application
@@ -61,7 +97,7 @@ func LoadConfig() {
 		AppURL:  getEnv("APP_URL", "http://localhost:8080"),
 
 		// Base de données
-		DBHost:      getEnv("DB_HOST", "localhost"),
+		DBHost:      getEnv("DB_HOST", "127.0.0.1"),
 		DBPort:      getEnv("DB_PORT", "3306"),
 		DBUser:      getEnv("DB_USER", "root"),
 		DBPassword:  getEnv("DB_PASSWORD", ""),
@@ -90,6 +126,10 @@ func LoadConfig() {
 
 	// Créer les dossiers d'upload si nécessaire
 	createDirs()
+
+	// Log de la configuration de la base de données (sans le mot de passe)
+	log.Printf("📊 Configuration DB: Host=%s, Port=%s, User=%s, Database=%s",
+		AppConfig.DBHost, AppConfig.DBPort, AppConfig.DBUser, AppConfig.DBName)
 }
 
 // getEnv récupère une variable d'environnement ou retourne la valeur par défaut
