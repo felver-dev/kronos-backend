@@ -468,6 +468,11 @@ func (s *incidentService) assetToDTO(asset *models.Asset) dto.AssetDTO {
 		assignedToDTO = &assignedDTO
 	}
 
+	var assignedToID *uint
+	if asset.AssignedToID != nil {
+		assignedToID = asset.AssignedToID
+	}
+
 	return dto.AssetDTO{
 		ID:           asset.ID,
 		Name:         asset.Name,
@@ -475,7 +480,8 @@ func (s *incidentService) assetToDTO(asset *models.Asset) dto.AssetDTO {
 		Model:        asset.Model,
 		Manufacturer: asset.Manufacturer,
 		CategoryID:   asset.CategoryID,
-		AssignedTo:   assignedToDTO,
+		AssignedTo:   assignedToID,
+		AssignedUser: assignedToDTO,
 		Status:       asset.Status,
 		CreatedAt:    asset.CreatedAt,
 		UpdatedAt:    asset.UpdatedAt,
