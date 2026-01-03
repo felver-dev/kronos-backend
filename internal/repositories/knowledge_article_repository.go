@@ -111,7 +111,7 @@ func (r *knowledgeArticleRepository) Delete(id uint) error {
 
 // IncrementViewCount incrémente le compteur de vues d'un article
 func (r *knowledgeArticleRepository) IncrementViewCount(id uint) error {
-	return database.DB.Model(&models.KnowledgeArticle{}).Where("id = ?", id).UpdateColumn("view_count", database.DB.Raw("view_count + 1")).Error
+	return database.DB.Model(&models.KnowledgeArticle{}).Where("id = ?", id).Update("view_count", database.DB.Raw("view_count + 1")).Error
 }
 
 // Create crée une nouvelle catégorie

@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"time"
+
 	"github.com/mcicare/itsm-backend/database"
 	"github.com/mcicare/itsm-backend/internal/models"
 )
@@ -70,17 +72,19 @@ func (r *notificationRepository) Update(notification *models.Notification) error
 
 // MarkAsRead marque une notification comme lue
 func (r *notificationRepository) MarkAsRead(id uint) error {
+	now := time.Now()
 	return database.DB.Model(&models.Notification{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"is_read": true,
-		"read_at": database.DB.NowFunc(),
+		"read_at": now,
 	}).Error
 }
 
 // MarkAllAsRead marque toutes les notifications d'un utilisateur comme lues
 func (r *notificationRepository) MarkAllAsRead(userID uint) error {
+	now := time.Now()
 	return database.DB.Model(&models.Notification{}).Where("user_id = ? AND is_read = ?", userID, false).Updates(map[string]interface{}{
 		"is_read": true,
-		"read_at": database.DB.NowFunc(),
+		"read_at": now,
 	}).Error
 }
 
