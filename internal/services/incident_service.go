@@ -404,7 +404,7 @@ func (s *incidentService) incidentToDTO(incident *models.Incident) dto.IncidentD
 	return dto.IncidentDTO{
 		ID:             incident.ID,
 		TicketID:       incident.TicketID,
-		Ticket:         ticketDTO,
+		Ticket:         &ticketDTO,
 		Impact:         incident.Impact,
 		Urgency:        incident.Urgency,
 		ResolutionTime: incident.ResolutionTime,
