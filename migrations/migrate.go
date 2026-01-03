@@ -219,9 +219,33 @@ func SeedData() error {
 	return nil
 }
 
-// recreateDatabase supprime et recrée la base de données
+// recreateDatabase supprime toutes les tables et recrée la base de données
 func recreateDatabase() error {
-	// Se connecter sans base de données spécifiée
+	// D'abord, essayer de supprimer toutes les tables
+	log.Println("🗑️  Suppression de toutes les tables...")
+	
+	// Récupérer la liste de toutes les tables
+	var tables []string
+	rows, err := database.DB.Raw("SHOW TABLES").Rows()
+	if err == nil {
+		defer rows.Close()
+		for rows.Next() {
+			var tableName string
+			if err := rows.Scan(&tableName); err == nil {
+				tables = append(tables, tableName)
+			}
+		}
+	}
+	
+	// Supprimer toutes les tables une par une
+	for _, table := range tables {
+		dropTableQuery := fmt.Sprintf("DROP TABLE IF EXISTS `%s`", table)
+		if err := database.DB.Exec(dropTableQuery).Error; err != nil {
+			log.Printf("⚠️  Erreur lors de la suppression de la table %s: %v", table, err)
+		}
+	}
+	
+	// Maintenant, se connecter sans base de données spécifiée pour supprimer la base
 	dsnWithoutDB := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=%s&parseTime=%t&loc=%s",
 		config.AppConfig.DBUser,
 		config.AppConfig.DBPassword,
@@ -239,15 +263,17 @@ func recreateDatabase() error {
 	}
 	defer db.Close()
 
-	// Supprimer la base de données si elle existe
+	// Supprimer la base de données si elle existe (maintenant qu'elle est vide)
 	dropQuery := fmt.Sprintf("DROP DATABASE IF EXISTS %s", config.AppConfig.DBName)
 	if _, err := db.Exec(dropQuery); err != nil {
-		return fmt.Errorf("erreur lors de la suppression de la base: %w", err)
+		// Si la suppression échoue, ce n'est pas grave, on continue
+		log.Printf("⚠️  Impossible de supprimer la base de données (peut être déjà vide): %v", err)
+	} else {
+		log.Printf("🗑️  Base de données '%s' supprimée", config.AppConfig.DBName)
 	}
-	log.Printf("🗑️  Base de données '%s' supprimée", config.AppConfig.DBName)
 
 	// Recréer la base de données
-	createQuery := fmt.Sprintf("CREATE DATABASE %s CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", config.AppConfig.DBName)
+	createQuery := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", config.AppConfig.DBName)
 	if _, err := db.Exec(createQuery); err != nil {
 		return fmt.Errorf("erreur lors de la création de la base: %w", err)
 	}
