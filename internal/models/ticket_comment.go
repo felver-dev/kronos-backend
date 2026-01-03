@@ -19,7 +19,7 @@ type TicketComment struct {
 	DeletedAt  gorm.DeletedAt `gorm:"index" json:"-"` // Soft delete
 
 	// Relations
-	Ticket Ticket `gorm:"foreignKey:TicketID" json:"-"` // Ticket associé
+	Ticket Ticket `gorm:"foreignKey:TicketID" json:"-"`  // Ticket associé
 	User   User   `gorm:"foreignKey:UserID" json:"user"` // Utilisateur auteur
 }
 
@@ -27,4 +27,3 @@ type TicketComment struct {
 func (TicketComment) TableName() string {
 	return "ticket_comments"
 }
-
