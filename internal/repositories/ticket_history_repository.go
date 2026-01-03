@@ -69,4 +69,3 @@ func (r *ticketHistoryRepository) Update(history *models.TicketHistory) error {
 func (r *ticketHistoryRepository) Delete(id uint) error {
 	return database.DB.Delete(&models.TicketHistory{}, id).Error
 }
-

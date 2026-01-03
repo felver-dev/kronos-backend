@@ -300,4 +300,3 @@ func (s *userService) userToDTO(user *models.User) dto.UserDTO {
 		UpdatedAt: user.UpdatedAt,
 	}
 }
-

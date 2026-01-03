@@ -77,4 +77,3 @@ func (r *ticketCommentRepository) Update(comment *models.TicketComment) error {
 func (r *ticketCommentRepository) Delete(id uint) error {
 	return database.DB.Delete(&models.TicketComment{}, id).Error
 }
-

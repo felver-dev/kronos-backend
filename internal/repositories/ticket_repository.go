@@ -109,4 +109,3 @@ func (r *ticketRepository) CountByCategory(category string) (int64, error) {
 	err := database.DB.Model(&models.Ticket{}).Where("category = ?", category).Count(&count).Error
 	return count, err
 }
-

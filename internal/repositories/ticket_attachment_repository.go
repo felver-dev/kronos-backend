@@ -80,4 +80,3 @@ func (r *ticketAttachmentRepository) Update(attachment *models.TicketAttachment)
 func (r *ticketAttachmentRepository) Delete(id uint) error {
 	return database.DB.Delete(&models.TicketAttachment{}, id).Error
 }
-

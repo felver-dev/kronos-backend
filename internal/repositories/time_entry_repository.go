@@ -119,4 +119,3 @@ func (r *timeEntryRepository) SumByUserID(userID uint) (int, error) {
 		Scan(&total).Error
 	return total, err
 }
-

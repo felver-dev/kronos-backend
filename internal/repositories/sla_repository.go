@@ -162,4 +162,3 @@ func (r *ticketSLARepository) Update(ticketSLA *models.TicketSLA) error {
 func (r *ticketSLARepository) Delete(id uint) error {
 	return database.DB.Delete(&models.TicketSLA{}, id).Error
 }
-

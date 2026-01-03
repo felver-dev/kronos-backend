@@ -159,4 +159,3 @@ func (r *knowledgeCategoryRepository) Update(category *models.KnowledgeCategory)
 func (r *knowledgeCategoryRepository) Delete(id uint) error {
 	return database.DB.Delete(&models.KnowledgeCategory{}, id).Error
 }
-

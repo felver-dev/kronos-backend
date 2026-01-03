@@ -67,4 +67,3 @@ func (r *projectRepository) Delete(id uint) error {
 func (r *projectRepository) UpdateConsumedTime(projectID uint, consumedTime int) error {
 	return database.DB.Model(&models.Project{}).Where("id = ?", projectID).Update("consumed_time", consumedTime).Error
 }
-

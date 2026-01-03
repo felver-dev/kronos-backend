@@ -99,4 +99,3 @@ func (r *notificationRepository) CountUnread(userID uint) (int64, error) {
 	err := database.DB.Model(&models.Notification{}).Where("user_id = ? AND is_read = ?", userID, false).Count(&count).Error
 	return count, err
 }
-

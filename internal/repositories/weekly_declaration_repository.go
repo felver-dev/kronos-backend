@@ -82,4 +82,3 @@ func (r *weeklyDeclarationRepository) Update(declaration *models.WeeklyDeclarati
 func (r *weeklyDeclarationRepository) Delete(id uint) error {
 	return database.DB.Delete(&models.WeeklyDeclaration{}, id).Error
 }
-
