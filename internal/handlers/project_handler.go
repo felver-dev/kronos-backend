@@ -29,7 +29,7 @@ func NewProjectHandler(projectService services.ProjectService) *ProjectHandler {
 // @Accept json
 // @Produce json
 // @Param request body object true "Données du projet" SchemaExample({"name":"string","description":"string","total_budget_time":0})
-// @Success 201 {object} dto.ProjectDTO
+// @Success 201 {object} models.Project
 // @Failure 400 {object} utils.Response
 // @Failure 401 {object} utils.Response
 // @Router /projects [post]
@@ -68,7 +68,7 @@ func (h *ProjectHandler) Create(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "ID du projet"
-// @Success 200 {object} dto.ProjectDTO
+// @Success 200 {object} models.Project
 // @Failure 400 {object} utils.Response
 // @Failure 404 {object} utils.Response
 // @Router /projects/{id} [get]
@@ -96,7 +96,7 @@ func (h *ProjectHandler) GetByID(c *gin.Context) {
 // @Security BearerAuth
 // @Accept json
 // @Produce json
-// @Success 200 {array} dto.ProjectDTO
+// @Success 200 {array} models.Project
 // @Failure 500 {object} utils.Response
 // @Router /projects [get]
 func (h *ProjectHandler) GetAll(c *gin.Context) {

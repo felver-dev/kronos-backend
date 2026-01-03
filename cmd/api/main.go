@@ -1,6 +1,27 @@
+// @title           ITSM Backend API
+// @version         1.0
+// @description     API REST pour la gestion des services IT (ITSM) - MCI CARE CI
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   Support API
+// @contact.email  support@mcicare.ci
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /api/v1
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" suivi d'un espace puis le token JWT. Exemple: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
 package main
 
 import (
+	_ "github.com/mcicare/itsm-backend/docs" // Import pour Swagger docs
+
 	"log"
 	"net/http"
 
@@ -133,6 +154,7 @@ func main() {
 	log.Printf("🚀 Serveur démarré sur le port %s", config.AppConfig.AppPort)
 	log.Printf("📡 API disponible sur http://localhost%s/api/v1", port)
 	log.Printf("💚 Health check: http://localhost%s/health", port)
+	log.Printf("📚 Swagger UI: http://localhost%s/swagger/index.html", port)
 
 	if err := http.ListenAndServe(port, router); err != nil {
 		log.Fatalf("❌ Erreur lors du démarrage du serveur: %v", err)

@@ -2,6 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/mcicare/itsm-backend/internal/handlers"
 	"github.com/mcicare/itsm-backend/internal/middleware"
 )
@@ -15,6 +17,9 @@ func SetupRoutes(router *gin.Engine, handlers *Handlers) {
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
+
+	// Route Swagger UI
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Groupe API v1
 	api := router.Group("/api/v1")
