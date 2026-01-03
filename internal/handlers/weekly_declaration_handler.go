@@ -22,6 +22,17 @@ func NewWeeklyDeclarationHandler(weeklyDeclarationService services.WeeklyDeclara
 }
 
 // GetByID récupère une déclaration par son ID
+// @Summary Récupérer une déclaration hebdomadaire par ID
+// @Description Récupère une déclaration hebdomadaire par son identifiant
+// @Tags weekly-declarations
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de la déclaration"
+// @Success 200 {object} dto.WeeklyDeclarationDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /weekly-declarations/{id} [get]
 func (h *WeeklyDeclarationHandler) GetByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -40,6 +51,18 @@ func (h *WeeklyDeclarationHandler) GetByID(c *gin.Context) {
 }
 
 // GetByUserIDAndWeek récupère une déclaration par utilisateur et semaine
+// @Summary Récupérer une déclaration hebdomadaire par utilisateur et semaine
+// @Description Récupère une déclaration hebdomadaire pour un utilisateur et une semaine donnée
+// @Tags weekly-declarations
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param user_id path int true "ID de l'utilisateur"
+// @Param week query string true "Semaine (format: YYYY-WW)"
+// @Success 200 {object} dto.WeeklyDeclarationDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /weekly-declarations/users/{user_id}/by-week [get]
 func (h *WeeklyDeclarationHandler) GetByUserIDAndWeek(c *gin.Context) {
 	userIDParam := c.Param("user_id")
 	userID, err := strconv.ParseUint(userIDParam, 10, 32)
@@ -64,6 +87,16 @@ func (h *WeeklyDeclarationHandler) GetByUserIDAndWeek(c *gin.Context) {
 }
 
 // GetByUserID récupère les déclarations d'un utilisateur
+// @Summary Récupérer les déclarations hebdomadaires d'un utilisateur
+// @Description Récupère toutes les déclarations hebdomadaires d'un utilisateur
+// @Tags weekly-declarations
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param user_id path int true "ID de l'utilisateur"
+// @Success 200 {array} dto.WeeklyDeclarationDTO
+// @Failure 400 {object} utils.Response
+// @Router /weekly-declarations/users/{user_id} [get]
 func (h *WeeklyDeclarationHandler) GetByUserID(c *gin.Context) {
 	userIDParam := c.Param("user_id")
 	userID, err := strconv.ParseUint(userIDParam, 10, 32)
@@ -82,6 +115,17 @@ func (h *WeeklyDeclarationHandler) GetByUserID(c *gin.Context) {
 }
 
 // Validate valide une déclaration
+// @Summary Valider une déclaration hebdomadaire
+// @Description Valide une déclaration hebdomadaire
+// @Tags weekly-declarations
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de la déclaration"
+// @Success 200 {object} dto.WeeklyDeclarationDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /weekly-declarations/{id}/validate [post]
 func (h *WeeklyDeclarationHandler) Validate(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)

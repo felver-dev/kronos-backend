@@ -23,6 +23,17 @@ func NewKnowledgeArticleHandler(knowledgeArticleService services.KnowledgeArticl
 }
 
 // Create crée un nouvel article
+// @Summary Créer un article de base de connaissances
+// @Description Crée un nouvel article dans la base de connaissances
+// @Tags knowledge-base
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateKnowledgeArticleRequest true "Données de l'article"
+// @Success 201 {object} dto.KnowledgeArticleDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /knowledge-base/articles [post]
 func (h *KnowledgeArticleHandler) Create(c *gin.Context) {
 	var req dto.CreateKnowledgeArticleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -46,6 +57,17 @@ func (h *KnowledgeArticleHandler) Create(c *gin.Context) {
 }
 
 // GetByID récupère un article par son ID
+// @Summary Récupérer un article par ID
+// @Description Récupère un article de la base de connaissances par son identifiant
+// @Tags knowledge-base
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'article"
+// @Success 200 {object} dto.KnowledgeArticleDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /knowledge-base/articles/{id} [get]
 func (h *KnowledgeArticleHandler) GetByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -64,6 +86,14 @@ func (h *KnowledgeArticleHandler) GetByID(c *gin.Context) {
 }
 
 // GetPublished récupère les articles publiés
+// @Summary Récupérer les articles publiés
+// @Description Récupère la liste des articles publiés (route publique)
+// @Tags knowledge-base
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.KnowledgeArticleDTO
+// @Failure 500 {object} utils.Response
+// @Router /knowledge-base/articles/published [get]
 func (h *KnowledgeArticleHandler) GetPublished(c *gin.Context) {
 	articles, err := h.knowledgeArticleService.GetPublished()
 	if err != nil {
@@ -75,6 +105,16 @@ func (h *KnowledgeArticleHandler) GetPublished(c *gin.Context) {
 }
 
 // Search recherche des articles
+// @Summary Rechercher des articles
+// @Description Recherche des articles dans la base de connaissances (route publique)
+// @Tags knowledge-base
+// @Accept json
+// @Produce json
+// @Param q query string true "Terme de recherche"
+// @Success 200 {array} dto.KnowledgeArticleSearchResultDTO
+// @Failure 400 {object} utils.Response
+// @Failure 500 {object} utils.Response
+// @Router /knowledge-base/articles/search [get]
 func (h *KnowledgeArticleHandler) Search(c *gin.Context) {
 	query := c.Query("q")
 	if query == "" {
@@ -92,6 +132,17 @@ func (h *KnowledgeArticleHandler) Search(c *gin.Context) {
 }
 
 // Delete supprime un article
+// @Summary Supprimer un article
+// @Description Supprime un article de la base de connaissances
+// @Tags knowledge-base
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'article"
+// @Success 200 {object} utils.Response
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /knowledge-base/articles/{id} [delete]
 func (h *KnowledgeArticleHandler) Delete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)

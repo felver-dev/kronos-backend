@@ -23,6 +23,17 @@ func NewDailyDeclarationHandler(dailyDeclarationService services.DailyDeclaratio
 }
 
 // GetByID récupère une déclaration par son ID
+// @Summary Récupérer une déclaration journalière par ID
+// @Description Récupère une déclaration journalière par son identifiant
+// @Tags daily-declarations
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de la déclaration"
+// @Success 200 {object} dto.DailyDeclarationDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /daily-declarations/{id} [get]
 func (h *DailyDeclarationHandler) GetByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -41,6 +52,18 @@ func (h *DailyDeclarationHandler) GetByID(c *gin.Context) {
 }
 
 // GetByUserIDAndDate récupère une déclaration par utilisateur et date
+// @Summary Récupérer une déclaration journalière par utilisateur et date
+// @Description Récupère une déclaration journalière pour un utilisateur et une date donnée
+// @Tags daily-declarations
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param user_id path int true "ID de l'utilisateur"
+// @Param date query string true "Date (format: YYYY-MM-DD)"
+// @Success 200 {object} dto.DailyDeclarationDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /daily-declarations/users/{user_id}/by-date [get]
 func (h *DailyDeclarationHandler) GetByUserIDAndDate(c *gin.Context) {
 	userIDParam := c.Param("user_id")
 	userID, err := strconv.ParseUint(userIDParam, 10, 32)
@@ -71,6 +94,16 @@ func (h *DailyDeclarationHandler) GetByUserIDAndDate(c *gin.Context) {
 }
 
 // GetByUserID récupère les déclarations d'un utilisateur
+// @Summary Récupérer les déclarations journalières d'un utilisateur
+// @Description Récupère toutes les déclarations journalières d'un utilisateur
+// @Tags daily-declarations
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param user_id path int true "ID de l'utilisateur"
+// @Success 200 {array} dto.DailyDeclarationDTO
+// @Failure 400 {object} utils.Response
+// @Router /daily-declarations/users/{user_id} [get]
 func (h *DailyDeclarationHandler) GetByUserID(c *gin.Context) {
 	userIDParam := c.Param("user_id")
 	userID, err := strconv.ParseUint(userIDParam, 10, 32)
@@ -89,6 +122,17 @@ func (h *DailyDeclarationHandler) GetByUserID(c *gin.Context) {
 }
 
 // Validate valide une déclaration
+// @Summary Valider une déclaration journalière
+// @Description Valide une déclaration journalière
+// @Tags daily-declarations
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de la déclaration"
+// @Success 200 {object} dto.DailyDeclarationDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /daily-declarations/{id}/validate [post]
 func (h *DailyDeclarationHandler) Validate(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)

@@ -20,6 +20,16 @@ func NewReportHandler(reportService services.ReportService) *ReportHandler {
 }
 
 // GetDashboard récupère le tableau de bord
+// @Summary Récupérer le tableau de bord
+// @Description Récupère les statistiques du tableau de bord
+// @Tags reports
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param period query string false "Période (défaut: month)"
+// @Success 200 {object} dto.DashboardDTO
+// @Failure 500 {object} utils.Response
+// @Router /reports/dashboard [get]
 func (h *ReportHandler) GetDashboard(c *gin.Context) {
 	period := c.DefaultQuery("period", "month")
 
@@ -33,6 +43,16 @@ func (h *ReportHandler) GetDashboard(c *gin.Context) {
 }
 
 // GetTicketCountReport récupère le rapport de nombre de tickets
+// @Summary Récupérer le rapport de nombre de tickets
+// @Description Récupère le rapport sur le nombre de tickets
+// @Tags reports
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param period query string false "Période (défaut: month)"
+// @Success 200 {object} dto.TicketCountReportDTO
+// @Failure 500 {object} utils.Response
+// @Router /reports/tickets/count [get]
 func (h *ReportHandler) GetTicketCountReport(c *gin.Context) {
 	period := c.DefaultQuery("period", "month")
 
@@ -46,6 +66,15 @@ func (h *ReportHandler) GetTicketCountReport(c *gin.Context) {
 }
 
 // GetTicketTypeDistribution récupère la distribution des types de tickets
+// @Summary Récupérer la distribution des types de tickets
+// @Description Récupère la distribution des types de tickets
+// @Tags reports
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.TicketTypeDistributionDTO
+// @Failure 500 {object} utils.Response
+// @Router /reports/tickets/distribution [get]
 func (h *ReportHandler) GetTicketTypeDistribution(c *gin.Context) {
 	distribution, err := h.reportService.GetTicketTypeDistribution()
 	if err != nil {
@@ -57,6 +86,15 @@ func (h *ReportHandler) GetTicketTypeDistribution(c *gin.Context) {
 }
 
 // GetAverageResolutionTime récupère le temps moyen de résolution
+// @Summary Récupérer le temps moyen de résolution
+// @Description Récupère le temps moyen de résolution des tickets
+// @Tags reports
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.AverageResolutionTimeDTO
+// @Failure 500 {object} utils.Response
+// @Router /reports/tickets/average-resolution-time [get]
 func (h *ReportHandler) GetAverageResolutionTime(c *gin.Context) {
 	avgTime, err := h.reportService.GetAverageResolutionTime()
 	if err != nil {
@@ -68,6 +106,16 @@ func (h *ReportHandler) GetAverageResolutionTime(c *gin.Context) {
 }
 
 // GenerateCustomReport génère un rapport personnalisé
+// @Summary Générer un rapport personnalisé
+// @Description Génère un rapport personnalisé selon les critères spécifiés
+// @Tags reports
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param request body dto.CustomReportRequest true "Critères du rapport"
+// @Success 200 {object} any
+// @Failure 400 {object} utils.Response
+// @Router /reports/custom [post]
 func (h *ReportHandler) GenerateCustomReport(c *gin.Context) {
 	var req dto.CustomReportRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

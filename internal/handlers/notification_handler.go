@@ -22,6 +22,16 @@ func NewNotificationHandler(notificationService services.NotificationService) *N
 }
 
 // GetByUserID récupère les notifications d'un utilisateur
+// @Summary Récupérer les notifications d'un utilisateur
+// @Description Récupère toutes les notifications de l'utilisateur connecté
+// @Tags notifications
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.NotificationDTO
+// @Failure 401 {object} utils.Response
+// @Failure 500 {object} utils.Response
+// @Router /notifications [get]
 func (h *NotificationHandler) GetByUserID(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -39,6 +49,17 @@ func (h *NotificationHandler) GetByUserID(c *gin.Context) {
 }
 
 // MarkAsRead marque une notification comme lue
+// @Summary Marquer une notification comme lue
+// @Description Marque une notification spécifique comme lue
+// @Tags notifications
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de la notification"
+// @Success 200 {object} utils.Response
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /notifications/{id}/read [post]
 func (h *NotificationHandler) MarkAsRead(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -63,6 +84,16 @@ func (h *NotificationHandler) MarkAsRead(c *gin.Context) {
 }
 
 // MarkAllAsRead marque toutes les notifications comme lues
+// @Summary Marquer toutes les notifications comme lues
+// @Description Marque toutes les notifications de l'utilisateur connecté comme lues
+// @Tags notifications
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Failure 500 {object} utils.Response
+// @Router /notifications/read-all [post]
 func (h *NotificationHandler) MarkAllAsRead(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -80,6 +111,16 @@ func (h *NotificationHandler) MarkAllAsRead(c *gin.Context) {
 }
 
 // GetUnreadCount récupère le nombre de notifications non lues
+// @Summary Récupérer le nombre de notifications non lues
+// @Description Récupère le nombre de notifications non lues de l'utilisateur connecté
+// @Tags notifications
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.UnreadCountDTO
+// @Failure 401 {object} utils.Response
+// @Failure 500 {object} utils.Response
+// @Router /notifications/unread/count [get]
 func (h *NotificationHandler) GetUnreadCount(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {

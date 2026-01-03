@@ -21,6 +21,17 @@ func NewPerformanceHandler(performanceService services.PerformanceService) *Perf
 }
 
 // GetPerformanceByUserID récupère les métriques de performance d'un utilisateur
+// @Summary Récupérer les métriques de performance d'un utilisateur
+// @Description Récupère les métriques de performance complètes d'un utilisateur
+// @Tags performance
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param user_id path int true "ID de l'utilisateur"
+// @Success 200 {object} dto.PerformanceDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /performance/users/{user_id} [get]
 func (h *PerformanceHandler) GetPerformanceByUserID(c *gin.Context) {
 	userIDParam := c.Param("user_id")
 	userID, err := strconv.ParseUint(userIDParam, 10, 32)
@@ -39,6 +50,17 @@ func (h *PerformanceHandler) GetPerformanceByUserID(c *gin.Context) {
 }
 
 // GetEfficiencyByUserID récupère les métriques d'efficacité d'un utilisateur
+// @Summary Récupérer les métriques d'efficacité d'un utilisateur
+// @Description Récupère les métriques d'efficacité d'un utilisateur
+// @Tags performance
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param user_id path int true "ID de l'utilisateur"
+// @Success 200 {object} dto.EfficiencyDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /performance/users/{user_id}/efficiency [get]
 func (h *PerformanceHandler) GetEfficiencyByUserID(c *gin.Context) {
 	userIDParam := c.Param("user_id")
 	userID, err := strconv.ParseUint(userIDParam, 10, 32)
@@ -57,6 +79,17 @@ func (h *PerformanceHandler) GetEfficiencyByUserID(c *gin.Context) {
 }
 
 // GetProductivityByUserID récupère les métriques de productivité d'un utilisateur
+// @Summary Récupérer les métriques de productivité d'un utilisateur
+// @Description Récupère les métriques de productivité d'un utilisateur
+// @Tags performance
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param user_id path int true "ID de l'utilisateur"
+// @Success 200 {object} dto.ProductivityDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /performance/users/{user_id}/productivity [get]
 func (h *PerformanceHandler) GetProductivityByUserID(c *gin.Context) {
 	userIDParam := c.Param("user_id")
 	userID, err := strconv.ParseUint(userIDParam, 10, 32)
@@ -75,6 +108,16 @@ func (h *PerformanceHandler) GetProductivityByUserID(c *gin.Context) {
 }
 
 // GetPerformanceRanking récupère le classement des performances
+// @Summary Récupérer le classement des performances
+// @Description Récupère le classement des performances des utilisateurs
+// @Tags performance
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param limit query int false "Nombre de résultats (défaut: 10, max: 100)"
+// @Success 200 {array} dto.PerformanceRankingDTO
+// @Failure 500 {object} utils.Response
+// @Router /performance/ranking [get]
 func (h *PerformanceHandler) GetPerformanceRanking(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	if limit < 1 || limit > 100 {

@@ -22,6 +22,17 @@ func NewProjectHandler(projectService services.ProjectService) *ProjectHandler {
 }
 
 // Create crée un nouveau projet
+// @Summary Créer un projet
+// @Description Crée un nouveau projet dans le système
+// @Tags projects
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param request body object true "Données du projet" SchemaExample({"name":"string","description":"string","total_budget_time":0})
+// @Success 201 {object} dto.ProjectDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /projects [post]
 func (h *ProjectHandler) Create(c *gin.Context) {
 	var req struct {
 		Name            string `json:"name" binding:"required"`
@@ -50,6 +61,17 @@ func (h *ProjectHandler) Create(c *gin.Context) {
 }
 
 // GetByID récupère un projet par son ID
+// @Summary Récupérer un projet par ID
+// @Description Récupère un projet par son identifiant
+// @Tags projects
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID du projet"
+// @Success 200 {object} dto.ProjectDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /projects/{id} [get]
 func (h *ProjectHandler) GetByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -68,6 +90,15 @@ func (h *ProjectHandler) GetByID(c *gin.Context) {
 }
 
 // GetAll récupère tous les projets
+// @Summary Récupérer tous les projets
+// @Description Récupère la liste de tous les projets
+// @Tags projects
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.ProjectDTO
+// @Failure 500 {object} utils.Response
+// @Router /projects [get]
 func (h *ProjectHandler) GetAll(c *gin.Context) {
 	projects, err := h.projectService.GetAll()
 	if err != nil {

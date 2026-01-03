@@ -213,4 +213,3 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 
 	utils.SuccessResponse(c, nil, "Mot de passe modifié avec succès")
 }
-

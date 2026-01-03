@@ -23,6 +23,17 @@ func NewServiceRequestHandler(serviceRequestService services.ServiceRequestServi
 }
 
 // Create crée une nouvelle demande de service
+// @Summary Créer une demande de service
+// @Description Crée une nouvelle demande de service dans le système
+// @Tags service-requests
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateServiceRequestRequest true "Données de la demande de service"
+// @Success 201 {object} dto.ServiceRequestDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /service-requests [post]
 func (h *ServiceRequestHandler) Create(c *gin.Context) {
 	var req dto.CreateServiceRequestRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -46,6 +57,17 @@ func (h *ServiceRequestHandler) Create(c *gin.Context) {
 }
 
 // GetByID récupère une demande de service par son ID
+// @Summary Récupérer une demande de service par ID
+// @Description Récupère une demande de service par son identifiant
+// @Tags service-requests
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de la demande de service"
+// @Success 200 {object} dto.ServiceRequestDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /service-requests/{id} [get]
 func (h *ServiceRequestHandler) GetByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -64,6 +86,15 @@ func (h *ServiceRequestHandler) GetByID(c *gin.Context) {
 }
 
 // GetAll récupère toutes les demandes de service
+// @Summary Récupérer toutes les demandes de service
+// @Description Récupère la liste de toutes les demandes de service
+// @Tags service-requests
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.ServiceRequestDTO
+// @Failure 500 {object} utils.Response
+// @Router /service-requests [get]
 func (h *ServiceRequestHandler) GetAll(c *gin.Context) {
 	serviceRequests, err := h.serviceRequestService.GetAll()
 	if err != nil {
@@ -75,6 +106,18 @@ func (h *ServiceRequestHandler) GetAll(c *gin.Context) {
 }
 
 // Validate valide une demande de service
+// @Summary Valider une demande de service
+// @Description Valide une demande de service
+// @Tags service-requests
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de la demande de service"
+// @Param request body dto.ValidateServiceRequestRequest true "Données de validation"
+// @Success 200 {object} dto.ServiceRequestDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /service-requests/{id}/validate [post]
 func (h *ServiceRequestHandler) Validate(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -105,6 +148,17 @@ func (h *ServiceRequestHandler) Validate(c *gin.Context) {
 }
 
 // Delete supprime une demande de service
+// @Summary Supprimer une demande de service
+// @Description Supprime une demande de service du système
+// @Tags service-requests
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de la demande de service"
+// @Success 200 {object} utils.Response
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /service-requests/{id} [delete]
 func (h *ServiceRequestHandler) Delete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -121,4 +175,3 @@ func (h *ServiceRequestHandler) Delete(c *gin.Context) {
 
 	utils.SuccessResponse(c, nil, "Demande de service supprimée avec succès")
 }
-

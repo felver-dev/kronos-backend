@@ -366,4 +366,3 @@ func (h *TicketHandler) GetComments(c *gin.Context) {
 
 	utils.SuccessResponse(c, comments, "Commentaires récupérés avec succès")
 }
-

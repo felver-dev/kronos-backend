@@ -23,6 +23,17 @@ func NewTimeEntryHandler(timeEntryService services.TimeEntryService) *TimeEntryH
 }
 
 // Create crée une nouvelle entrée de temps
+// @Summary Créer une entrée de temps
+// @Description Crée une nouvelle entrée de temps dans le système
+// @Tags time-entries
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateTimeEntryRequest true "Données de l'entrée de temps"
+// @Success 201 {object} dto.TimeEntryDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /time-entries [post]
 func (h *TimeEntryHandler) Create(c *gin.Context) {
 	var req dto.CreateTimeEntryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -46,6 +57,17 @@ func (h *TimeEntryHandler) Create(c *gin.Context) {
 }
 
 // GetByID récupère une entrée de temps par son ID
+// @Summary Récupérer une entrée de temps par ID
+// @Description Récupère une entrée de temps par son identifiant
+// @Tags time-entries
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'entrée de temps"
+// @Success 200 {object} dto.TimeEntryDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /time-entries/{id} [get]
 func (h *TimeEntryHandler) GetByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -64,6 +86,15 @@ func (h *TimeEntryHandler) GetByID(c *gin.Context) {
 }
 
 // GetAll récupère toutes les entrées de temps
+// @Summary Récupérer toutes les entrées de temps
+// @Description Récupère la liste de toutes les entrées de temps
+// @Tags time-entries
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.TimeEntryDTO
+// @Failure 500 {object} utils.Response
+// @Router /time-entries [get]
 func (h *TimeEntryHandler) GetAll(c *gin.Context) {
 	timeEntries, err := h.timeEntryService.GetAll()
 	if err != nil {
@@ -75,6 +106,18 @@ func (h *TimeEntryHandler) GetAll(c *gin.Context) {
 }
 
 // Validate valide une entrée de temps
+// @Summary Valider une entrée de temps
+// @Description Valide une entrée de temps
+// @Tags time-entries
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'entrée de temps"
+// @Param request body dto.ValidateTimeEntryRequest true "Données de validation"
+// @Success 200 {object} dto.TimeEntryDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /time-entries/{id}/validate [post]
 func (h *TimeEntryHandler) Validate(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -105,6 +148,17 @@ func (h *TimeEntryHandler) Validate(c *gin.Context) {
 }
 
 // Delete supprime une entrée de temps
+// @Summary Supprimer une entrée de temps
+// @Description Supprime une entrée de temps du système
+// @Tags time-entries
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'entrée de temps"
+// @Success 200 {object} utils.Response
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /time-entries/{id} [delete]
 func (h *TimeEntryHandler) Delete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -121,4 +175,3 @@ func (h *TimeEntryHandler) Delete(c *gin.Context) {
 
 	utils.SuccessResponse(c, nil, "Entrée de temps supprimée avec succès")
 }
-

@@ -23,6 +23,17 @@ func NewDelayHandler(delayService services.DelayService) *DelayHandler {
 }
 
 // GetByID récupère un retard par son ID
+// @Summary Récupérer un retard par ID
+// @Description Récupère un retard par son identifiant
+// @Tags delays
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID du retard"
+// @Success 200 {object} dto.DelayDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /delays/{id} [get]
 func (h *DelayHandler) GetByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -41,6 +52,15 @@ func (h *DelayHandler) GetByID(c *gin.Context) {
 }
 
 // GetAll récupère tous les retards
+// @Summary Récupérer tous les retards
+// @Description Récupère la liste de tous les retards
+// @Tags delays
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.DelayDTO
+// @Failure 500 {object} utils.Response
+// @Router /delays [get]
 func (h *DelayHandler) GetAll(c *gin.Context) {
 	delays, err := h.delayService.GetAll()
 	if err != nil {
@@ -52,6 +72,18 @@ func (h *DelayHandler) GetAll(c *gin.Context) {
 }
 
 // CreateJustification crée une justification pour un retard
+// @Summary Créer une justification de retard
+// @Description Crée une justification pour un retard
+// @Tags delays
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param delay_id path int true "ID du retard"
+// @Param request body dto.CreateDelayJustificationRequest true "Données de la justification"
+// @Success 201 {object} dto.DelayJustificationDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /delays/{delay_id}/justifications [post]
 func (h *DelayHandler) CreateJustification(c *gin.Context) {
 	delayIDParam := c.Param("delay_id")
 	delayID, err := strconv.ParseUint(delayIDParam, 10, 32)
@@ -82,6 +114,18 @@ func (h *DelayHandler) CreateJustification(c *gin.Context) {
 }
 
 // ValidateJustification valide une justification
+// @Summary Valider une justification de retard
+// @Description Valide une justification de retard
+// @Tags delays
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de la justification"
+// @Param request body dto.ValidateDelayJustificationRequest true "Données de validation"
+// @Success 200 {object} dto.DelayJustificationDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /delays/justifications/{id}/validate [post]
 func (h *DelayHandler) ValidateJustification(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)

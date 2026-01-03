@@ -23,6 +23,17 @@ func NewAssetHandler(assetService services.AssetService) *AssetHandler {
 }
 
 // Create crée un nouvel actif
+// @Summary Créer un actif IT
+// @Description Crée un nouvel actif IT dans le système
+// @Tags assets
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateAssetRequest true "Données de l'actif"
+// @Success 201 {object} dto.AssetDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /assets [post]
 func (h *AssetHandler) Create(c *gin.Context) {
 	var req dto.CreateAssetRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -46,6 +57,17 @@ func (h *AssetHandler) Create(c *gin.Context) {
 }
 
 // GetByID récupère un actif par son ID
+// @Summary Récupérer un actif par ID
+// @Description Récupère un actif IT par son identifiant
+// @Tags assets
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'actif"
+// @Success 200 {object} dto.AssetDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /assets/{id} [get]
 func (h *AssetHandler) GetByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -64,6 +86,15 @@ func (h *AssetHandler) GetByID(c *gin.Context) {
 }
 
 // GetAll récupère tous les actifs
+// @Summary Récupérer tous les actifs
+// @Description Récupère la liste de tous les actifs IT
+// @Tags assets
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.AssetDTO
+// @Failure 500 {object} utils.Response
+// @Router /assets [get]
 func (h *AssetHandler) GetAll(c *gin.Context) {
 	assets, err := h.assetService.GetAll()
 	if err != nil {
@@ -75,6 +106,18 @@ func (h *AssetHandler) GetAll(c *gin.Context) {
 }
 
 // Assign assigne un actif à un utilisateur
+// @Summary Assigner un actif à un utilisateur
+// @Description Assigne un actif IT à un utilisateur
+// @Tags assets
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'actif"
+// @Param request body dto.AssignAssetRequest true "Données d'assignation"
+// @Success 200 {object} dto.AssetDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /assets/{id}/assign [post]
 func (h *AssetHandler) Assign(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -105,6 +148,17 @@ func (h *AssetHandler) Assign(c *gin.Context) {
 }
 
 // Delete supprime un actif
+// @Summary Supprimer un actif
+// @Description Supprime un actif IT du système
+// @Tags assets
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'actif"
+// @Success 200 {object} utils.Response
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /assets/{id} [delete]
 func (h *AssetHandler) Delete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)

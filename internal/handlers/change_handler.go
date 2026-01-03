@@ -23,6 +23,17 @@ func NewChangeHandler(changeService services.ChangeService) *ChangeHandler {
 }
 
 // Create crée un nouveau changement
+// @Summary Créer un changement
+// @Description Crée un nouveau changement dans le système
+// @Tags changes
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateChangeRequest true "Données du changement"
+// @Success 201 {object} dto.ChangeDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /changes [post]
 func (h *ChangeHandler) Create(c *gin.Context) {
 	var req dto.CreateChangeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -46,6 +57,17 @@ func (h *ChangeHandler) Create(c *gin.Context) {
 }
 
 // GetByID récupère un changement par son ID
+// @Summary Récupérer un changement par ID
+// @Description Récupère un changement par son identifiant
+// @Tags changes
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID du changement"
+// @Success 200 {object} dto.ChangeDTO
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /changes/{id} [get]
 func (h *ChangeHandler) GetByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -64,6 +86,15 @@ func (h *ChangeHandler) GetByID(c *gin.Context) {
 }
 
 // GetAll récupère tous les changements
+// @Summary Récupérer tous les changements
+// @Description Récupère la liste de tous les changements
+// @Tags changes
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.ChangeDTO
+// @Failure 500 {object} utils.Response
+// @Router /changes [get]
 func (h *ChangeHandler) GetAll(c *gin.Context) {
 	changes, err := h.changeService.GetAll()
 	if err != nil {
@@ -75,6 +106,18 @@ func (h *ChangeHandler) GetAll(c *gin.Context) {
 }
 
 // Update met à jour un changement
+// @Summary Mettre à jour un changement
+// @Description Met à jour les informations d'un changement
+// @Tags changes
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID du changement"
+// @Param request body dto.UpdateChangeRequest true "Données de mise à jour"
+// @Success 200 {object} dto.ChangeDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /changes/{id} [put]
 func (h *ChangeHandler) Update(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -105,6 +148,18 @@ func (h *ChangeHandler) Update(c *gin.Context) {
 }
 
 // RecordResult enregistre le résultat d'un changement
+// @Summary Enregistrer le résultat d'un changement
+// @Description Enregistre le résultat d'un changement (succès/échec)
+// @Tags changes
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID du changement"
+// @Param request body dto.RecordChangeResultRequest true "Résultat du changement"
+// @Success 200 {object} dto.ChangeDTO
+// @Failure 400 {object} utils.Response
+// @Failure 401 {object} utils.Response
+// @Router /changes/{id}/result [post]
 func (h *ChangeHandler) RecordResult(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -135,6 +190,17 @@ func (h *ChangeHandler) RecordResult(c *gin.Context) {
 }
 
 // Delete supprime un changement
+// @Summary Supprimer un changement
+// @Description Supprime un changement du système
+// @Tags changes
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID du changement"
+// @Success 200 {object} utils.Response
+// @Failure 400 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /changes/{id} [delete]
 func (h *ChangeHandler) Delete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -151,4 +217,3 @@ func (h *ChangeHandler) Delete(c *gin.Context) {
 
 	utils.SuccessResponse(c, nil, "Changement supprimé avec succès")
 }
-
