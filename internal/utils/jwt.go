@@ -86,3 +86,8 @@ func ValidateToken(tokenString string) (*Claims, error) {
 
 	return claims, nil
 }
+
+// ValidateRefreshToken valide un refresh token JWT et retourne les claims
+func ValidateRefreshToken(tokenString string) (*Claims, error) {
+	return ValidateToken(tokenString) // Même logique que ValidateToken
+}
