@@ -95,4 +95,3 @@ func (r *dailyDeclarationRepository) Update(declaration *models.DailyDeclaration
 func (r *dailyDeclarationRepository) Delete(id uint) error {
 	return database.DB.Delete(&models.DailyDeclaration{}, id).Error
 }
-
