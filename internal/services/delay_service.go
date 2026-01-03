@@ -39,9 +39,9 @@ type DelayJustificationService interface {
 
 // delayService implémente DelayService
 type delayService struct {
-	delayRepo             repositories.DelayRepository
+	delayRepo              repositories.DelayRepository
 	delayJustificationRepo repositories.DelayJustificationRepository
-	userRepo              repositories.UserRepository
+	userRepo               repositories.UserRepository
 }
 
 // NewDelayService crée une nouvelle instance de DelayService
@@ -378,15 +378,15 @@ func (s *delayService) justificationToDTO(justification *models.DelayJustificati
 // ticketToDTO convertit un modèle Ticket en DTO (méthode helper)
 func (s *delayService) ticketToDTO(ticket *models.Ticket) dto.TicketDTO {
 	ticketDTO := dto.TicketDTO{
-		ID:            ticket.ID,
-		Title:         ticket.Title,
-		Description:   ticket.Description,
-		Category:      ticket.Category,
-		Source:        ticket.Source,
-		Status:        ticket.Status,
-		Priority:      ticket.Priority,
-		CreatedAt:     ticket.CreatedAt,
-		UpdatedAt:     ticket.UpdatedAt,
+		ID:          ticket.ID,
+		Title:       ticket.Title,
+		Description: ticket.Description,
+		Category:    ticket.Category,
+		Source:      ticket.Source,
+		Status:      ticket.Status,
+		Priority:    ticket.Priority,
+		CreatedAt:   ticket.CreatedAt,
+		UpdatedAt:   ticket.UpdatedAt,
 	}
 
 	if ticket.EstimatedTime != nil {
@@ -438,4 +438,3 @@ func (s *delayService) userToDTO(user *models.User) dto.UserDTO {
 
 	return userDTO
 }
-

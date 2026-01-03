@@ -61,11 +61,11 @@ func (s *slaService) Create(req dto.CreateSLARequest, createdByID uint) (*dto.SL
 		Name:           req.Name,
 		Description:    req.Description,
 		TicketCategory: req.TicketCategory,
-		Priority:        req.Priority,
+		Priority:       req.Priority,
 		TargetTime:     req.TargetTime,
 		Unit:           unit,
 		IsActive:       isActive,
-		CreatedByID:     createdByIDPtr,
+		CreatedByID:    createdByIDPtr,
 	}
 
 	if err := s.slaRepo.Create(sla); err != nil {
@@ -246,4 +246,3 @@ func (s *slaService) slaToDTO(sla *models.SLA) dto.SLADTO {
 		UpdatedAt:      sla.UpdatedAt,
 	}
 }
-

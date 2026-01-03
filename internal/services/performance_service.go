@@ -151,4 +151,3 @@ func (s *performanceService) userToDTO(user *models.User) dto.UserDTO {
 
 	return userDTO
 }
-

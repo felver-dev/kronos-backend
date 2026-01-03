@@ -76,4 +76,3 @@ func (s *reportService) GenerateCustomReport(req dto.CustomReportRequest) (inter
 	// TODO: Implémenter la génération de rapport personnalisé
 	return nil, errors.New("rapport personnalisé non implémenté")
 }
-

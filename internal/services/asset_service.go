@@ -380,4 +380,3 @@ func (s *assetService) userToDTO(user *models.User) dto.UserDTO {
 
 	return userDTO
 }
-

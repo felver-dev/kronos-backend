@@ -148,4 +148,3 @@ func (s *projectService) Delete(id uint) error {
 func (s *projectService) UpdateConsumedTime(projectID uint, consumedTime int) error {
 	return s.projectRepo.UpdateConsumedTime(projectID, consumedTime)
 }
-
