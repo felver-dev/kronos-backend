@@ -34,25 +34,28 @@ func RunMigrations() error {
 		&models.User{},
 		&models.UserSession{},
 	); err != nil {
-		// Si l'erreur est "table doesn't exist in engine", la base est corrompue
+		// Si l'erreur est "table doesn't exist in engine" ou "Tablespace exists", la base est corrompue
 		// Il faut supprimer et recréer la base de données
-		if strings.Contains(strings.ToLower(err.Error()), "doesn't exist in engine") {
+		errMsg := strings.ToLower(err.Error())
+		if strings.Contains(errMsg, "doesn't exist in engine") ||
+			strings.Contains(errMsg, "tablespace") ||
+			strings.Contains(errMsg, "discard the tablespace") {
 			log.Println("⚠️  Détection d'une incohérence dans la base de données")
 			log.Println("🔄 Suppression et recréation de la base de données...")
-			
+
 			// Fermer la connexion actuelle
 			database.Close()
-			
+
 			// Supprimer et recréer la base de données
 			if err := recreateDatabase(); err != nil {
 				return fmt.Errorf("erreur lors de la recréation de la base de données: %w", err)
 			}
-			
+
 			// Se reconnecter
 			if err := database.Connect(); err != nil {
 				return fmt.Errorf("erreur lors de la reconnexion: %w", err)
 			}
-			
+
 			// Réessayer les migrations
 			log.Println("🔄 Nouvelle tentative de migration...")
 			return RunMigrations()
@@ -223,7 +226,7 @@ func SeedData() error {
 func recreateDatabase() error {
 	// D'abord, essayer de supprimer toutes les tables
 	log.Println("🗑️  Suppression de toutes les tables...")
-	
+
 	// Récupérer la liste de toutes les tables
 	var tables []string
 	rows, err := database.DB.Raw("SHOW TABLES").Rows()
@@ -236,15 +239,23 @@ func recreateDatabase() error {
 			}
 		}
 	}
-	
-	// Supprimer toutes les tables une par une
+
+	// Supprimer toutes les tables une par une avec gestion des tablespaces
 	for _, table := range tables {
+		// Essayer de supprimer le tablespace d'abord (pour les tables InnoDB)
+		discardQuery := fmt.Sprintf("ALTER TABLE `%s` DISCARD TABLESPACE", table)
+		database.DB.Exec(discardQuery) // Ignorer l'erreur si la table n'existe pas ou n'a pas de tablespace
+
+		// Supprimer la table
 		dropTableQuery := fmt.Sprintf("DROP TABLE IF EXISTS `%s`", table)
 		if err := database.DB.Exec(dropTableQuery).Error; err != nil {
 			log.Printf("⚠️  Erreur lors de la suppression de la table %s: %v", table, err)
+			// Essayer de forcer la suppression
+			forceDropQuery := fmt.Sprintf("DROP TABLE `%s`", table)
+			database.DB.Exec(forceDropQuery) // Ignorer l'erreur
 		}
 	}
-	
+
 	// Maintenant, se connecter sans base de données spécifiée pour supprimer la base
 	dsnWithoutDB := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=%s&parseTime=%t&loc=%s",
 		config.AppConfig.DBUser,
