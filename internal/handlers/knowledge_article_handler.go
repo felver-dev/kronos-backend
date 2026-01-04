@@ -159,3 +159,187 @@ func (h *KnowledgeArticleHandler) Delete(c *gin.Context) {
 
 	utils.SuccessResponse(c, nil, "Article supprimé avec succès")
 }
+
+// GetAll récupère tous les articles
+// @Summary Récupérer tous les articles
+// @Description Récupère la liste de tous les articles (publiés et non publiés)
+// @Tags knowledge-base
+// @Security BearerAuth
+// @Produce json
+// @Success 200 {array} dto.KnowledgeArticleDTO
+// @Failure 500 {object} utils.Response
+// @Router /knowledge-base/articles [get]
+func (h *KnowledgeArticleHandler) GetAll(c *gin.Context) {
+	articles, err := h.knowledgeArticleService.GetAll()
+	if err != nil {
+		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des articles")
+		return
+	}
+
+	utils.SuccessResponse(c, articles, "Articles récupérés avec succès")
+}
+
+// Update met à jour un article
+// @Summary Mettre à jour un article
+// @Description Met à jour les informations d'un article de la base de connaissances
+// @Tags knowledge-base
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'article"
+// @Param request body dto.UpdateKnowledgeArticleRequest true "Données à mettre à jour"
+// @Success 200 {object} dto.KnowledgeArticleDTO
+// @Failure 400 {object} utils.Response
+// @Router /knowledge-base/articles/{id} [put]
+func (h *KnowledgeArticleHandler) Update(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	var req dto.UpdateKnowledgeArticleRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
+		return
+	}
+
+	updatedByID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
+	article, err := h.knowledgeArticleService.Update(uint(id), req, updatedByID.(uint))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, article, "Article mis à jour avec succès")
+}
+
+// Publish publie ou dépublie un article
+// @Summary Publier/Dépublier un article
+// @Description Change le statut de publication d'un article
+// @Tags knowledge-base
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'article"
+// @Param request body map[string]bool true "Statut de publication"
+// @Success 200 {object} dto.KnowledgeArticleDTO
+// @Failure 400 {object} utils.Response
+// @Router /knowledge-base/articles/{id}/publish [post]
+func (h *KnowledgeArticleHandler) Publish(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	var req struct {
+		Published bool `json:"published" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
+		return
+	}
+
+	updatedByID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
+	article, err := h.knowledgeArticleService.Publish(uint(id), req.Published, updatedByID.(uint))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, article, "Statut de publication mis à jour avec succès")
+}
+
+// GetByCategory récupère les articles d'une catégorie
+// @Summary Récupérer les articles par catégorie
+// @Description Récupère les articles d'une catégorie spécifique
+// @Tags knowledge-base
+// @Security BearerAuth
+// @Produce json
+// @Param categoryId path int true "ID de la catégorie"
+// @Success 200 {array} dto.KnowledgeArticleDTO
+// @Failure 400 {object} utils.Response
+// @Router /knowledge-base/articles/by-category/{categoryId} [get]
+func (h *KnowledgeArticleHandler) GetByCategory(c *gin.Context) {
+	categoryIDParam := c.Param("categoryId")
+	categoryID, err := strconv.ParseUint(categoryIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID catégorie invalide")
+		return
+	}
+
+	articles, err := h.knowledgeArticleService.GetByCategory(uint(categoryID))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, articles, "Articles récupérés avec succès")
+}
+
+// GetByAuthor récupère les articles d'un auteur
+// @Summary Récupérer les articles par auteur
+// @Description Récupère les articles créés par un auteur spécifique
+// @Tags knowledge-base
+// @Security BearerAuth
+// @Produce json
+// @Param authorId path int true "ID de l'auteur"
+// @Success 200 {array} dto.KnowledgeArticleDTO
+// @Failure 400 {object} utils.Response
+// @Router /knowledge-base/articles/by-author/{authorId} [get]
+func (h *KnowledgeArticleHandler) GetByAuthor(c *gin.Context) {
+	authorIDParam := c.Param("authorId")
+	authorID, err := strconv.ParseUint(authorIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID auteur invalide")
+		return
+	}
+
+	articles, err := h.knowledgeArticleService.GetByAuthor(uint(authorID))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, articles, "Articles récupérés avec succès")
+}
+
+// IncrementViewCount incrémente le compteur de vues d'un article
+// @Summary Incrémenter le compteur de vues
+// @Description Incrémente le compteur de vues d'un article (appelé automatiquement lors de la consultation)
+// @Tags knowledge-base
+// @Security BearerAuth
+// @Produce json
+// @Param id path int true "ID de l'article"
+// @Success 200 {object} utils.Response
+// @Failure 404 {object} utils.Response
+// @Router /knowledge-base/articles/{id}/view [post]
+func (h *KnowledgeArticleHandler) IncrementViewCount(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	err = h.knowledgeArticleService.IncrementViewCount(uint(id))
+	if err != nil {
+		utils.NotFoundResponse(c, "Article introuvable")
+		return
+	}
+
+	utils.SuccessResponse(c, nil, "Compteur de vues incrémenté avec succès")
+}
