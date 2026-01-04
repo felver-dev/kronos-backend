@@ -175,3 +175,287 @@ func (h *AssetHandler) Delete(c *gin.Context) {
 
 	utils.SuccessResponse(c, nil, "Actif supprimé avec succès")
 }
+
+// Update met à jour un actif
+// @Summary Mettre à jour un actif
+// @Description Met à jour les informations d'un actif IT
+// @Tags assets
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID de l'actif"
+// @Param request body dto.UpdateAssetRequest true "Données à mettre à jour"
+// @Success 200 {object} dto.AssetDTO
+// @Failure 400 {object} utils.Response
+// @Router /assets/{id} [put]
+func (h *AssetHandler) Update(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	var req dto.UpdateAssetRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
+		return
+	}
+
+	updatedByID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
+	asset, err := h.assetService.Update(uint(id), req, updatedByID.(uint))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, asset, "Actif mis à jour avec succès")
+}
+
+// Unassign retire l'assignation d'un actif
+// @Summary Retirer l'assignation d'un actif
+// @Description Retire l'assignation d'un actif IT à un utilisateur
+// @Tags assets
+// @Security BearerAuth
+// @Produce json
+// @Param id path int true "ID de l'actif"
+// @Success 200 {object} dto.AssetDTO
+// @Failure 400 {object} utils.Response
+// @Router /assets/{id}/unassign-user [delete]
+func (h *AssetHandler) Unassign(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	unassignedByID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
+	// Créer une requête avec UserID = 0 pour indiquer la désassignation
+	req := dto.AssignAssetRequest{UserID: 0}
+	asset, err := h.assetService.Unassign(uint(id), req, unassignedByID.(uint))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, asset, "Assignation retirée avec succès")
+}
+
+// GetAssignedUser récupère l'utilisateur assigné à un actif
+// @Summary Récupérer l'utilisateur assigné
+// @Description Récupère l'utilisateur assigné à un actif IT
+// @Tags assets
+// @Security BearerAuth
+// @Produce json
+// @Param id path int true "ID de l'actif"
+// @Success 200 {object} dto.UserDTO
+// @Failure 404 {object} utils.Response
+// @Router /assets/{id}/assigned-user [get]
+func (h *AssetHandler) GetAssignedUser(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	asset, err := h.assetService.GetByID(uint(id))
+	if err != nil {
+		utils.NotFoundResponse(c, "Actif introuvable")
+		return
+	}
+
+	if asset.AssignedUser == nil {
+		utils.NotFoundResponse(c, "Aucun utilisateur assigné à cet actif")
+		return
+	}
+
+	utils.SuccessResponse(c, asset.AssignedUser, "Utilisateur assigné récupéré avec succès")
+}
+
+// GetByCategory récupère les actifs d'une catégorie
+// @Summary Récupérer les actifs par catégorie
+// @Description Récupère les actifs IT d'une catégorie spécifique
+// @Tags assets
+// @Security BearerAuth
+// @Produce json
+// @Param categoryId path int true "ID de la catégorie"
+// @Success 200 {array} dto.AssetDTO
+// @Failure 400 {object} utils.Response
+// @Router /assets/by-category/{categoryId} [get]
+func (h *AssetHandler) GetByCategory(c *gin.Context) {
+	categoryIDParam := c.Param("categoryId")
+	categoryID, err := strconv.ParseUint(categoryIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID catégorie invalide")
+		return
+	}
+
+	assets, err := h.assetService.GetByCategory(uint(categoryID))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, assets, "Actifs récupérés avec succès")
+}
+
+// GetByUser récupère les actifs assignés à un utilisateur
+// @Summary Récupérer les actifs par utilisateur
+// @Description Récupère les actifs IT assignés à un utilisateur spécifique
+// @Tags assets
+// @Security BearerAuth
+// @Produce json
+// @Param userId path int true "ID de l'utilisateur"
+// @Success 200 {array} dto.AssetDTO
+// @Failure 400 {object} utils.Response
+// @Router /assets/by-user/{userId} [get]
+func (h *AssetHandler) GetByUser(c *gin.Context) {
+	userIDParam := c.Param("userId")
+	userID, err := strconv.ParseUint(userIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID utilisateur invalide")
+		return
+	}
+
+	assets, err := h.assetService.GetByAssignedTo(uint(userID))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, assets, "Actifs récupérés avec succès")
+}
+
+// GetInventory récupère l'inventaire des actifs
+// @Summary Récupérer l'inventaire des actifs
+// @Description Récupère l'inventaire complet des actifs IT avec statistiques
+// @Tags assets
+// @Security BearerAuth
+// @Produce json
+// @Success 200 {object} dto.AssetInventoryDTO
+// @Failure 500 {object} utils.Response
+// @Router /assets/inventory [get]
+func (h *AssetHandler) GetInventory(c *gin.Context) {
+	inventory, err := h.assetService.GetInventory()
+	if err != nil {
+		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération de l'inventaire")
+		return
+	}
+
+	utils.SuccessResponse(c, inventory, "Inventaire récupéré avec succès")
+}
+
+// GetLinkedTickets récupère les tickets liés à un actif
+// @Summary Récupérer les tickets liés
+// @Description Récupère la liste des tickets liés à un actif IT
+// @Tags assets
+// @Security BearerAuth
+// @Produce json
+// @Param id path int true "ID de l'actif"
+// @Success 200 {array} dto.TicketDTO
+// @Failure 404 {object} utils.Response
+// @Router /assets/{id}/tickets [get]
+func (h *AssetHandler) GetLinkedTickets(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	tickets, err := h.assetService.GetLinkedTickets(uint(id))
+	if err != nil {
+		utils.NotFoundResponse(c, err.Error())
+		return
+	}
+
+	utils.SuccessResponse(c, tickets, "Tickets liés récupérés avec succès")
+}
+
+// LinkTicket lie un ticket à un actif
+// @Summary Lier un ticket à un actif
+// @Description Lie un ticket à un actif IT
+// @Tags assets
+// @Security BearerAuth
+// @Produce json
+// @Param id path int true "ID de l'actif"
+// @Param ticketId path int true "ID du ticket"
+// @Success 200 {object} utils.Response
+// @Failure 400 {object} utils.Response
+// @Router /assets/{id}/link-ticket/{ticketId} [post]
+func (h *AssetHandler) LinkTicket(c *gin.Context) {
+	idParam := c.Param("id")
+	assetID, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID actif invalide")
+		return
+	}
+
+	ticketIDParam := c.Param("ticketId")
+	ticketID, err := strconv.ParseUint(ticketIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID ticket invalide")
+		return
+	}
+
+	linkedByID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
+	err = h.assetService.LinkTicket(uint(assetID), uint(ticketID), linkedByID.(uint))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, nil, "Ticket lié avec succès")
+}
+
+// UnlinkTicket supprime la liaison entre un ticket et un actif
+// @Summary Délier un ticket d'un actif
+// @Description Supprime la liaison entre un ticket et un actif IT
+// @Tags assets
+// @Security BearerAuth
+// @Produce json
+// @Param id path int true "ID de l'actif"
+// @Param ticketId path int true "ID du ticket"
+// @Success 200 {object} utils.Response
+// @Failure 400 {object} utils.Response
+// @Router /assets/{id}/unlink-ticket/{ticketId} [delete]
+func (h *AssetHandler) UnlinkTicket(c *gin.Context) {
+	idParam := c.Param("id")
+	assetID, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID actif invalide")
+		return
+	}
+
+	ticketIDParam := c.Param("ticketId")
+	ticketID, err := strconv.ParseUint(ticketIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID ticket invalide")
+		return
+	}
+
+	err = h.assetService.UnlinkTicket(uint(assetID), uint(ticketID))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, nil, "Liaison supprimée avec succès")
+}
