@@ -109,6 +109,328 @@ const docTemplate = `{
                 }
             }
         },
+        "/assets/by-category/{categoryId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les actifs IT d'une catégorie spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer les actifs par catégorie",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "categoryId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AssetDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/by-user/{userId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les actifs IT assignés à un utilisateur spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer les actifs par utilisateur",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AssetDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/categories": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de toutes les catégories d'actifs IT",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer toutes les catégories d'actifs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AssetCategoryDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée une nouvelle catégorie d'actif IT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Créer une catégorie d'actif",
+                "parameters": [
+                    {
+                        "description": "Données de la catégorie",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateAssetCategoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AssetCategoryDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/categories/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une catégorie d'actif IT par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer une catégorie par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AssetCategoryDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'une catégorie d'actif IT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Mettre à jour une catégorie d'actif",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateAssetCategoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AssetCategoryDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime une catégorie d'actif IT du système",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Supprimer une catégorie d'actif",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/inventory": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère l'inventaire complet des actifs IT avec statistiques",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer l'inventaire des actifs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AssetInventoryDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/assets/{id}": {
             "get": {
                 "security": [
@@ -151,6 +473,56 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'un actif IT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Mettre à jour un actif",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'actif",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateAssetRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AssetDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -263,9 +635,477 @@ const docTemplate = `{
                 }
             }
         },
+        "/assets/{id}/assigned-user": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère l'utilisateur assigné à un actif IT",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer l'utilisateur assigné",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'actif",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/{id}/link-ticket/{ticketId}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lie un ticket à un actif IT",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Lier un ticket à un actif",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'actif",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/{id}/tickets": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste des tickets liés à un actif IT",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer les tickets liés",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'actif",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TicketDTO"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/{id}/unassign-user": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retire l'assignation d'un actif IT à un utilisateur",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Retirer l'assignation d'un actif",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'actif",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AssetDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/{id}/unlink-ticket/{ticketId}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime la liaison entre un ticket et un actif IT",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Délier un ticket d'un actif",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'actif",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/audit-logs": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste des logs d'audit avec pagination et filtres",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "audit"
+                ],
+                "summary": "Liste des logs d'audit",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Numéro de page (défaut: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Nombre d'éléments par page (défaut: 50, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filtrer par ID utilisateur",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filtrer par action",
+                        "name": "action",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filtrer par type d'entité",
+                        "name": "entityType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AuditLogListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/audit-logs/by-action/{action}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les logs d'audit d'un type d'action",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "audit"
+                ],
+                "summary": "Logs d'audit par action",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Type d'action (create, update, delete, etc.)",
+                        "name": "action",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AuditLogDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/audit-logs/by-entity/{entityType}/{entityId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les logs d'audit d'une entité spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "audit"
+                ],
+                "summary": "Logs d'audit par entité",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Type d'entité (ticket, user, asset, etc.)",
+                        "name": "entityType",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID de l'entité",
+                        "name": "entityId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AuditLogDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/audit-logs/by-user/{userId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les logs d'audit d'un utilisateur",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "audit"
+                ],
+                "summary": "Logs d'audit par utilisateur",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date de début (format: 2006-01-02)",
+                        "name": "startDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date de fin (format: 2006-01-02)",
+                        "name": "endDate",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AuditLogDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/audit-logs/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les détails d'un log d'audit par son ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "audit"
+                ],
+                "summary": "Détails d'un log d'audit",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du log d'audit",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AuditLogDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
-                "description": "Authentifie un utilisateur et retourne un token JWT",
+                "description": "Authentifie un utilisateur avec son email et mot de passe, retourne un token JWT",
                 "consumes": [
                     "application/json"
                 ],
@@ -278,7 +1118,7 @@ const docTemplate = `{
                 "summary": "Connexion utilisateur",
                 "parameters": [
                     {
-                        "description": "Identifiants de connexion",
+                        "description": "Identifiants de connexion (email et mot de passe)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -420,6 +1260,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/register": {
+            "post": {
+                "description": "Crée un nouveau compte utilisateur et connecte automatiquement l'utilisateur",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Inscription utilisateur",
+                "parameters": [
+                    {
+                        "description": "Données d'inscription",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegisterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/changes": {
             "get": {
                 "security": [
@@ -499,6 +1379,92 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/changes/by-responsible/{userId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les changements assignés à un responsable spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "changes"
+                ],
+                "summary": "Récupérer les changements par responsable",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du responsable",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ChangeDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/changes/by-risk/{riskLevel}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les changements filtrés par niveau de risque (low, medium, high, critical)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "changes"
+                ],
+                "summary": "Récupérer les changements par risque",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Niveau de risque (low, medium, high, critical)",
+                        "name": "riskLevel",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ChangeDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -658,7 +1624,98 @@ const docTemplate = `{
                 }
             }
         },
+        "/changes/{id}/assign-responsible": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Assigne un responsable à un changement",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "changes"
+                ],
+                "summary": "Assigner un responsable",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du changement",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ID du responsable",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AssignResponsibleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ChangeDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/changes/{id}/result": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le résultat post-changement d'un changement",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "changes"
+                ],
+                "summary": "Récupérer le résultat d'un changement",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du changement",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -709,6 +1766,58 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/changes/{id}/risk": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour le niveau de risque d'un changement",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "changes"
+                ],
+                "summary": "Mettre à jour le risque",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du changement",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de risque",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateRiskRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ChangeDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -953,6 +2062,108 @@ const docTemplate = `{
                 }
             }
         },
+        "/delays/justifications/history": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère l'historique de toutes les justifications",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delays"
+                ],
+                "summary": "Historique des justifications",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/delays/justifications/rejected": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les justifications rejetées",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delays"
+                ],
+                "summary": "Récupérer les justifications rejetées",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/delays/justifications/validated": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les justifications validées",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delays"
+                ],
+                "summary": "Récupérer les justifications validées",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/delays/justifications/{id}/validate": {
             "post": {
                 "security": [
@@ -1004,6 +2215,186 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/delays/{delayId}/justification": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la justification d'un retard par l'ID du retard",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delays"
+                ],
+                "summary": "Récupérer la justification d'un retard",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du retard",
+                        "name": "delayId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour une justification de retard (avant validation)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delays"
+                ],
+                "summary": "Mettre à jour une justification de retard",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du retard",
+                        "name": "delayId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Nouvelle justification",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateDelayJustificationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime une justification de retard (seulement si en attente)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delays"
+                ],
+                "summary": "Supprimer une justification de retard",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du retard",
+                        "name": "delayId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/delays/{delayId}/justification/reject": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Rejette une justification de retard",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delays"
+                ],
+                "summary": "Rejeter une justification de retard",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du retard",
+                        "name": "delayId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Commentaire de rejet",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ValidateDelayJustificationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -1204,6 +2595,92 @@ const docTemplate = `{
                 }
             }
         },
+        "/incidents/by-impact/{impact}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les incidents filtrés par impact (low, medium, high, critical)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "incidents"
+                ],
+                "summary": "Récupérer les incidents par impact",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Impact (low, medium, high, critical)",
+                        "name": "impact",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.IncidentDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/incidents/by-urgency/{urgency}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les incidents filtrés par urgence (low, medium, high, critical)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "incidents"
+                ],
+                "summary": "Récupérer les incidents par urgence",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Urgence (low, medium, high, critical)",
+                        "name": "urgency",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.IncidentDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/incidents/{id}": {
             "get": {
                 "security": [
@@ -1356,6 +2833,104 @@ const docTemplate = `{
                 }
             }
         },
+        "/incidents/{id}/link-asset": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lie un actif IT à un incident",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "incidents"
+                ],
+                "summary": "Lier un actif à un incident",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'incident",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ID de l'actif",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/incidents/{id}/linked-assets": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste des actifs IT liés à un incident",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "incidents"
+                ],
+                "summary": "Récupérer les actifs liés",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'incident",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AssetDTO"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/incidents/{id}/qualify": {
             "post": {
                 "security": [
@@ -1414,6 +2989,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/incidents/{id}/resolution-time": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le temps de résolution d'un incident en minutes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "incidents"
+                ],
+                "summary": "Récupérer le temps de résolution",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'incident",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/incidents/{id}/resolve": {
             "post": {
                 "security": [
@@ -1463,7 +3079,86 @@ const docTemplate = `{
                 }
             }
         },
+        "/incidents/{id}/unlink-asset/{assetId}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime la liaison entre un incident et un actif IT",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "incidents"
+                ],
+                "summary": "Délier un actif d'un incident",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'incident",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID de l'actif",
+                        "name": "assetId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/knowledge-base/articles": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de tous les articles (publiés et non publiés)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Récupérer tous les articles",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -1507,6 +3202,92 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/knowledge-base/articles/by-author/{authorId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les articles créés par un auteur spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Récupérer les articles par auteur",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'auteur",
+                        "name": "authorId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/knowledge-base/articles/by-category/{categoryId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les articles d'une catégorie spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Récupérer les articles par catégorie",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "categoryId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -1641,6 +3422,56 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'un article de la base de connaissances",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Mettre à jour un article",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'article",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateKnowledgeArticleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "security": [
                     {
@@ -1676,6 +3507,306 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/knowledge-base/articles/{id}/publish": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Change le statut de publication d'un article",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Publier/Dépublier un article",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'article",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Statut de publication",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "boolean"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/knowledge-base/articles/{id}/view": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Incrémente le compteur de vues d'un article (appelé automatiquement lors de la consultation)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Incrémenter le compteur de vues",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'article",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/knowledge-base/categories": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de toutes les catégories de la base de connaissances",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Récupérer toutes les catégories",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.KnowledgeCategoryDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée une nouvelle catégorie dans la base de connaissances",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Créer une catégorie",
+                "parameters": [
+                    {
+                        "description": "Données de la catégorie",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateKnowledgeCategoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.KnowledgeCategoryDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/knowledge-base/categories/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une catégorie de la base de connaissances par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Récupérer une catégorie par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.KnowledgeCategoryDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'une catégorie",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Mettre à jour une catégorie",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateKnowledgeCategoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.KnowledgeCategoryDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime une catégorie de la base de connaissances",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "knowledge-base"
+                ],
+                "summary": "Supprimer une catégorie",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -2188,6 +4319,96 @@ const docTemplate = `{
                 }
             }
         },
+        "/projects/{id}/time-budget": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le budget temps d'un projet",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer le budget temps d'un projet",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du projet",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ProjectTimeBudgetDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Définit le budget temps d'un projet",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Définir le budget temps d'un projet",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du projet",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données du budget",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SetProjectTimeBudgetRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/reports/custom": {
             "post": {
                 "security": [
@@ -2262,6 +4483,161 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.DashboardDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/export/{format}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Exporte un rapport dans un format spécifique (PDF, Excel, CSV)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/pdf",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "text/csv"
+                ],
+                "tags": [
+                    "reports"
+                ],
+                "summary": "Exporter un rapport",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Format d'export (pdf, excel, csv)",
+                        "name": "format",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Type de rapport (dashboard, tickets, sla, performance)",
+                        "name": "reportType",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Période (défaut: month)",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/performance/individual/{userId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le rapport de performance d'un utilisateur spécifique",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reports"
+                ],
+                "summary": "Récupérer le rapport de performance individuel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Période (défaut: month)",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.IndividualPerformanceReportDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/sla/compliance": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le rapport de conformité des SLA",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reports"
+                ],
+                "summary": "Récupérer le rapport de conformité SLA",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Période (défaut: month)",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.SLAComplianceReportDTO"
                         }
                     },
                     "500": {
@@ -2349,6 +4725,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/reports/tickets/delayed": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le rapport des tickets qui ont dépassé leur délai",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reports"
+                ],
+                "summary": "Récupérer le rapport des tickets en retard",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Période (défaut: month)",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DelayedTicketDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/reports/tickets/distribution": {
             "get": {
                 "security": [
@@ -2376,6 +4797,465 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/workload/by-agent": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la charge de travail (nombre de tickets) par agent",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reports"
+                ],
+                "summary": "Récupérer la charge de travail par agent",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.WorkloadByAgentDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/roles": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de tous les rôles du système",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Récupérer tous les rôles",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.RoleDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée un nouveau rôle dans le système",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Créer un rôle",
+                "parameters": [
+                    {
+                        "description": "Données du rôle",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateRoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RoleDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/roles/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère un rôle par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Récupérer un rôle par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du rôle",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RoleDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'un rôle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Mettre à jour un rôle",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du rôle",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateRoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RoleDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime un rôle du système",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Supprimer un rôle",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du rôle",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/search": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Effectue une recherche dans tous les types (tickets, actifs, articles)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "Recherche globale",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Terme de recherche",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Types à rechercher (tickets,assets,articles) - séparés par des virgules",
+                        "name": "types",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limite de résultats (défaut: 20, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GlobalSearchResultDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/search/assets": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Effectue une recherche dans les actifs IT",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "Rechercher dans les actifs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Terme de recherche",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filtrer par catégorie",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limite de résultats (défaut: 20, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AssetSearchResultDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/search/knowledge-base": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Effectue une recherche dans les articles de la base de connaissances",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "Rechercher dans la base de connaissances",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Terme de recherche",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filtrer par catégorie",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limite de résultats (défaut: 20, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.KnowledgeArticleSearchResultDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/search/tickets": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Effectue une recherche dans les tickets",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "Rechercher dans les tickets",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Terme de recherche",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filtrer par statut",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limite de résultats (défaut: 20, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TicketSearchResultDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -2469,6 +5349,211 @@ const docTemplate = `{
                 }
             }
         },
+        "/service-requests/types": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de tous les types de demandes de service paramétrables",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "service-requests"
+                ],
+                "summary": "Récupérer tous les types de demandes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ServiceRequestTypeDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée un nouveau type de demande de service paramétrable",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "service-requests"
+                ],
+                "summary": "Créer un type de demande",
+                "parameters": [
+                    {
+                        "description": "Données du type",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateServiceRequestTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ServiceRequestTypeDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/service-requests/types/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère un type de demande de service par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "service-requests"
+                ],
+                "summary": "Récupérer un type par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du type",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ServiceRequestTypeDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'un type de demande de service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "service-requests"
+                ],
+                "summary": "Mettre à jour un type",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du type",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateServiceRequestTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ServiceRequestTypeDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime un type de demande de service du système",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "service-requests"
+                ],
+                "summary": "Supprimer un type",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du type",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/service-requests/{id}": {
             "get": {
                 "security": [
@@ -2494,6 +5579,62 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ServiceRequestDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'une demande de service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "service-requests"
+                ],
+                "summary": "Mettre à jour une demande de service",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la demande de service",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateServiceRequestRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -2565,6 +5706,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/service-requests/{id}/deadline": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le délai de traitement d'une demande de service",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "service-requests"
+                ],
+                "summary": "Récupérer le délai de traitement",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la demande de service",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/service-requests/{id}/validate": {
             "post": {
                 "security": [
@@ -2616,6 +5798,446 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/service-requests/{id}/validation-status": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le statut de validation d'une demande de service",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "service-requests"
+                ],
+                "summary": "Récupérer le statut de validation",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la demande de service",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les paramètres généraux du système",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Récupérer les paramètres généraux",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les paramètres généraux du système",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Mettre à jour les paramètres généraux",
+                "parameters": [
+                    {
+                        "description": "Paramètres à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateSettingsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/backup": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la configuration de sauvegarde du système",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Récupérer la configuration de sauvegarde",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BackupConfigurationDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour la configuration de sauvegarde du système",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Mettre à jour la configuration de sauvegarde",
+                "parameters": [
+                    {
+                        "description": "Configuration de sauvegarde",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.BackupConfigurationDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BackupConfigurationDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/backup/execute": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Exécute une sauvegarde manuelle du système",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Exécuter une sauvegarde manuelle",
+                "parameters": [
+                    {
+                        "description": "Type de sauvegarde (optionnel)",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ExecuteBackupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BackupExecutionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/sources": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de toutes les sources de demande configurées",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Récupérer les sources de demande",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.RequestSourceDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée une nouvelle source de demande",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Créer une source de demande",
+                "parameters": [
+                    {
+                        "description": "Données de la source",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateRequestSourceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RequestSourceDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/sources/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une source de demande par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Récupérer une source par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la source",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RequestSourceDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour une source de demande",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Mettre à jour une source de demande",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la source",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateRequestSourceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RequestSourceDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime une source de demande",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Supprimer une source de demande",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la source",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -2709,6 +6331,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/sla/compliance-report": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Génère un rapport de conformité des SLA au format PDF ou Excel",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sla"
+                ],
+                "summary": "Générer un rapport de conformité",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Période (week, month)",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Format (pdf, excel)",
+                        "name": "format",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/sla/tickets/{ticket_id}/status": {
             "get": {
                 "security": [
@@ -2758,6 +6425,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/sla/violations": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les violations de SLA avec filtres optionnels",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sla"
+                ],
+                "summary": "Récupérer toutes les violations",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Période (week, month)",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Catégorie de ticket",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.SLAViolationDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/sla/{id}": {
             "get": {
                 "security": [
@@ -2800,6 +6515,392 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'un SLA",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sla"
+                ],
+                "summary": "Mettre à jour un SLA",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du SLA",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateSLARequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.SLADTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime un SLA du système",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sla"
+                ],
+                "summary": "Supprimer un SLA",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du SLA",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/sla/{id}/compliance": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le taux de conformité d'un SLA (pourcentage de tickets respectant le SLA)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sla"
+                ],
+                "summary": "Récupérer le taux de conformité",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du SLA",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/sla/{id}/violations": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste des violations d'un SLA spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sla"
+                ],
+                "summary": "Récupérer les violations d'un SLA",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du SLA",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.SLAViolationDTO"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/kpi": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les indicateurs de succès (KPI) du système",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Indicateurs de succès (KPI)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Période (week, month, quarter, year) - défaut: month",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.KPIStatisticsDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/overview": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une vue d'ensemble des statistiques du système",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Vue d'ensemble des statistiques",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Période (week, month, quarter, year) - défaut: month",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StatisticsOverviewDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/performance": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les statistiques de performance globales",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Statistiques de performance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Période (week, month, quarter, year) - défaut: month",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PerformanceStatisticsDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/trends": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les tendances pour une métrique donnée",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Tendances",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Métrique (tickets, resolution_time, sla_compliance, etc.)",
+                        "name": "metric",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Période (1month, 3months, 6months, year) - défaut: 3months",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TrendsStatisticsDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/workload": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les statistiques de charge de travail",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Statistiques de charge de travail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Période (week, month, quarter, year) - défaut: month",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur (optionnel)",
+                        "name": "userId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.WorkloadStatisticsDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -2886,6 +6987,269 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/dto.TicketDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/by-assignee/{userId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les tickets assignés à un utilisateur spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer les tickets par assigné",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Numéro de page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Nombre d'éléments par page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TicketListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/by-category/{category}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les tickets filtrés par catégorie (incident, demande, changement, developpement)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer les tickets par catégorie",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Catégorie (incident, demande, changement, developpement)",
+                        "name": "category",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Numéro de page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Nombre d'éléments par page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TicketListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/by-source/{source}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les tickets filtrés par source (mail, appel, direct)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer les tickets par source",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Source (mail, appel, direct)",
+                        "name": "source",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Numéro de page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Nombre d'éléments par page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TicketListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/by-status/{status}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les tickets filtrés par statut (ouvert, en_cours, en_attente, cloture)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer les tickets par statut",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Statut (ouvert, en_cours, en_attente, cloture)",
+                        "name": "status",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Numéro de page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Nombre d'éléments par page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TicketListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/my-tickets": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les tickets assignés à l'utilisateur connecté",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer mes tickets",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Numéro de page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Nombre d'éléments par page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TicketListResponse"
                         }
                     },
                     "400": {
@@ -3077,6 +7441,543 @@ const docTemplate = `{
                 }
             }
         },
+        "/tickets/{id}/attachments": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de toutes les pièces jointes d'un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer les pièces jointes d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Récupérer uniquement les images",
+                        "name": "images_only",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Upload une pièce jointe (image ou document) pour un ticket",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Uploader une pièce jointe",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Fichier à uploader",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description de la pièce jointe",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Ordre d'affichage",
+                        "name": "display_order",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/attachments/images": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de toutes les images d'un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer les images d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/attachments/reorder": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Réorganise l'ordre d'affichage des pièces jointes d'un ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Réorganiser les pièces jointes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Liste des IDs dans le nouvel ordre",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ReorderTicketAttachmentsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/attachments/{attachmentId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les informations d'une pièce jointe par son ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer une pièce jointe",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID de la pièce jointe",
+                        "name": "attachmentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'une pièce jointe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Mettre à jour une pièce jointe",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID de la pièce jointe",
+                        "name": "attachmentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateTicketAttachmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime une pièce jointe d'un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Supprimer une pièce jointe",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID de la pièce jointe",
+                        "name": "attachmentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/attachments/{attachmentId}/download": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Télécharge une pièce jointe",
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Télécharger une pièce jointe",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID de la pièce jointe",
+                        "name": "attachmentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fichier téléchargeable",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/attachments/{attachmentId}/set-primary": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Définit une image comme image principale du ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Définir une image comme principale",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID de la pièce jointe",
+                        "name": "attachmentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/attachments/{attachmentId}/thumbnail": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la miniature d'une image",
+                "produces": [
+                    "image/*"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer la miniature d'une image",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID de la pièce jointe",
+                        "name": "attachmentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Miniature de l'image",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/audit-trail": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la piste d'audit complète d'un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Piste d'audit d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AuditLogDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/tickets/{id}/close": {
             "post": {
                 "security": [
@@ -3210,6 +8111,241 @@ const docTemplate = `{
                 }
             }
         },
+        "/tickets/{id}/estimated-time": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le temps estimé d'un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer le temps estimé d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.EstimatedTimeDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour le temps estimé d'un ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Mettre à jour le temps estimé d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Nouveau temps estimé en minutes",
+                        "name": "estimatedTime",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Définit le temps estimé d'un ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Définir le temps estimé d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Temps estimé en minutes",
+                        "name": "estimatedTime",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/history": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère l'historique complet des modifications d'un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer l'historique d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TicketHistoryDTO"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/reassign": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Réassigne un ticket à un autre technicien",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Réassigner un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de réassignation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AssignTicketRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TicketDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/tickets/{id}/status": {
             "put": {
                 "security": [
@@ -3258,6 +8394,129 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/time-comparison": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la comparaison entre le temps estimé et le temps réel d'un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Comparer temps estimé vs réel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TimeComparisonDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/time-entries": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les entrées de temps associées à un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les entrées de temps d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{ticketId}/delay-justification": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la justification de retard d'un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer la justification d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -3505,6 +8764,1480 @@ const docTemplate = `{
                 }
             }
         },
+        "/timesheet/alerts/budget": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les alertes de budget",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les alertes de budget",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.BudgetAlertDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/alerts/delays": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les alertes de retard",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les alertes de retard",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DelayAlertDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/alerts/justifications-pending": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les alertes de justifications en attente",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les alertes de justifications en attente",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.PendingJustificationAlertDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/alerts/overload": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les alertes de surcharge",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les alertes de surcharge",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.OverloadAlertDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/alerts/reminders": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Envoie des rappels aux utilisateurs spécifiés",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Envoyer des rappels",
+                "parameters": [
+                    {
+                        "description": "Liste des IDs utilisateurs",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/alerts/underload": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les alertes de sous-charge",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les alertes de sous-charge",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.UnderloadAlertDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/audit-trail": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la piste d'audit du timesheet dans une plage de dates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer la piste d'audit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date de début (format: YYYY-MM-DD)",
+                        "name": "startDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date de fin (format: YYYY-MM-DD)",
+                        "name": "endDate",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AuditTrailDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/budget-alerts": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les alertes de budget",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les alertes de budget",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.BudgetAlertDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/budget-status/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le statut du budget (on_budget, over_budget, under_budget) d'un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer le statut du budget d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BudgetStatusDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/daily/calendar": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le calendrier des déclarations journalières dans une plage de dates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer le calendrier journalier",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date de début (format: YYYY-MM-DD)",
+                        "name": "startDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date de fin (format: YYYY-MM-DD)",
+                        "name": "endDate",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DailyCalendarDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/daily/range": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les déclarations journalières dans une plage de dates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les déclarations journalières dans une plage",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date de début (format: YYYY-MM-DD)",
+                        "name": "startDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date de fin (format: YYYY-MM-DD)",
+                        "name": "endDate",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DailyDeclarationDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/daily/{date}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la déclaration journalière d'une date",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer une déclaration journalière",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date (format: YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DailyDeclarationDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée ou met à jour une déclaration journalière",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Créer ou mettre à jour une déclaration journalière",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date (format: YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Liste des tâches",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DailyTaskRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DailyDeclarationDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/daily/{date}/summary": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le résumé (temps total, nombre de tâches) d'une déclaration journalière",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer le résumé d'une déclaration journalière",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date (format: YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DailySummaryDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/daily/{date}/tasks": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les tâches d'une déclaration journalière",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les tâches d'une déclaration journalière",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date (format: YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DailyTaskDTO"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée une nouvelle tâche dans une déclaration journalière",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Créer une tâche journalière",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date (format: YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de la tâche",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DailyTaskRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DailyTaskDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/daily/{date}/tasks/{taskId}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime une tâche d'une déclaration journalière",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Supprimer une tâche journalière",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date (format: YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID de la tâche",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/entries": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de toutes les entrées de temps",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer toutes les entrées de temps",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée une nouvelle entrée de temps dans le timesheet",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Créer une entrée de temps",
+                "parameters": [
+                    {
+                        "description": "Données de l'entrée de temps",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateTimeEntryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/entries/by-date/{date}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les entrées de temps d'une date spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les entrées de temps d'une date",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date (format: YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/entries/pending-validation": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les entrées de temps en attente de validation",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les entrées en attente de validation",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/entries/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une entrée de temps par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer une entrée de temps par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'entrée de temps",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour une entrée de temps",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Mettre à jour une entrée de temps",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'entrée de temps",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de mise à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateTimeEntryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/entries/{id}/validate": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Valide une entrée de temps",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Valider une entrée de temps",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'entrée de temps",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de validation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ValidateTimeEntryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/history": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère l'historique du timesheet dans une plage de dates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer l'historique du timesheet",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date de début (format: YYYY-MM-DD)",
+                        "name": "startDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date de fin (format: YYYY-MM-DD)",
+                        "name": "endDate",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TimesheetHistoryDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/history/{entryId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une entrée détaillée de l'historique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer une entrée de l'historique",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'entrée",
+                        "name": "entryId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TimesheetHistoryEntryDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/modifications": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les modifications du timesheet dans une plage de dates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les modifications",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date de début (format: YYYY-MM-DD)",
+                        "name": "startDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date de fin (format: YYYY-MM-DD)",
+                        "name": "endDate",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ModificationDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/validation-history": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère l'historique de toutes les validations",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer l'historique de validation",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ValidationHistoryDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/weekly/{week}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la déclaration hebdomadaire d'une semaine",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer une déclaration hebdomadaire",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Semaine (format: YYYY-Www)",
+                        "name": "week",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.WeeklyDeclarationDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée ou met à jour une déclaration hebdomadaire",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Créer ou mettre à jour une déclaration hebdomadaire",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Semaine (format: YYYY-Www)",
+                        "name": "week",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Liste des tâches",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.WeeklyTaskRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.WeeklyDeclarationDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/weekly/{week}/daily-breakdown": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la répartition quotidienne d'une déclaration hebdomadaire",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer la répartition quotidienne",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Semaine (format: YYYY-Www)",
+                        "name": "week",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DailyBreakdownDTO"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/weekly/{week}/summary": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le résumé (temps total, nombre de tâches) d'une déclaration hebdomadaire",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer le résumé d'une déclaration hebdomadaire",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Semaine (format: YYYY-Www)",
+                        "name": "week",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.WeeklySummaryDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/weekly/{week}/tasks": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les tâches d'une déclaration hebdomadaire",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les tâches d'une déclaration hebdomadaire",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Semaine (format: YYYY-Www)",
+                        "name": "week",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.WeeklyTaskDTO"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/weekly/{week}/validate": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Valide une déclaration hebdomadaire",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Valider une déclaration hebdomadaire",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Semaine (format: YYYY-Www)",
+                        "name": "week",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.WeeklyDeclarationDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/timesheet/weekly/{week}/validation-status": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère le statut de validation d'une déclaration hebdomadaire",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer le statut de validation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Semaine (format: YYYY-Www)",
+                        "name": "week",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ValidationStatusDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "security": [
@@ -3734,6 +10467,172 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/{id}/avatar": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère l'avatar d'un utilisateur",
+                "produces": [
+                    "image/*"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Récupérer l'avatar d'un utilisateur",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Image de l'avatar",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Upload un avatar pour un utilisateur",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Uploader un avatar",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Fichier image (JPG, PNG, max 2MB)",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime l'avatar d'un utilisateur",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Supprimer l'avatar d'un utilisateur",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/avatar/thumbnail": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la miniature de l'avatar d'un utilisateur",
+                "produces": [
+                    "image/*"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Récupérer la miniature de l'avatar",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Miniature de l'avatar",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}/password": {
             "put": {
                 "security": [
@@ -3782,6 +10681,182 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/permissions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste des permissions d'un utilisateur",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Récupérer les permissions d'un utilisateur",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserPermissionsDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour la liste des permissions d'un utilisateur",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Mettre à jour les permissions d'un utilisateur",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Liste des permissions",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserPermissionsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserPermissionsDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/time-entries": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les entrées de temps d'un utilisateur",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "timesheet"
+                ],
+                "summary": "Récupérer les entrées de temps d'un utilisateur",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userId}/delay-justifications": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les justifications de retards d'un utilisateur",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Récupérer les justifications d'un utilisateur",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -4098,6 +11173,67 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.AssetInventoryDTO": {
+            "type": "object",
+            "properties": {
+                "assigned": {
+                    "description": "Nombre d'actifs assignés",
+                    "type": "integer"
+                },
+                "available": {
+                    "description": "Nombre d'actifs disponibles",
+                    "type": "integer"
+                },
+                "by_category": {
+                    "description": "Répartition par catégorie",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "by_status": {
+                    "description": "Répartition par statut",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "total": {
+                    "description": "Nombre total d'actifs",
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.AssetSearchResultDTO": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/dto.AssetCategoryDTO"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "serial_number": {
+                    "type": "string"
+                },
+                "snippet": {
+                    "description": "Extrait de la description correspondant",
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.AssignAssetRequest": {
             "type": "object",
             "required": [
@@ -4106,6 +11242,18 @@ const docTemplate = `{
             "properties": {
                 "user_id": {
                     "description": "ID de l'utilisateur (obligatoire)",
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.AssignResponsibleRequest": {
+            "type": "object",
+            "required": [
+                "user_id"
+            ],
+            "properties": {
+                "user_id": {
+                    "description": "ID de l'utilisateur responsable (obligatoire)",
                     "type": "integer"
                 }
             }
@@ -4122,6 +11270,87 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "ID de l'utilisateur à assigner (obligatoire)",
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.AuditLogDTO": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "entity_id": {
+                    "type": "integer"
+                },
+                "entity_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ip_address": {
+                    "type": "string"
+                },
+                "new_values": {
+                    "type": "object"
+                },
+                "old_values": {
+                    "type": "object"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserDTO"
+                },
+                "user_agent": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.AuditLogListResponse": {
+            "type": "object",
+            "properties": {
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.AuditLogDTO"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/dto.PaginationDTO"
+                }
+            }
+        },
+        "dto.AuditTrailDTO": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "entity_id": {
+                    "type": "integer"
+                },
+                "entity_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "user_id": {
                     "type": "integer"
                 }
             }
@@ -4144,6 +11373,96 @@ const docTemplate = `{
                 "unit": {
                     "description": "minutes",
                     "type": "string"
+                }
+            }
+        },
+        "dto.BackupConfigurationDTO": {
+            "type": "object",
+            "properties": {
+                "auto_backup": {
+                    "description": "Si la sauvegarde automatique est activée",
+                    "type": "boolean"
+                },
+                "frequency": {
+                    "description": "daily, weekly, monthly",
+                    "type": "string"
+                },
+                "last_backup": {
+                    "type": "string"
+                },
+                "next_backup": {
+                    "type": "string"
+                },
+                "retention": {
+                    "description": "Nombre de jours de rétention",
+                    "type": "integer"
+                },
+                "time": {
+                    "description": "Heure de sauvegarde (format: HH:MM)",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.BackupExecutionResponse": {
+            "type": "object",
+            "properties": {
+                "backup_id": {
+                    "type": "integer"
+                },
+                "estimated_time": {
+                    "description": "en secondes",
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "in_progress, completed, failed",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.BudgetAlertDTO": {
+            "type": "object",
+            "properties": {
+                "alert_type": {
+                    "type": "string"
+                },
+                "budget": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "percentage": {
+                    "type": "number"
+                },
+                "project_id": {
+                    "type": "integer"
+                },
+                "spent": {
+                    "type": "integer"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.BudgetStatusDTO": {
+            "type": "object",
+            "properties": {
+                "comparison": {
+                    "$ref": "#/definitions/dto.TimeComparisonDTO"
+                },
+                "status": {
+                    "description": "on_budget, over_budget, under_budget",
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -4201,6 +11520,26 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.CreateAssetCategoryRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Nom (obligatoire)",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "ID catégorie parente (optionnel)",
+                    "type": "integer"
                 }
             }
         },
@@ -4362,6 +11701,63 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateKnowledgeCategoryRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Nom (obligatoire)",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "ID catégorie parente (optionnel)",
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.CreateRequestSourceRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateRoleRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Nom du rôle (obligatoire)",
+                    "type": "string"
+                }
+            }
+        },
         "dto.CreateSLARequest": {
             "type": "object",
             "required": [
@@ -4436,6 +11832,28 @@ const docTemplate = `{
                 "type_id": {
                     "description": "ID du type (obligatoire)",
                     "type": "integer"
+                }
+            }
+        },
+        "dto.CreateServiceRequestTypeRequest": {
+            "type": "object",
+            "required": [
+                "default_deadline",
+                "name"
+            ],
+            "properties": {
+                "default_deadline": {
+                    "description": "Délai par défaut en heures (obligatoire, min 1)",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Nom (obligatoire)",
+                    "type": "string"
                 }
             }
         },
@@ -4516,21 +11934,17 @@ const docTemplate = `{
             ],
             "properties": {
                 "date": {
-                    "description": "Date au format \"2006-01-02\" (obligatoire)",
+                    "description": "Format: YYYY-MM-DD",
                     "type": "string"
                 },
                 "description": {
-                    "description": "Description (optionnel)",
                     "type": "string"
                 },
                 "ticket_id": {
-                    "description": "ID du ticket (obligatoire)",
                     "type": "integer"
                 },
                 "time_spent": {
-                    "description": "Temps passé en minutes (obligatoire, min 1)",
-                    "type": "integer",
-                    "minimum": 1
+                    "type": "integer"
                 }
             }
         },
@@ -4614,12 +12028,27 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "task_count": {
-                    "description": "Nombre de tâches du jour",
                     "type": "integer"
                 },
                 "total_time": {
-                    "description": "Temps total du jour en minutes",
                     "type": "integer"
+                }
+            }
+        },
+        "dto.DailyCalendarDTO": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "has_entry": {
+                    "type": "boolean"
+                },
+                "total_time": {
+                    "type": "integer"
+                },
+                "validated": {
+                    "type": "boolean"
                 }
             }
         },
@@ -4636,18 +12065,15 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "task_count": {
-                    "description": "Nombre de tâches",
                     "type": "integer"
                 },
                 "tasks": {
-                    "description": "Tâches déclarées (optionnel)",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.TimeEntryDTO"
                     }
                 },
                 "total_time": {
-                    "description": "Temps total en minutes",
                     "type": "integer"
                 },
                 "updated_at": {
@@ -4660,13 +12086,67 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "validated": {
-                    "description": "Si la déclaration a été validée",
                     "type": "boolean"
                 },
                 "validated_at": {
                     "type": "string"
                 },
                 "validated_by": {
+                    "type": "integer"
+                },
+                "validation_comment": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.DailySummaryDTO": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "task_count": {
+                    "type": "integer"
+                },
+                "total_time": {
+                    "type": "integer"
+                },
+                "validated": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "dto.DailyTaskDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ticket": {
+                    "$ref": "#/definitions/dto.TicketDTO"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "time_spent": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.DailyTaskRequest": {
+            "type": "object",
+            "required": [
+                "ticket_id",
+                "time_spent"
+            ],
+            "properties": {
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "time_spent": {
                     "type": "integer"
                 }
             }
@@ -4708,6 +12188,26 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.TicketStatsDTO"
                         }
                     ]
+                }
+            }
+        },
+        "dto.DelayAlertDTO": {
+            "type": "object",
+            "properties": {
+                "delay_id": {
+                    "type": "integer"
+                },
+                "delay_time": {
+                    "type": "integer"
+                },
+                "detected_at": {
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -4818,6 +12318,33 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.DelayedTicketDTO": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "description": "Catégorie du ticket",
+                    "type": "string"
+                },
+                "delayed_by": {
+                    "description": "Nombre de jours de retard",
+                    "type": "integer"
+                },
+                "expected_date": {
+                    "description": "Date attendue de résolution",
+                    "type": "string"
+                },
+                "priority": {
+                    "description": "Priorité du ticket",
+                    "type": "string"
+                },
+                "ticket": {
+                    "$ref": "#/definitions/dto.TicketDTO"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.EfficiencyDTO": {
             "type": "object",
             "properties": {
@@ -4846,6 +12373,61 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "dto.EstimatedTimeDTO": {
+            "type": "object",
+            "properties": {
+                "estimated_time": {
+                    "type": "integer"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ExecuteBackupRequest": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "description": "full, incremental",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.GlobalSearchResultDTO": {
+            "type": "object",
+            "properties": {
+                "articles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.KnowledgeArticleSearchResultDTO"
+                    }
+                },
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.AssetSearchResultDTO"
+                    }
+                },
+                "query": {
+                    "type": "string"
+                },
+                "tickets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TicketSearchResultDTO"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -4894,6 +12476,76 @@ const docTemplate = `{
                 "urgency": {
                     "description": "low, medium, high, critical",
                     "type": "string"
+                }
+            }
+        },
+        "dto.IndividualPerformanceReportDTO": {
+            "type": "object",
+            "properties": {
+                "average_resolution_time": {
+                    "description": "Temps moyen de résolution en minutes",
+                    "type": "number"
+                },
+                "breakdown": {
+                    "description": "Répartition détaillée",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "efficiency": {
+                    "description": "Efficacité en %",
+                    "type": "number"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "productivity": {
+                    "description": "Productivité (tickets/heure)",
+                    "type": "number"
+                },
+                "tickets_treated": {
+                    "description": "Nombre de tickets traités",
+                    "type": "integer"
+                },
+                "total_time_spent": {
+                    "description": "Temps total passé en minutes",
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserDTO"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.KPIStatisticsDTO": {
+            "type": "object",
+            "properties": {
+                "average_satisfaction": {
+                    "description": "en pourcentage (si disponible)",
+                    "type": "number"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "report_production": {
+                    "description": "nombre de rapports produits",
+                    "type": "integer"
+                },
+                "resolution_rate": {
+                    "description": "taux de résolution en pourcentage",
+                    "type": "number"
+                },
+                "response_time": {
+                    "description": "temps de réponse moyen en minutes",
+                    "type": "number"
+                },
+                "tickets_registered": {
+                    "type": "integer"
+                },
+                "utilization_rate": {
+                    "description": "en pourcentage",
+                    "type": "number"
                 }
             }
         },
@@ -4998,16 +12650,16 @@ const docTemplate = `{
         "dto.LoginRequest": {
             "type": "object",
             "required": [
-                "password",
-                "username"
+                "email",
+                "password"
             ],
             "properties": {
-                "password": {
-                    "description": "Mot de passe (obligatoire)",
+                "email": {
+                    "description": "Email (obligatoire, format email)",
                     "type": "string"
                 },
-                "username": {
-                    "description": "Nom d'utilisateur (obligatoire)",
+                "password": {
+                    "description": "Mot de passe (obligatoire)",
                     "type": "string"
                 }
             }
@@ -5030,6 +12682,28 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.UserDTO"
                         }
                     ]
+                }
+            }
+        },
+        "dto.ModificationDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "field": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "new_value": {},
+                "old_value": {},
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -5084,6 +12758,26 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.OverloadAlertDTO": {
+            "type": "object",
+            "properties": {
+                "actual_time": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "max_time": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.PaginationDTO": {
             "type": "object",
             "properties": {
@@ -5101,6 +12795,23 @@ const docTemplate = `{
                 },
                 "total_pages": {
                     "description": "Nombre total de pages",
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.PendingJustificationAlertDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "delay_id": {
+                    "type": "integer"
+                },
+                "justification_id": {
+                    "type": "integer"
+                },
+                "user_id": {
                     "type": "integer"
                 }
             }
@@ -5187,6 +12898,34 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.PerformanceStatisticsDTO": {
+            "type": "object",
+            "properties": {
+                "average_resolution_time": {
+                    "description": "en minutes",
+                    "type": "number"
+                },
+                "efficiency": {
+                    "description": "en pourcentage",
+                    "type": "number"
+                },
+                "first_response_time": {
+                    "description": "en minutes",
+                    "type": "number"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "productivity": {
+                    "description": "en pourcentage",
+                    "type": "number"
+                },
+                "sla_compliance": {
+                    "description": "en pourcentage",
+                    "type": "number"
+                }
+            }
+        },
         "dto.PerformanceStatsDTO": {
             "type": "object",
             "properties": {
@@ -5244,6 +12983,26 @@ const docTemplate = `{
                     "$ref": "#/definitions/dto.UserDTO"
                 },
                 "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ProjectTimeBudgetDTO": {
+            "type": "object",
+            "properties": {
+                "budget": {
+                    "type": "integer"
+                },
+                "percentage": {
+                    "type": "number"
+                },
+                "project_id": {
+                    "type": "integer"
+                },
+                "remaining": {
+                    "type": "integer"
+                },
+                "spent": {
                     "type": "integer"
                 }
             }
@@ -5316,6 +13075,164 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "description": "Email (obligatoire, format email)",
+                    "type": "string"
+                },
+                "first_name": {
+                    "description": "Prénom (optionnel)",
+                    "type": "string"
+                },
+                "last_name": {
+                    "description": "Nom (optionnel)",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Mot de passe (obligatoire, min 6 caractères)",
+                    "type": "string",
+                    "minLength": 6
+                },
+                "username": {
+                    "description": "Nom d'utilisateur (obligatoire, min 3 caractères)",
+                    "type": "string",
+                    "minLength": 3
+                }
+            }
+        },
+        "dto.RegisterResponse": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "description": "Token de rafraîchissement (optionnel)",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Token JWT d'accès",
+                    "type": "string"
+                },
+                "user": {
+                    "description": "Informations de l'utilisateur créé",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/dto.UserDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "dto.ReorderTicketAttachmentsRequest": {
+            "type": "object",
+            "required": [
+                "attachment_ids"
+            ],
+            "properties": {
+                "attachment_ids": {
+                    "description": "Liste des IDs dans le nouvel ordre",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dto.RequestSourceDTO": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RoleDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_system": {
+                    "description": "Si c'est un rôle système (ne peut pas être modifié/supprimé)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom du rôle (ex: \"DSI\", \"TECHNICIEN_IT\")",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.SLAComplianceReportDTO": {
+            "type": "object",
+            "properties": {
+                "by_category": {
+                    "description": "Conformité par catégorie",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                },
+                "by_priority": {
+                    "description": "Conformité par priorité",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                },
+                "generated_at": {
+                    "description": "Date de génération",
+                    "type": "string"
+                },
+                "overall_compliance": {
+                    "description": "Conformité globale en %",
+                    "type": "number"
+                },
+                "period": {
+                    "description": "Période analysée",
+                    "type": "string"
+                },
+                "total_tickets": {
+                    "type": "integer"
+                },
+                "total_violations": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.SLADTO": {
             "type": "object",
             "properties": {
@@ -5385,6 +13302,38 @@ const docTemplate = `{
                 },
                 "total_violations": {
                     "description": "Nombre total de violations",
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.SLAViolationDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "sla": {
+                    "$ref": "#/definitions/dto.SLADTO"
+                },
+                "sla_id": {
+                    "type": "integer"
+                },
+                "ticket": {
+                    "$ref": "#/definitions/dto.TicketDTO"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "unit": {
+                    "description": "minutes",
+                    "type": "string"
+                },
+                "violated_at": {
+                    "description": "Date de violation",
+                    "type": "string"
+                },
+                "violation_time": {
+                    "description": "Temps de violation en minutes",
                     "type": "integer"
                 }
             }
@@ -5466,6 +13415,78 @@ const docTemplate = `{
                 "name": {
                     "description": "Nom du type (ex: \"Installation\", \"Configuration\")",
                     "type": "string"
+                }
+            }
+        },
+        "dto.SetProjectTimeBudgetRequest": {
+            "type": "object",
+            "required": [
+                "budget"
+            ],
+            "properties": {
+                "budget": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.StatisticsOverviewDTO": {
+            "type": "object",
+            "properties": {
+                "performance": {
+                    "$ref": "#/definitions/dto.PerformanceStatsDTO"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "sla": {
+                    "$ref": "#/definitions/dto.SLAStatsDTO"
+                },
+                "tickets": {
+                    "$ref": "#/definitions/dto.TicketStatsDTO"
+                },
+                "users": {
+                    "$ref": "#/definitions/dto.UserStatsDTO"
+                }
+            }
+        },
+        "dto.TicketAttachmentDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "display_order": {
+                    "type": "integer"
+                },
+                "file_name": {
+                    "type": "string"
+                },
+                "file_path": {
+                    "type": "string"
+                },
+                "file_size": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_image": {
+                    "type": "boolean"
+                },
+                "mime_type": {
+                    "type": "string"
+                },
+                "thumbnail_path": {
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserDTO"
                 }
             }
         },
@@ -5583,6 +13604,43 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.TicketHistoryDTO": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "description": "created, updated, status_changed, assigned, etc.",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description de l'action (optionnel)",
+                    "type": "string"
+                },
+                "field_name": {
+                    "description": "Nom du champ modifié (optionnel)",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "new_value": {
+                    "description": "Nouvelle valeur (optionnel)",
+                    "type": "string"
+                },
+                "old_value": {
+                    "description": "Ancienne valeur (optionnel)",
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserDTO"
+                }
+            }
+        },
         "dto.TicketListResponse": {
             "type": "object",
             "properties": {
@@ -5630,6 +13688,39 @@ const docTemplate = `{
                 },
                 "violated_at": {
                     "description": "Date de violation (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TicketSearchResultDTO": {
+            "type": "object",
+            "properties": {
+                "assigned_to": {
+                    "$ref": "#/definitions/dto.UserDTO"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "$ref": "#/definitions/dto.UserDTO"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "string"
+                },
+                "snippet": {
+                    "description": "Extrait de la description correspondant",
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -5701,6 +13792,26 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.TimeComparisonDTO": {
+            "type": "object",
+            "properties": {
+                "actual_time": {
+                    "type": "integer"
+                },
+                "difference": {
+                    "type": "integer"
+                },
+                "estimated_time": {
+                    "type": "integer"
+                },
+                "percentage": {
+                    "type": "number"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.TimeEntryDTO": {
             "type": "object",
             "properties": {
@@ -5708,7 +13819,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "date": {
-                    "description": "Date de l'entrée",
                     "type": "string"
                 },
                 "description": {
@@ -5718,36 +13828,24 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "ticket": {
-                    "description": "Ticket associé (optionnel)",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.TicketDTO"
-                        }
-                    ]
+                    "$ref": "#/definitions/dto.TicketDTO"
                 },
                 "ticket_id": {
                     "type": "integer"
                 },
                 "time_spent": {
-                    "description": "Temps passé en minutes",
                     "type": "integer"
                 },
                 "updated_at": {
                     "type": "string"
                 },
                 "user": {
-                    "description": "Utilisateur (optionnel)",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.UserDTO"
-                        }
-                    ]
+                    "$ref": "#/definitions/dto.UserDTO"
                 },
                 "user_id": {
                     "type": "integer"
                 },
                 "validated": {
-                    "description": "Si l'entrée a été validée",
                     "type": "boolean"
                 },
                 "validated_at": {
@@ -5758,12 +13856,180 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.TimesheetHistoryDTO": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.TimesheetHistoryEntryDTO": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "changes": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.TrendDataDTO": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.TrendsStatisticsDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TrendDataDTO"
+                    }
+                },
+                "forecast": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TrendDataDTO"
+                    }
+                },
+                "metric": {
+                    "type": "string"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "trend": {
+                    "description": "increasing, decreasing, stable",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UnderloadAlertDTO": {
+            "type": "object",
+            "properties": {
+                "actual_time": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "min_time": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.UnreadCountDTO": {
             "type": "object",
             "properties": {
                 "count": {
                     "description": "Nombre de notifications non lues",
                     "type": "integer"
+                }
+            }
+        },
+        "dto.UpdateAssetCategoryRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "nil pour retirer la catégorie parente",
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UpdateAssetRequest": {
+            "type": "object",
+            "properties": {
+                "assigned_to": {
+                    "description": "nil pour retirer l'assignation",
+                    "type": "integer"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "purchase_date": {
+                    "type": "string"
+                },
+                "serial_number": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "available",
+                        "in_use",
+                        "maintenance",
+                        "retired"
+                    ]
+                },
+                "warranty_expiry": {
+                    "type": "string"
                 }
             }
         },
@@ -5782,6 +14048,18 @@ const docTemplate = `{
                 },
                 "risk_description": {
                     "description": "Description du risque (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateDelayJustificationRequest": {
+            "type": "object",
+            "required": [
+                "justification"
+            ],
+            "properties": {
+                "justification": {
+                    "description": "Nouveau texte de justification",
                     "type": "string"
                 }
             }
@@ -5808,6 +14086,169 @@ const docTemplate = `{
                         "high",
                         "critical"
                     ]
+                }
+            }
+        },
+        "dto.UpdateKnowledgeArticleRequest": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "is_published": {
+                    "description": "Statut de publication (optionnel)",
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateKnowledgeCategoryRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "nil pour retirer la catégorie parente",
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UpdateRequestSourceRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateRiskRequest": {
+            "type": "object",
+            "required": [
+                "risk"
+            ],
+            "properties": {
+                "risk": {
+                    "description": "Risque (obligatoire)",
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ]
+                },
+                "risk_description": {
+                    "description": "Description du risque (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateRoleRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Nom (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateSLARequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "target_time": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "unit": {
+                    "type": "string",
+                    "enum": [
+                        "minutes",
+                        "hours",
+                        "days"
+                    ]
+                }
+            }
+        },
+        "dto.UpdateServiceRequestRequest": {
+            "type": "object",
+            "properties": {
+                "deadline": {
+                    "description": "Date limite format \"2006-01-02\" (optionnel)",
+                    "type": "string"
+                },
+                "type_id": {
+                    "description": "ID du type (optionnel)",
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UpdateServiceRequestTypeRequest": {
+            "type": "object",
+            "properties": {
+                "default_deadline": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "description": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "description": "Statut actif (optionnel)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateSettingsRequest": {
+            "type": "object",
+            "properties": {
+                "settings": {
+                    "description": "Map de clé-valeur des paramètres à mettre à jour",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "dto.UpdateTicketAttachmentRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "display_order": {
+                    "description": "Ordre d'affichage (optionnel)",
+                    "type": "integer"
                 }
             }
         },
@@ -5841,6 +14282,36 @@ const docTemplate = `{
                 "title": {
                     "description": "Titre (optionnel)",
                     "type": "string"
+                }
+            }
+        },
+        "dto.UpdateTimeEntryRequest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "description": "Format: YYYY-MM-DD",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "time_spent": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UpdateUserPermissionsRequest": {
+            "type": "object",
+            "required": [
+                "permissions"
+            ],
+            "properties": {
+                "permissions": {
+                    "description": "Liste des permissions (obligatoire)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -5909,6 +14380,44 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.UserPermissionsDTO": {
+            "type": "object",
+            "properties": {
+                "permissions": {
+                    "description": "Liste des permissions (ex: [\"tickets.create\", \"tickets.update\"])",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserDTO"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UserStatsDTO": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "integer"
+                },
+                "average_tickets_per_user": {
+                    "type": "number"
+                },
+                "by_role": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.ValidateDelayJustificationRequest": {
             "type": "object",
             "required": [
@@ -5947,13 +14456,47 @@ const docTemplate = `{
                 "validated"
             ],
             "properties": {
-                "comment": {
-                    "description": "Commentaire de validation (optionnel)",
+                "validated": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "dto.ValidationHistoryDTO": {
+            "type": "object",
+            "properties": {
+                "entry_id": {
+                    "type": "integer"
+                },
+                "entry_type": {
+                    "description": "time_entry, daily, weekly",
                     "type": "string"
                 },
+                "status": {
+                    "description": "validated, rejected",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "validated_at": {
+                    "type": "string"
+                },
+                "validated_by": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ValidationStatusDTO": {
+            "type": "object",
+            "properties": {
                 "validated": {
-                    "description": "true pour valider, false pour invalider",
                     "type": "boolean"
+                },
+                "validated_at": {
+                    "type": "string"
+                },
+                "validated_by": {
+                    "type": "integer"
                 }
             }
         },
@@ -5964,7 +14507,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "daily_breakdown": {
-                    "description": "Répartition par jour (optionnel)",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.DailyBreakdownDTO"
@@ -5980,11 +14522,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "task_count": {
-                    "description": "Nombre total de tâches",
                     "type": "integer"
                 },
                 "total_time": {
-                    "description": "Temps total en minutes",
                     "type": "integer"
                 },
                 "updated_at": {
@@ -5997,7 +14537,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "validated": {
-                    "description": "Si la déclaration a été validée",
                     "type": "boolean"
                 },
                 "validated_at": {
@@ -6006,9 +14545,139 @@ const docTemplate = `{
                 "validated_by": {
                     "type": "integer"
                 },
-                "week": {
-                    "description": "Format ISO: \"2024-W03\"",
+                "validation_comment": {
                     "type": "string"
+                },
+                "week": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.WeeklySummaryDTO": {
+            "type": "object",
+            "properties": {
+                "end_date": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "task_count": {
+                    "type": "integer"
+                },
+                "total_time": {
+                    "type": "integer"
+                },
+                "validated": {
+                    "type": "boolean"
+                },
+                "week": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.WeeklyTaskDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ticket": {
+                    "$ref": "#/definitions/dto.TicketDTO"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "time_spent": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.WeeklyTaskRequest": {
+            "type": "object",
+            "required": [
+                "date",
+                "ticket_id",
+                "time_spent"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "time_spent": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.WorkloadByAgentDTO": {
+            "type": "object",
+            "properties": {
+                "average_time": {
+                    "description": "Temps moyen en minutes",
+                    "type": "number"
+                },
+                "ticket_count": {
+                    "description": "Nombre de tickets",
+                    "type": "integer"
+                },
+                "total_time": {
+                    "description": "Temps total en minutes",
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserDTO"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.WorkloadDayDTO": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.WorkloadStatisticsDTO": {
+            "type": "object",
+            "properties": {
+                "average_per_day": {
+                    "type": "number"
+                },
+                "distribution": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.WorkloadDayDTO"
+                    }
+                },
+                "peak_day": {
+                    "type": "string"
+                },
+                "peak_day_count": {
+                    "type": "integer"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "total_tickets": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -6132,6 +14801,14 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "primary_image": {
+                    "description": "Image principale (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.TicketAttachment"
+                        }
+                    ]
+                },
                 "primary_image_id": {
                     "description": "ID de l'image principale (optionnel)",
                     "type": "integer"
@@ -6153,6 +14830,60 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "models.TicketAttachment": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description optionnelle",
+                    "type": "string"
+                },
+                "display_order": {
+                    "description": "Ordre d'affichage (pour les galeries)",
+                    "type": "integer"
+                },
+                "file_name": {
+                    "type": "string"
+                },
+                "file_path": {
+                    "type": "string"
+                },
+                "file_size": {
+                    "description": "Taille en bytes (optionnel)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_image": {
+                    "description": "TRUE si c'est une image",
+                    "type": "boolean"
+                },
+                "mime_type": {
+                    "type": "string"
+                },
+                "thumbnail_path": {
+                    "description": "Chemin vers la miniature (pour les images)",
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "description": "Utilisateur qui a uploadé",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
