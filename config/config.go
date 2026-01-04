@@ -88,37 +88,53 @@ type ApplicationConfig struct {
 var AppConfig *Config
 
 // loadEnvFile charge le fichier .env en gérant le BOM UTF-8
+// Le fichier .env doit être à la racine du projet (même niveau que .gitignore)
 func loadEnvFile() {
 	wd, _ := os.Getwd()
-	envPaths := []string{
-		filepath.Join(wd, ".env"),
-		".env",
-		filepath.Join(wd, "..", ".env"),
-		"../.env",
-	}
-
-	for _, path := range envPaths {
-		if _, err := os.Stat(path); err == nil {
-			// Lire le fichier
-			content, err := os.ReadFile(path)
-			if err != nil {
-				continue
-			}
-
-			// Supprimer le BOM UTF-8 s'il existe
-			content = bytes.TrimPrefix(content, []byte("\xef\xbb\xbf"))
-
-			// Parser et charger dans les variables d'environnement
-			envMap, err := godotenv.UnmarshalBytes(content)
-			if err == nil {
-				for key, value := range envMap {
-					os.Setenv(key, value)
+	
+	// Chercher le fichier .env en remontant depuis le répertoire courant
+	// jusqu'à trouver un fichier .gitignore (indicateur de la racine du projet)
+	currentDir := wd
+	for i := 0; i < 10; i++ { // Limiter à 10 niveaux pour éviter une boucle infinie
+		envPath := filepath.Join(currentDir, ".env")
+		gitignorePath := filepath.Join(currentDir, ".gitignore")
+		
+		// Si on trouve .gitignore, on est probablement à la racine
+		if _, err := os.Stat(gitignorePath); err == nil {
+			if _, err := os.Stat(envPath); err == nil {
+				// Lire et charger le fichier .env
+				content, err := os.ReadFile(envPath)
+				if err == nil {
+					// Supprimer le BOM UTF-8 s'il existe
+					content = bytes.TrimPrefix(content, []byte("\xef\xbb\xbf"))
+					
+					// Écrire dans un fichier temporaire pour godotenv.Load()
+					tmpFile, err := os.CreateTemp("", "*.env")
+					if err == nil {
+						defer os.Remove(tmpFile.Name())
+						defer tmpFile.Close()
+						
+						if _, err := tmpFile.Write(content); err == nil {
+							tmpFile.Close()
+							if err := godotenv.Load(tmpFile.Name()); err == nil {
+								log.Printf("✅ Fichier .env chargé depuis: %s", envPath)
+								return
+							}
+						}
+					}
 				}
-				log.Printf("✅ Fichier .env chargé depuis: %s", path)
-				return
 			}
 		}
+		
+		// Remonter d'un niveau
+		parentDir := filepath.Dir(currentDir)
+		if parentDir == currentDir {
+			break // On est arrivé à la racine du système
+		}
+		currentDir = parentDir
 	}
+	
+	log.Printf("⚠️  Aucun fichier .env trouvé à la racine du projet, utilisation des valeurs par défaut")
 }
 
 // Load charge la configuration depuis les variables d'environnement
