@@ -51,6 +51,7 @@ func main() {
 	ticketRepo := repositories.NewTicketRepository()
 	ticketCommentRepo := repositories.NewTicketCommentRepository()
 	ticketHistoryRepo := repositories.NewTicketHistoryRepository()
+	ticketAttachmentRepo := repositories.NewTicketAttachmentRepository()
 	ticketAssetRepo := repositories.NewTicketAssetRepository()
 	incidentRepo := repositories.NewIncidentRepository()
 	serviceRequestRepo := repositories.NewServiceRequestRepository()
@@ -69,20 +70,28 @@ func main() {
 	projectRepo := repositories.NewProjectRepository()
 	dailyDeclarationRepo := repositories.NewDailyDeclarationRepository()
 	weeklyDeclarationRepo := repositories.NewWeeklyDeclarationRepository()
+	auditLogRepo := repositories.NewAuditLogRepository()
+	settingsRepo := repositories.NewSettingsRepository()
+	requestSourceRepo := repositories.NewRequestSourceRepository()
 
 	// Initialiser tous les services
-	authService := services.NewAuthService(userRepo, userSessionRepo)
+	authService := services.NewAuthService(userRepo, userSessionRepo, roleRepo)
 	userService := services.NewUserService(userRepo, roleRepo)
+	roleService := services.NewRoleService(roleRepo, userRepo)
 	ticketService := services.NewTicketService(ticketRepo, userRepo, ticketCommentRepo, ticketHistoryRepo)
+	ticketAttachmentService := services.NewTicketAttachmentService(ticketAttachmentRepo, ticketRepo, userRepo)
 	incidentService := services.NewIncidentService(incidentRepo, ticketRepo, ticketAssetRepo, assetRepo)
 	serviceRequestService := services.NewServiceRequestService(serviceRequestRepo, serviceRequestTypeRepo, ticketRepo, userRepo)
+	serviceRequestTypeService := services.NewServiceRequestTypeService(serviceRequestTypeRepo, userRepo)
 	changeService := services.NewChangeService(changeRepo, ticketRepo, userRepo)
 	timeEntryService := services.NewTimeEntryService(timeEntryRepo, ticketRepo, userRepo)
 	delayService := services.NewDelayService(delayRepo, delayJustificationRepo, userRepo)
-	assetService := services.NewAssetService(assetRepo, assetCategoryRepo, userRepo)
+	assetService := services.NewAssetService(assetRepo, assetCategoryRepo, userRepo, ticketAssetRepo, ticketRepo)
+	assetCategoryService := services.NewAssetCategoryService(assetCategoryRepo, userRepo)
 	slaService := services.NewSLAService(slaRepo, ticketSLARepo, ticketRepo)
 	notificationService := services.NewNotificationService(notificationRepo, userRepo)
 	knowledgeArticleService := services.NewKnowledgeArticleService(knowledgeArticleRepo, knowledgeCategoryRepo, userRepo)
+	knowledgeCategoryService := services.NewKnowledgeCategoryService(knowledgeCategoryRepo, userRepo)
 	projectService := services.NewProjectService(projectRepo, userRepo)
 	dailyDeclarationService := services.NewDailyDeclarationService(dailyDeclarationRepo, timeEntryRepo, userRepo)
 	weeklyDeclarationService := services.NewWeeklyDeclarationService(weeklyDeclarationRepo, userRepo)
@@ -97,45 +106,85 @@ func main() {
 		slaRepo,
 		userRepo,
 	)
+	searchService := services.NewSearchService(ticketRepo, assetRepo, knowledgeArticleRepo)
+	statisticsService := services.NewStatisticsService(ticketRepo, slaRepo, userRepo, timeEntryRepo)
+	auditService := services.NewAuditService(auditLogRepo)
+	settingsService := services.NewSettingsService(settingsRepo)
+	requestSourceService := services.NewRequestSourceService(requestSourceRepo)
+	backupService := services.NewBackupService(settingsRepo)
+	timesheetService := services.NewTimesheetService(
+		timeEntryService,
+		dailyDeclarationService,
+		weeklyDeclarationService,
+		ticketRepo,
+		projectRepo,
+		delayRepo,
+		delayJustificationRepo,
+		userRepo,
+	)
 
 	// Initialiser tous les handlers
 	authHandler := handlers.NewAuthHandler(authService)
 	userHandler := handlers.NewUserHandler(userService)
+	roleHandler := handlers.NewRoleHandler(roleService)
 	ticketHandler := handlers.NewTicketHandler(ticketService)
+	ticketAttachmentHandler := handlers.NewTicketAttachmentHandler(ticketAttachmentService)
 	incidentHandler := handlers.NewIncidentHandler(incidentService)
 	changeHandler := handlers.NewChangeHandler(changeService)
 	serviceRequestHandler := handlers.NewServiceRequestHandler(serviceRequestService)
+	serviceRequestTypeHandler := handlers.NewServiceRequestTypeHandler(serviceRequestTypeService)
 	timeEntryHandler := handlers.NewTimeEntryHandler(timeEntryService)
 	delayHandler := handlers.NewDelayHandler(delayService)
 	assetHandler := handlers.NewAssetHandler(assetService)
+	assetCategoryHandler := handlers.NewAssetCategoryHandler(assetCategoryService)
 	slaHandler := handlers.NewSLAHandler(slaService)
 	notificationHandler := handlers.NewNotificationHandler(notificationService)
 	knowledgeArticleHandler := handlers.NewKnowledgeArticleHandler(knowledgeArticleService)
+	knowledgeCategoryHandler := handlers.NewKnowledgeCategoryHandler(knowledgeCategoryService)
 	projectHandler := handlers.NewProjectHandler(projectService)
 	dailyDeclarationHandler := handlers.NewDailyDeclarationHandler(dailyDeclarationService)
 	weeklyDeclarationHandler := handlers.NewWeeklyDeclarationHandler(weeklyDeclarationService)
 	performanceHandler := handlers.NewPerformanceHandler(performanceService)
 	reportHandler := handlers.NewReportHandler(reportService)
+	searchHandler := handlers.NewSearchHandler(searchService)
+	statisticsHandler := handlers.NewStatisticsHandler(statisticsService)
+	auditHandler := handlers.NewAuditHandler(auditService)
+	settingsHandler := handlers.NewSettingsHandler(settingsService)
+	requestSourceHandler := handlers.NewRequestSourceHandler(requestSourceService)
+	backupHandler := handlers.NewBackupHandler(backupService)
+	timesheetHandler := handlers.NewTimesheetHandler(timesheetService)
 
 	// Créer la structure Handlers
 	appHandlers := &routes.Handlers{
 		AuthHandler:              authHandler,
 		UserHandler:              userHandler,
+		RoleHandler:              roleHandler,
 		TicketHandler:            ticketHandler,
+		TicketAttachmentHandler:  ticketAttachmentHandler,
 		IncidentHandler:          incidentHandler,
 		ChangeHandler:            changeHandler,
-		ServiceRequestHandler:    serviceRequestHandler,
-		TimeEntryHandler:         timeEntryHandler,
+		ServiceRequestHandler:      serviceRequestHandler,
+		ServiceRequestTypeHandler:  serviceRequestTypeHandler,
+		TimeEntryHandler:           timeEntryHandler,
 		DelayHandler:             delayHandler,
 		AssetHandler:             assetHandler,
+		AssetCategoryHandler:      assetCategoryHandler,
 		SLAHandler:               slaHandler,
 		NotificationHandler:      notificationHandler,
-		KnowledgeArticleHandler:  knowledgeArticleHandler,
-		ProjectHandler:           projectHandler,
+		KnowledgeArticleHandler:    knowledgeArticleHandler,
+		KnowledgeCategoryHandler:   knowledgeCategoryHandler,
+		ProjectHandler:             projectHandler,
 		DailyDeclarationHandler:  dailyDeclarationHandler,
 		WeeklyDeclarationHandler: weeklyDeclarationHandler,
 		PerformanceHandler:       performanceHandler,
 		ReportHandler:            reportHandler,
+		SearchHandler:            searchHandler,
+		StatisticsHandler:       statisticsHandler,
+		AuditHandler:             auditHandler,
+		SettingsHandler:           settingsHandler,
+		RequestSourceHandler:      requestSourceHandler,
+		BackupHandler:             backupHandler,
+		TimesheetHandler:          timesheetHandler,
 	}
 
 	// Configurer Gin
