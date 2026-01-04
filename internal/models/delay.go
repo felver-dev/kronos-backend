@@ -6,7 +6,7 @@ import "time"
 // Table: delays
 type Delay struct {
 	ID              uint      `gorm:"primaryKey" json:"id"`
-	TicketID        uint      `gorm:"uniqueIndex;not null;index" json:"ticket_id"`                // Relation 1:1 avec Ticket
+	TicketID        uint      `gorm:"uniqueIndex:idx_delays_ticket_id;not null" json:"ticket_id"` // Relation 1:1 avec Ticket
 	UserID          uint      `gorm:"not null;index" json:"user_id"`                              // Technicien en retard
 	EstimatedTime   int       `gorm:"not null" json:"estimated_time"`                             // Temps estimé en minutes
 	ActualTime      int       `gorm:"not null" json:"actual_time"`                                // Temps réel en minutes
@@ -32,7 +32,7 @@ func (Delay) TableName() string {
 // Table: delay_justifications
 type DelayJustification struct {
 	ID                uint       `gorm:"primaryKey" json:"id"`
-	DelayID           uint       `gorm:"uniqueIndex;not null;index" json:"delay_id"`             // Relation 1:1 avec Delay
+	DelayID           uint       `gorm:"uniqueIndex:idx_delay_justifications_delay_id;not null" json:"delay_id"`             // Relation 1:1 avec Delay
 	UserID            uint       `gorm:"not null;index" json:"user_id"`                          // Technicien qui justifie
 	Justification     string     `gorm:"type:text;not null" json:"justification"`                // Texte de justification
 	Status            string     `gorm:"type:varchar(50);default:'pending';index" json:"status"` // pending, validated, rejected
