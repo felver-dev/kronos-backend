@@ -15,7 +15,11 @@ func SetupReportRoutes(router *gin.RouterGroup, reportHandler *handlers.ReportHa
 		reports.GET("/tickets/count", reportHandler.GetTicketCountReport)
 		reports.GET("/tickets/distribution", reportHandler.GetTicketTypeDistribution)
 		reports.GET("/tickets/average-resolution-time", reportHandler.GetAverageResolutionTime)
-		// reports.GET("/workload/by-agent", reportHandler.GetWorkloadByAgent) // TODO: Implémenter dans le handler
+		reports.GET("/tickets/by-agent", reportHandler.GetWorkloadByAgent)
+		reports.GET("/tickets/delayed", reportHandler.GetDelayedTicketsReport)
+		reports.GET("/sla/compliance", reportHandler.GetSLAComplianceReport)
+		reports.GET("/performance/individual/:userId", reportHandler.GetIndividualPerformanceReport)
+		reports.GET("/export/:format", reportHandler.ExportReport)
 		reports.POST("/custom", reportHandler.GenerateCustomReport)
 	}
 }

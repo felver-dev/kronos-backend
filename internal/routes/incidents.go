@@ -18,6 +18,12 @@ func SetupIncidentRoutes(router *gin.RouterGroup, incidentHandler *handlers.Inci
 		incidents.DELETE("/:id", incidentHandler.Delete)
 		incidents.POST("/:id/qualify", incidentHandler.Qualify)
 		incidents.POST("/:id/resolve", incidentHandler.Resolve)
+		incidents.GET("/:id/resolution-time", incidentHandler.GetResolutionTime)
+		incidents.POST("/:id/link-asset", incidentHandler.LinkAsset)
+		incidents.DELETE("/:id/unlink-asset/:assetId", incidentHandler.UnlinkAsset)
+		incidents.GET("/:id/linked-assets", incidentHandler.GetLinkedAssets)
+		incidents.GET("/by-impact/:impact", incidentHandler.GetByImpact)
+		incidents.GET("/by-urgency/:urgency", incidentHandler.GetByUrgency)
 	}
 }
 

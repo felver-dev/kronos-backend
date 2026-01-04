@@ -17,5 +17,10 @@ func SetupChangeRoutes(router *gin.RouterGroup, changeHandler *handlers.ChangeHa
 		changes.PUT("/:id", changeHandler.Update)
 		changes.DELETE("/:id", changeHandler.Delete)
 		changes.POST("/:id/result", changeHandler.RecordResult)
+		changes.GET("/:id/result", changeHandler.GetResult)
+		changes.PUT("/:id/risk", changeHandler.UpdateRisk)
+		changes.POST("/:id/assign-responsible", changeHandler.AssignResponsible)
+		changes.GET("/by-risk/:riskLevel", changeHandler.GetByRisk)
+		changes.GET("/by-responsible/:userId", changeHandler.GetByResponsible)
 	}
 }

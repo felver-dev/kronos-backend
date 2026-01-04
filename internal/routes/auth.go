@@ -11,6 +11,7 @@ func SetupAuthRoutes(router *gin.RouterGroup, authHandler *handlers.AuthHandler)
 	auth := router.Group("/auth")
 	{
 		// Routes publiques (sans authentification)
+		auth.POST("/register", authHandler.Register)
 		auth.POST("/login", authHandler.Login)
 		auth.POST("/refresh", authHandler.RefreshToken)
 
