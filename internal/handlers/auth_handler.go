@@ -24,11 +24,11 @@ func NewAuthHandler(authService services.AuthService) *AuthHandler {
 
 // Login gère la connexion d'un utilisateur
 // @Summary Connexion utilisateur
-// @Description Authentifie un utilisateur et retourne un token JWT
+// @Description Authentifie un utilisateur avec son email et mot de passe, retourne un token JWT
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param request body dto.LoginRequest true "Identifiants de connexion"
+// @Param request body dto.LoginRequest true "Identifiants de connexion (email et mot de passe)"
 // @Success 200 {object} dto.LoginResponse
 // @Failure 400 {object} utils.Response
 // @Failure 401 {object} utils.Response
@@ -150,4 +150,30 @@ func (h *AuthHandler) GetMe(c *gin.Context) {
 	}
 
 	utils.SuccessResponse(c, userInfo, "Informations utilisateur récupérées")
+}
+
+// Register gère l'inscription d'un nouvel utilisateur
+// @Summary Inscription utilisateur
+// @Description Crée un nouveau compte utilisateur et connecte automatiquement l'utilisateur
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body dto.RegisterRequest true "Données d'inscription"
+// @Success 201 {object} dto.RegisterResponse
+// @Failure 400 {object} utils.Response
+// @Router /auth/register [post]
+func (h *AuthHandler) Register(c *gin.Context) {
+	var req dto.RegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Données d'inscription invalides", err.Error())
+		return
+	}
+
+	response, err := h.authService.Register(req)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.CreatedResponse(c, response, "Inscription réussie")
 }
