@@ -77,3 +77,14 @@ type OverallSLAComplianceDTO struct {
 	TotalTickets      int                `json:"total_tickets"`
 	TotalViolations   int                `json:"total_violations"`
 }
+
+// SLAComplianceReportDTO représente un rapport de conformité des SLA
+type SLAComplianceReportDTO struct {
+	OverallCompliance float64            `json:"overall_compliance"` // Conformité globale en %
+	ByCategory        map[string]float64 `json:"by_category"`        // Conformité par catégorie
+	ByPriority        map[string]float64 `json:"by_priority"`        // Conformité par priorité
+	TotalTickets      int                `json:"total_tickets"`
+	TotalViolations   int                `json:"total_violations"`
+	Period            string             `json:"period"`      // Période analysée
+	GeneratedAt       time.Time          `json:"generated_at"` // Date de génération
+}

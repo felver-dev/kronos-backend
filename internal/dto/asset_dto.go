@@ -64,3 +64,26 @@ type UpdateAssetRequest struct {
 type AssignAssetRequest struct {
 	UserID uint `json:"user_id" binding:"required"` // ID de l'utilisateur (obligatoire)
 }
+
+// AssetInventoryDTO représente l'inventaire des actifs
+type AssetInventoryDTO struct {
+	Total      int            `json:"total"`       // Nombre total d'actifs
+	ByStatus   map[string]int `json:"by_status"`   // Répartition par statut
+	ByCategory map[string]int `json:"by_category"` // Répartition par catégorie
+	Assigned   int            `json:"assigned"`    // Nombre d'actifs assignés
+	Available  int            `json:"available"`   // Nombre d'actifs disponibles
+}
+
+// CreateAssetCategoryRequest représente la requête de création d'une catégorie d'actif
+type CreateAssetCategoryRequest struct {
+	Name        string `json:"name" binding:"required"` // Nom (obligatoire)
+	Description string `json:"description,omitempty"`   // Description (optionnel)
+	ParentID    *uint  `json:"parent_id,omitempty"`    // ID catégorie parente (optionnel)
+}
+
+// UpdateAssetCategoryRequest représente la requête de mise à jour d'une catégorie d'actif
+type UpdateAssetCategoryRequest struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	ParentID    *uint  `json:"parent_id,omitempty"` // nil pour retirer la catégorie parente
+}

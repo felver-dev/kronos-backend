@@ -4,23 +4,23 @@ import "time"
 
 // DashboardDTO représente le tableau de bord complet
 type DashboardDTO struct {
-	Tickets     TicketStatsDTO     `json:"tickets"`      // Statistiques des tickets
-	SLA         SLAStatsDTO        `json:"sla"`          // Statistiques SLA
+	Tickets     TicketStatsDTO      `json:"tickets"`     // Statistiques des tickets
+	SLA         SLAStatsDTO         `json:"sla"`         // Statistiques SLA
 	Performance PerformanceStatsDTO `json:"performance"` // Statistiques de performance
-	Alerts      []AlertDTO         `json:"alerts"`       // Alertes en cours
-	Period      string             `json:"period"`       // Période (week, month, etc.)
+	Alerts      []AlertDTO          `json:"alerts"`      // Alertes en cours
+	Period      string              `json:"period"`      // Période (week, month, etc.)
 }
 
 // TicketStatsDTO représente les statistiques des tickets
 type TicketStatsDTO struct {
-	Total              int                `json:"total"`                // Nombre total de tickets
-	ByCategory         map[string]int     `json:"by_category"`         // Par catégorie
-	ByStatus           map[string]int     `json:"by_status"`            // Par statut
-	ByPriority         map[string]int     `json:"by_priority"`          // Par priorité
-	AverageResolutionTime float64         `json:"average_resolution_time"` // Temps moyen de résolution en minutes
-	Delayed            int                `json:"delayed"`              // Tickets en retard
-	Open               int                `json:"open"`                 // Tickets ouverts
-	Closed             int                `json:"closed"`               // Tickets fermés
+	Total                 int            `json:"total"`                   // Nombre total de tickets
+	ByCategory            map[string]int `json:"by_category"`             // Par catégorie
+	ByStatus              map[string]int `json:"by_status"`               // Par statut
+	ByPriority            map[string]int `json:"by_priority"`             // Par priorité
+	AverageResolutionTime float64        `json:"average_resolution_time"` // Temps moyen de résolution en minutes
+	Delayed               int            `json:"delayed"`                 // Tickets en retard
+	Open                  int            `json:"open"`                    // Tickets ouverts
+	Closed                int            `json:"closed"`                  // Tickets fermés
 }
 
 // SLAStatsDTO représente les statistiques SLA
@@ -34,25 +34,25 @@ type SLAStatsDTO struct {
 
 // PerformanceStatsDTO représente les statistiques de performance
 type PerformanceStatsDTO struct {
-	TotalTimeSpent      int     `json:"total_time_spent"`       // Temps total passé en minutes
-	AverageEfficiency   float64 `json:"average_efficiency"`     // Efficacité moyenne en %
-	AverageProductivity float64 `json:"average_productivity"`   // Productivité moyenne (tickets/heure)
+	TotalTimeSpent      int     `json:"total_time_spent"`      // Temps total passé en minutes
+	AverageEfficiency   float64 `json:"average_efficiency"`    // Efficacité moyenne en %
+	AverageProductivity float64 `json:"average_productivity"`  // Productivité moyenne (tickets/heure)
 	TotalTicketsTreated int     `json:"total_tickets_treated"` // Nombre total de tickets traités
 }
 
 // AlertDTO représente une alerte
 type AlertDTO struct {
-	Type      string    `json:"type"`       // delay_alert, budget_alert, etc.
-	Severity  string    `json:"severity"`   // low, medium, high, critical
-	Message   string    `json:"message"`    // Message de l'alerte
+	Type      string    `json:"type"`               // delay_alert, budget_alert, etc.
+	Severity  string    `json:"severity"`           // low, medium, high, critical
+	Message   string    `json:"message"`            // Message de l'alerte
 	LinkURL   string    `json:"link_url,omitempty"` // URL vers la ressource (optionnel)
 	CreatedAt time.Time `json:"created_at"`
 }
 
 // TicketCountReportDTO représente le rapport de nombre de tickets par période
 type TicketCountReportDTO struct {
-	Period    string            `json:"period"`    // week, month, etc.
-	Count     int               `json:"count"`     // Nombre total
+	Period    string               `json:"period"`    // week, month, etc.
+	Count     int                  `json:"count"`     // Nombre total
 	Breakdown []PeriodBreakdownDTO `json:"breakdown"` // Répartition par sous-période
 }
 
@@ -79,20 +79,42 @@ type AverageResolutionTimeDTO struct {
 
 // WorkloadByAgentDTO représente la charge de travail par agent
 type WorkloadByAgentDTO struct {
-	UserID      uint   `json:"user_id"`
+	UserID      uint     `json:"user_id"`
 	User        *UserDTO `json:"user,omitempty"`
-	TicketCount int    `json:"ticket_count"`     // Nombre de tickets
-	AverageTime float64 `json:"average_time"`    // Temps moyen en minutes
-	TotalTime   int    `json:"total_time"`       // Temps total en minutes
+	TicketCount int      `json:"ticket_count"` // Nombre de tickets
+	AverageTime float64  `json:"average_time"` // Temps moyen en minutes
+	TotalTime   int      `json:"total_time"`   // Temps total en minutes
 }
 
 // CustomReportRequest représente la requête pour un rapport personnalisé
 type CustomReportRequest struct {
-	Metrics []string    `json:"metrics" binding:"required"` // Métriques à inclure (obligatoire)
-	Period  string      `json:"period" binding:"required"`  // Période (obligatoire)
-	StartDate *time.Time `json:"start_date,omitempty"`     // Date de début (optionnel)
-	EndDate   *time.Time `json:"end_date,omitempty"`       // Date de fin (optionnel)
-	Filters   map[string]any `json:"filters,omitempty"`    // Filtres personnalisés (optionnel)
-	Format    string    `json:"format,omitempty"`          // Format d'export (pdf, excel, csv) (optionnel)
+	Metrics   []string       `json:"metrics" binding:"required"` // Métriques à inclure (obligatoire)
+	Period    string         `json:"period" binding:"required"`  // Période (obligatoire)
+	StartDate *time.Time     `json:"start_date,omitempty"`       // Date de début (optionnel)
+	EndDate   *time.Time     `json:"end_date,omitempty"`         // Date de fin (optionnel)
+	Filters   map[string]any `json:"filters,omitempty"`          // Filtres personnalisés (optionnel)
+	Format    string         `json:"format,omitempty"`           // Format d'export (pdf, excel, csv) (optionnel)
 }
 
+// DelayedTicketDTO représente un ticket en retard
+type DelayedTicketDTO struct {
+	TicketID     uint       `json:"ticket_id"`
+	Ticket       *TicketDTO `json:"ticket,omitempty"`
+	ExpectedDate time.Time  `json:"expected_date"` // Date attendue de résolution
+	DelayedBy    int        `json:"delayed_by"`    // Nombre de jours de retard
+	Priority     string     `json:"priority"`      // Priorité du ticket
+	Category     string     `json:"category"`      // Catégorie du ticket
+}
+
+// IndividualPerformanceReportDTO représente le rapport de performance individuel
+type IndividualPerformanceReportDTO struct {
+	UserID                uint                   `json:"user_id"`
+	User                  *UserDTO               `json:"user,omitempty"`
+	Period                string                 `json:"period"`
+	TicketsTreated        int                    `json:"tickets_treated"`         // Nombre de tickets traités
+	AverageResolutionTime float64                `json:"average_resolution_time"` // Temps moyen de résolution en minutes
+	Efficiency            float64                `json:"efficiency"`              // Efficacité en %
+	Productivity          float64                `json:"productivity"`            // Productivité (tickets/heure)
+	TotalTimeSpent        int                    `json:"total_time_spent"`        // Temps total passé en minutes
+	Breakdown             map[string]interface{} `json:"breakdown,omitempty"`     // Répartition détaillée
+}

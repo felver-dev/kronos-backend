@@ -67,3 +67,49 @@ type CreateTicketCommentRequest struct {
 	Comment    string `json:"comment" binding:"required"` // Commentaire (obligatoire)
 	IsInternal bool   `json:"is_internal,omitempty"`      // Commentaire interne (optionnel, défaut: false)
 }
+
+// TicketHistoryDTO représente une entrée d'historique d'un ticket
+type TicketHistoryDTO struct {
+	ID          uint      `json:"id"`
+	TicketID    uint      `json:"ticket_id"`
+	User        UserDTO   `json:"user"`
+	Action      string    `json:"action"`       // created, updated, status_changed, assigned, etc.
+	FieldName   string    `json:"field_name"`   // Nom du champ modifié (optionnel)
+	OldValue    string    `json:"old_value"`    // Ancienne valeur (optionnel)
+	NewValue    string    `json:"new_value"`    // Nouvelle valeur (optionnel)
+	Description string    `json:"description"`  // Description de l'action (optionnel)
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+// TicketAttachmentDTO représente une pièce jointe d'un ticket
+type TicketAttachmentDTO struct {
+	ID            uint      `json:"id"`
+	TicketID      uint      `json:"ticket_id"`
+	User          UserDTO   `json:"user"`
+	FileName      string    `json:"file_name"`
+	FilePath      string    `json:"file_path"`
+	ThumbnailPath string    `json:"thumbnail_path,omitempty"`
+	FileSize      *int      `json:"file_size,omitempty"`
+	MimeType      string    `json:"mime_type,omitempty"`
+	IsImage       bool      `json:"is_image"`
+	DisplayOrder  int       `json:"display_order"`
+	Description   string    `json:"description,omitempty"`
+	CreatedAt     time.Time `json:"created_at"`
+}
+
+// CreateTicketAttachmentRequest représente la requête de création d'une pièce jointe
+type CreateTicketAttachmentRequest struct {
+	Description  string `json:"description,omitempty"`  // Description (optionnel)
+	DisplayOrder int    `json:"display_order,omitempty"` // Ordre d'affichage (optionnel)
+}
+
+// UpdateTicketAttachmentRequest représente la requête de mise à jour d'une pièce jointe
+type UpdateTicketAttachmentRequest struct {
+	Description  string `json:"description,omitempty"`  // Description (optionnel)
+	DisplayOrder int    `json:"display_order,omitempty"` // Ordre d'affichage (optionnel)
+}
+
+// ReorderTicketAttachmentsRequest représente la requête de réorganisation des pièces jointes
+type ReorderTicketAttachmentsRequest struct {
+	AttachmentIDs []uint `json:"attachment_ids" binding:"required"` // Liste des IDs dans le nouvel ordre
+}
