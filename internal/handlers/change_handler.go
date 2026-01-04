@@ -217,3 +217,168 @@ func (h *ChangeHandler) Delete(c *gin.Context) {
 
 	utils.SuccessResponse(c, nil, "Changement supprimé avec succès")
 }
+
+// UpdateRisk met à jour le risque d'un changement
+// @Summary Mettre à jour le risque
+// @Description Met à jour le niveau de risque d'un changement
+// @Tags changes
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID du changement"
+// @Param request body dto.UpdateRiskRequest true "Données de risque"
+// @Success 200 {object} dto.ChangeDTO
+// @Failure 400 {object} utils.Response
+// @Router /changes/{id}/risk [put]
+func (h *ChangeHandler) UpdateRisk(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	var req dto.UpdateRiskRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
+		return
+	}
+
+	updatedByID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
+	change, err := h.changeService.UpdateRisk(uint(id), req, updatedByID.(uint))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, change, "Risque mis à jour avec succès")
+}
+
+// AssignResponsible assigne un responsable à un changement
+// @Summary Assigner un responsable
+// @Description Assigne un responsable à un changement
+// @Tags changes
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID du changement"
+// @Param request body dto.AssignResponsibleRequest true "ID du responsable"
+// @Success 200 {object} dto.ChangeDTO
+// @Failure 400 {object} utils.Response
+// @Router /changes/{id}/assign-responsible [post]
+func (h *ChangeHandler) AssignResponsible(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	var req dto.AssignResponsibleRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
+		return
+	}
+
+	assignedByID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
+	change, err := h.changeService.AssignResponsible(uint(id), req, assignedByID.(uint))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, change, "Responsable assigné avec succès")
+}
+
+// GetResult récupère le résultat d'un changement
+// @Summary Récupérer le résultat d'un changement
+// @Description Récupère le résultat post-changement d'un changement
+// @Tags changes
+// @Security BearerAuth
+// @Produce json
+// @Param id path int true "ID du changement"
+// @Success 200 {object} map[string]interface{}
+// @Failure 404 {object} utils.Response
+// @Router /changes/{id}/result [get]
+func (h *ChangeHandler) GetResult(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	change, err := h.changeService.GetByID(uint(id))
+	if err != nil {
+		utils.NotFoundResponse(c, "Changement introuvable")
+		return
+	}
+
+	response := map[string]interface{}{
+		"result":            change.Result,
+		"description":      change.ResultDescription,
+		"date":              change.ResultDate,
+		"has_result":        change.Result != "",
+	}
+
+	utils.SuccessResponse(c, response, "Résultat récupéré avec succès")
+}
+
+// GetByRisk récupère les changements par niveau de risque
+// @Summary Récupérer les changements par risque
+// @Description Récupère les changements filtrés par niveau de risque (low, medium, high, critical)
+// @Tags changes
+// @Security BearerAuth
+// @Produce json
+// @Param riskLevel path string true "Niveau de risque (low, medium, high, critical)"
+// @Success 200 {array} dto.ChangeDTO
+// @Failure 400 {object} utils.Response
+// @Router /changes/by-risk/{riskLevel} [get]
+func (h *ChangeHandler) GetByRisk(c *gin.Context) {
+	riskLevel := c.Param("riskLevel")
+
+	changes, err := h.changeService.GetByRisk(riskLevel)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, changes, "Changements récupérés avec succès")
+}
+
+// GetByResponsible récupère les changements par responsable
+// @Summary Récupérer les changements par responsable
+// @Description Récupère les changements assignés à un responsable spécifique
+// @Tags changes
+// @Security BearerAuth
+// @Produce json
+// @Param userId path int true "ID du responsable"
+// @Success 200 {array} dto.ChangeDTO
+// @Failure 400 {object} utils.Response
+// @Router /changes/by-responsible/{userId} [get]
+func (h *ChangeHandler) GetByResponsible(c *gin.Context) {
+	userIDParam := c.Param("userId")
+	userID, err := strconv.ParseUint(userIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID utilisateur invalide")
+		return
+	}
+
+	changes, err := h.changeService.GetByResponsible(uint(userID))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, changes, "Changements récupérés avec succès")
+}
