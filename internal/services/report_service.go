@@ -14,7 +14,11 @@ type ReportService interface {
 	GetTicketTypeDistribution() (*dto.TicketTypeDistributionDTO, error)
 	GetAverageResolutionTime() (*dto.AverageResolutionTimeDTO, error)
 	GetWorkloadByAgent() ([]dto.WorkloadByAgentDTO, error)
-	GenerateCustomReport(req dto.CustomReportRequest) (interface{}, error)
+	GetSLAComplianceReport(period string) (*dto.SLAComplianceReportDTO, error)
+	GetDelayedTicketsReport(period string) ([]dto.DelayedTicketDTO, error)
+	GetIndividualPerformanceReport(userID uint, period string) (*dto.IndividualPerformanceReportDTO, error)
+	ExportReport(reportType, format, period string) (any, error)
+	GenerateCustomReport(req dto.CustomReportRequest) (any, error)
 }
 
 // reportService implémente ReportService
@@ -69,6 +73,35 @@ func (s *reportService) GetAverageResolutionTime() (*dto.AverageResolutionTimeDT
 func (s *reportService) GetWorkloadByAgent() ([]dto.WorkloadByAgentDTO, error) {
 	// TODO: Implémenter le calcul de la charge de travail
 	return []dto.WorkloadByAgentDTO{}, nil
+}
+
+// GetSLAComplianceReport récupère le rapport de conformité SLA
+func (s *reportService) GetSLAComplianceReport(period string) (*dto.SLAComplianceReportDTO, error) {
+	// TODO: Implémenter le calcul du rapport de conformité SLA
+	return &dto.SLAComplianceReportDTO{
+		Period: period,
+	}, nil
+}
+
+// GetDelayedTicketsReport récupère le rapport des tickets en retard
+func (s *reportService) GetDelayedTicketsReport(period string) ([]dto.DelayedTicketDTO, error) {
+	// TODO: Implémenter le calcul des tickets en retard
+	return []dto.DelayedTicketDTO{}, nil
+}
+
+// GetIndividualPerformanceReport récupère le rapport de performance individuel
+func (s *reportService) GetIndividualPerformanceReport(userID uint, period string) (*dto.IndividualPerformanceReportDTO, error) {
+	// TODO: Implémenter le calcul du rapport de performance individuel
+	return &dto.IndividualPerformanceReportDTO{
+		UserID: userID,
+		Period: period,
+	}, nil
+}
+
+// ExportReport exporte un rapport dans un format spécifique
+func (s *reportService) ExportReport(reportType, format, period string) (interface{}, error) {
+	// TODO: Implémenter l'export de rapport (PDF, Excel, CSV)
+	return nil, errors.New("export de rapport non implémenté")
 }
 
 // GenerateCustomReport génère un rapport personnalisé

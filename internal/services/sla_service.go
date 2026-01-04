@@ -19,6 +19,10 @@ type SLAService interface {
 	Update(id uint, req dto.UpdateSLARequest, updatedByID uint) (*dto.SLADTO, error)
 	Delete(id uint) error
 	GetTicketSLAStatus(ticketID uint) (*dto.TicketSLAStatusDTO, error)
+	GetCompliance(slaID uint) (*dto.SLAComplianceDTO, error)
+	GetViolations(slaID uint) ([]dto.SLAViolationDTO, error)
+	GetAllViolations(period, category string) ([]dto.SLAViolationDTO, error)
+	GetComplianceReport(period, format string) (*dto.SLAComplianceReportDTO, error)
 }
 
 // slaService implémente SLAService
@@ -228,6 +232,202 @@ func (s *slaService) GetTicketSLAStatus(ticketID uint) (*dto.TicketSLAStatusDTO,
 		Remaining:   remaining,
 		Status:      status,
 		ViolatedAt:  violatedAt,
+	}, nil
+}
+
+// GetCompliance récupère le taux de conformité d'un SLA
+func (s *slaService) GetCompliance(slaID uint) (*dto.SLAComplianceDTO, error) {
+	sla, err := s.slaRepo.FindByID(slaID)
+	if err != nil {
+		return nil, errors.New("SLA introuvable")
+	}
+
+	// Récupérer tous les tickets SLA associés à ce SLA
+	ticketSLAs, err := s.ticketSLARepo.FindBySLAID(slaID)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des tickets SLA")
+	}
+
+	totalTickets := len(ticketSLAs)
+	compliant := 0
+	violations := 0
+
+	for _, tsla := range ticketSLAs {
+		if tsla.Status == "on_time" {
+			compliant++
+		} else if tsla.Status == "violated" {
+			violations++
+		}
+	}
+
+	complianceRate := 0.0
+	if totalTickets > 0 {
+		complianceRate = (float64(compliant) / float64(totalTickets)) * 100
+	}
+
+	slaDTO := s.slaToDTO(sla)
+	return &dto.SLAComplianceDTO{
+		SLAID:          slaID,
+		SLA:            &slaDTO,
+		ComplianceRate: complianceRate,
+		TotalTickets:   totalTickets,
+		Compliant:      compliant,
+		Violations:     violations,
+	}, nil
+}
+
+// GetViolations récupère les violations d'un SLA
+func (s *slaService) GetViolations(slaID uint) ([]dto.SLAViolationDTO, error) {
+	// Récupérer tous les tickets SLA violés pour ce SLA
+	ticketSLAs, err := s.ticketSLARepo.FindBySLAID(slaID)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des violations")
+	}
+
+	var violations []dto.SLAViolationDTO
+	for _, tsla := range ticketSLAs {
+		if tsla.Status == "violated" && tsla.ViolationTime != nil {
+			ticket, _ := s.ticketRepo.FindByID(tsla.TicketID)
+			var ticketDTO *dto.TicketDTO
+			if ticket != nil {
+				// Convertir le ticket en DTO (simplifié)
+				ticketDTO = &dto.TicketDTO{
+					ID:          ticket.ID,
+					Title:       ticket.Title,
+					Category:    ticket.Category,
+					Status:      ticket.Status,
+					CreatedAt:   ticket.CreatedAt,
+				}
+			}
+
+			slaDTO := s.slaToDTO(&tsla.SLA)
+			violations = append(violations, dto.SLAViolationDTO{
+				ID:            tsla.ID,
+				TicketID:      tsla.TicketID,
+				Ticket:        ticketDTO,
+				SLAID:         slaID,
+				SLA:           &slaDTO,
+				ViolationTime: *tsla.ViolationTime,
+				Unit:          "minutes",
+				ViolatedAt:    tsla.TargetTime,
+			})
+		}
+	}
+
+	return violations, nil
+}
+
+// GetAllViolations récupère toutes les violations de SLA
+func (s *slaService) GetAllViolations(period, category string) ([]dto.SLAViolationDTO, error) {
+	// Récupérer tous les tickets SLA violés
+	allTicketSLAs, err := s.ticketSLARepo.FindAll()
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des violations")
+	}
+
+	var violations []dto.SLAViolationDTO
+	now := time.Now()
+	var startDate time.Time
+
+	// Calculer la date de début selon la période
+	switch period {
+	case "week":
+		startDate = now.AddDate(0, 0, -7)
+	case "month":
+		startDate = now.AddDate(0, -1, 0)
+	default:
+		startDate = now.AddDate(0, -1, 0) // Par défaut: 1 mois
+	}
+
+	for _, tsla := range allTicketSLAs {
+		// Filtrer par statut violé
+		if tsla.Status == "violated" && tsla.ViolationTime != nil {
+			// Filtrer par période
+			if tsla.TargetTime.Before(startDate) {
+				continue
+			}
+
+			// Filtrer par catégorie si fournie
+			if category != "" && tsla.SLA.TicketCategory != category {
+				continue
+			}
+
+			ticket, _ := s.ticketRepo.FindByID(tsla.TicketID)
+			var ticketDTO *dto.TicketDTO
+			if ticket != nil {
+				ticketDTO = &dto.TicketDTO{
+					ID:          ticket.ID,
+					Title:       ticket.Title,
+					Category:    ticket.Category,
+					Status:      ticket.Status,
+					CreatedAt:   ticket.CreatedAt,
+				}
+			}
+
+			slaDTO := s.slaToDTO(&tsla.SLA)
+			violations = append(violations, dto.SLAViolationDTO{
+				ID:            tsla.ID,
+				TicketID:      tsla.TicketID,
+				Ticket:        ticketDTO,
+				SLAID:         tsla.SLAID,
+				SLA:           &slaDTO,
+				ViolationTime: *tsla.ViolationTime,
+				Unit:          "minutes",
+				ViolatedAt:    tsla.TargetTime,
+			})
+		}
+	}
+
+	return violations, nil
+}
+
+// GetComplianceReport génère un rapport de conformité
+func (s *slaService) GetComplianceReport(period, format string) (*dto.SLAComplianceReportDTO, error) {
+	// Récupérer tous les SLA actifs
+	slas, err := s.slaRepo.FindActive()
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des SLA")
+	}
+
+	overallCompliance := 0.0
+	totalTickets := 0
+	totalViolations := 0
+	byCategory := make(map[string]float64)
+	byPriority := make(map[string]float64)
+
+	for _, sla := range slas {
+		compliance, err := s.GetCompliance(sla.ID)
+		if err != nil {
+			continue
+		}
+
+		totalTickets += compliance.TotalTickets
+		totalViolations += compliance.Violations
+
+		// Calculer la conformité par catégorie
+		if compliance.TotalTickets > 0 {
+			categoryCompliance := (float64(compliance.Compliant) / float64(compliance.TotalTickets)) * 100
+			byCategory[sla.TicketCategory] = categoryCompliance
+
+			// Calculer par priorité si fournie
+			if sla.Priority != nil {
+				byPriority[*sla.Priority] = categoryCompliance
+			}
+		}
+	}
+
+	if totalTickets > 0 {
+		overallCompliance = (float64(totalTickets-totalViolations) / float64(totalTickets)) * 100
+	}
+
+	return &dto.SLAComplianceReportDTO{
+		OverallCompliance: overallCompliance,
+		ByCategory:        byCategory,
+		ByPriority:         byPriority,
+		TotalTickets:      totalTickets,
+		TotalViolations:   totalViolations,
+		Period:            period,
+		GeneratedAt:       time.Now(),
 	}, nil
 }
 

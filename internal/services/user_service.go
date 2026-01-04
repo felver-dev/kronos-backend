@@ -2,7 +2,12 @@ package services
 
 import (
 	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 
+	"github.com/mcicare/itsm-backend/config"
 	"github.com/mcicare/itsm-backend/internal/dto"
 	"github.com/mcicare/itsm-backend/internal/models"
 	"github.com/mcicare/itsm-backend/internal/repositories"
@@ -21,6 +26,12 @@ type UserService interface {
 	ResetPassword(userID uint, newPassword string) error
 	Activate(id uint) error
 	Deactivate(id uint) error
+	GetPermissions(userID uint) (*dto.UserPermissionsDTO, error)
+	UpdatePermissions(userID uint, req dto.UpdateUserPermissionsRequest, updatedByID uint) (*dto.UserPermissionsDTO, error)
+	UploadAvatar(userID uint, filePath string, updatedByID uint) (*dto.UserDTO, error)
+	GetAvatarPath(userID uint) (string, error)
+	GetAvatarThumbnailPath(userID uint) (string, error)
+	DeleteAvatar(userID uint, updatedByID uint) (*dto.UserDTO, error)
 }
 
 // userService implémente UserService
@@ -76,7 +87,8 @@ func (s *userService) Create(req dto.CreateUserRequest, createdByID uint) (*dto.
 	}
 
 	if err := s.userRepo.Create(user); err != nil {
-		return nil, errors.New("erreur lors de la création de l'utilisateur")
+		// Retourner l'erreur réelle pour faciliter le débogage
+		return nil, fmt.Errorf("erreur lors de la création de l'utilisateur: %w", err)
 	}
 
 	// Récupérer l'utilisateur créé avec ses relations
@@ -282,6 +294,172 @@ func (s *userService) Deactivate(id uint) error {
 	}
 
 	return nil
+}
+
+// GetPermissions récupère les permissions d'un utilisateur
+func (s *userService) GetPermissions(userID uint) (*dto.UserPermissionsDTO, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return nil, errors.New("utilisateur introuvable")
+	}
+
+	userDTO := s.userToDTO(user)
+
+	// Pour l'instant, on retourne les permissions du rôle
+	// TODO: Implémenter la gestion des permissions personnalisées par utilisateur
+	permissions := []string{} // Les permissions seront récupérées depuis le rôle
+
+	permissionsDTO := &dto.UserPermissionsDTO{
+		UserID:      userID,
+		User:        &userDTO,
+		Permissions: permissions,
+	}
+
+	return permissionsDTO, nil
+}
+
+// UpdatePermissions met à jour les permissions d'un utilisateur
+func (s *userService) UpdatePermissions(userID uint, req dto.UpdateUserPermissionsRequest, updatedByID uint) (*dto.UserPermissionsDTO, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return nil, errors.New("utilisateur introuvable")
+	}
+
+	// TODO: Implémenter la sauvegarde des permissions personnalisées
+	// Pour l'instant, on retourne simplement les permissions demandées
+	userDTO := s.userToDTO(user)
+
+	permissionsDTO := &dto.UserPermissionsDTO{
+		UserID:      userID,
+		User:        &userDTO,
+		Permissions: req.Permissions,
+	}
+
+	return permissionsDTO, nil
+}
+
+// UploadAvatar upload un avatar pour un utilisateur
+func (s *userService) UploadAvatar(userID uint, fileName string, updatedByID uint) (*dto.UserDTO, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return nil, errors.New("utilisateur introuvable")
+	}
+
+	// Supprimer l'ancien avatar s'il existe
+	if user.Avatar != "" {
+		oldPath := filepath.Join(config.AppConfig.AvatarDir, user.Avatar)
+		if _, err := os.Stat(oldPath); err == nil {
+			os.Remove(oldPath)
+		}
+		// Supprimer aussi la miniature
+		thumbnailPath := strings.Replace(oldPath, filepath.Ext(oldPath), "_thumb"+filepath.Ext(oldPath), 1)
+		if _, err := os.Stat(thumbnailPath); err == nil {
+			os.Remove(thumbnailPath)
+		}
+	}
+
+	// Mettre à jour l'avatar dans la base de données (on stocke juste le nom du fichier)
+	user.Avatar = fileName
+	user.UpdatedByID = &updatedByID
+
+	if err := s.userRepo.Update(user); err != nil {
+		return nil, errors.New("erreur lors de la mise à jour de l'avatar")
+	}
+
+	updatedUser, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération de l'utilisateur mis à jour")
+	}
+
+	userDTO := s.userToDTO(updatedUser)
+	return &userDTO, nil
+}
+
+// GetAvatarPath récupère le chemin de l'avatar d'un utilisateur
+func (s *userService) GetAvatarPath(userID uint) (string, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return "", errors.New("utilisateur introuvable")
+	}
+
+	if user.Avatar == "" {
+		return "", errors.New("aucun avatar trouvé")
+	}
+
+	fullPath := filepath.Join(config.AppConfig.AvatarDir, user.Avatar)
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		return "", errors.New("fichier avatar introuvable")
+	}
+
+	return fullPath, nil
+}
+
+// GetAvatarThumbnailPath récupère le chemin de la miniature de l'avatar
+func (s *userService) GetAvatarThumbnailPath(userID uint) (string, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return "", errors.New("utilisateur introuvable")
+	}
+
+	if user.Avatar == "" {
+		return "", errors.New("aucun avatar trouvé")
+	}
+
+	// Générer le chemin de la miniature
+	avatarPath := filepath.Join(config.AppConfig.AvatarDir, user.Avatar)
+	ext := filepath.Ext(avatarPath)
+	thumbnailPath := strings.Replace(avatarPath, ext, "_thumb"+ext, 1)
+
+	if _, err := os.Stat(thumbnailPath); os.IsNotExist(err) {
+		// Si la miniature n'existe pas, retourner l'avatar original
+		if _, err := os.Stat(avatarPath); os.IsNotExist(err) {
+			return "", errors.New("fichier avatar introuvable")
+		}
+		return avatarPath, nil
+	}
+
+	return thumbnailPath, nil
+}
+
+// DeleteAvatar supprime l'avatar d'un utilisateur
+func (s *userService) DeleteAvatar(userID uint, updatedByID uint) (*dto.UserDTO, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return nil, errors.New("utilisateur introuvable")
+	}
+
+	if user.Avatar == "" {
+		return nil, errors.New("aucun avatar à supprimer")
+	}
+
+	// Supprimer le fichier
+	avatarPath := filepath.Join(config.AppConfig.AvatarDir, user.Avatar)
+	if _, err := os.Stat(avatarPath); err == nil {
+		os.Remove(avatarPath)
+	}
+
+	// Supprimer la miniature
+	ext := filepath.Ext(avatarPath)
+	thumbnailPath := strings.Replace(avatarPath, ext, "_thumb"+ext, 1)
+	if _, err := os.Stat(thumbnailPath); err == nil {
+		os.Remove(thumbnailPath)
+	}
+
+	// Mettre à jour dans la base de données
+	user.Avatar = ""
+	user.UpdatedByID = &updatedByID
+
+	if err := s.userRepo.Update(user); err != nil {
+		return nil, errors.New("erreur lors de la suppression de l'avatar")
+	}
+
+	updatedUser, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération de l'utilisateur mis à jour")
+	}
+
+	userDTO := s.userToDTO(updatedUser)
+	return &userDTO, nil
 }
 
 // userToDTO convertit un modèle User en DTO UserDTO

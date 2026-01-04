@@ -359,3 +359,157 @@ func (s *knowledgeArticleService) userToDTO(user *models.User) dto.UserDTO {
 
 	return userDTO
 }
+
+// knowledgeCategoryService implémente KnowledgeCategoryService
+type knowledgeCategoryService struct {
+	categoryRepo repositories.KnowledgeCategoryRepository
+	userRepo     repositories.UserRepository
+}
+
+// NewKnowledgeCategoryService crée une nouvelle instance de KnowledgeCategoryService
+func NewKnowledgeCategoryService(
+	categoryRepo repositories.KnowledgeCategoryRepository,
+	userRepo repositories.UserRepository,
+) KnowledgeCategoryService {
+	return &knowledgeCategoryService{
+		categoryRepo: categoryRepo,
+		userRepo:     userRepo,
+	}
+}
+
+// Create crée une nouvelle catégorie
+func (s *knowledgeCategoryService) Create(req dto.CreateKnowledgeCategoryRequest, createdByID uint) (*dto.KnowledgeCategoryDTO, error) {
+	category := &models.KnowledgeCategory{
+		Name:        req.Name,
+		Description: req.Description,
+		ParentID:    req.ParentID,
+		IsActive:    true,
+	}
+
+	if err := s.categoryRepo.Create(category); err != nil {
+		return nil, errors.New("erreur lors de la création de la catégorie")
+	}
+
+	createdCategory, err := s.categoryRepo.FindByID(category.ID)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération de la catégorie créée")
+	}
+
+	categoryDTO := s.categoryToDTO(createdCategory)
+	return &categoryDTO, nil
+}
+
+// GetByID récupère une catégorie par son ID
+func (s *knowledgeCategoryService) GetByID(id uint) (*dto.KnowledgeCategoryDTO, error) {
+	category, err := s.categoryRepo.FindByID(id)
+	if err != nil {
+		return nil, errors.New("catégorie introuvable")
+	}
+
+	categoryDTO := s.categoryToDTO(category)
+	return &categoryDTO, nil
+}
+
+// GetAll récupère toutes les catégories
+func (s *knowledgeCategoryService) GetAll() ([]dto.KnowledgeCategoryDTO, error) {
+	categories, err := s.categoryRepo.FindAll()
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des catégories")
+	}
+
+	var categoryDTOs []dto.KnowledgeCategoryDTO
+	for _, category := range categories {
+		categoryDTOs = append(categoryDTOs, s.categoryToDTO(&category))
+	}
+
+	return categoryDTOs, nil
+}
+
+// GetByParentID récupère les catégories enfants d'une catégorie parente
+func (s *knowledgeCategoryService) GetByParentID(parentID uint) ([]dto.KnowledgeCategoryDTO, error) {
+	categories, err := s.categoryRepo.FindByParentID(parentID)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des catégories")
+	}
+
+	var categoryDTOs []dto.KnowledgeCategoryDTO
+	for _, category := range categories {
+		categoryDTOs = append(categoryDTOs, s.categoryToDTO(&category))
+	}
+
+	return categoryDTOs, nil
+}
+
+// GetActive récupère toutes les catégories actives
+func (s *knowledgeCategoryService) GetActive() ([]dto.KnowledgeCategoryDTO, error) {
+	categories, err := s.categoryRepo.FindActive()
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des catégories")
+	}
+
+	var categoryDTOs []dto.KnowledgeCategoryDTO
+	for _, category := range categories {
+		categoryDTOs = append(categoryDTOs, s.categoryToDTO(&category))
+	}
+
+	return categoryDTOs, nil
+}
+
+// Update met à jour une catégorie
+func (s *knowledgeCategoryService) Update(id uint, req dto.UpdateKnowledgeCategoryRequest, updatedByID uint) (*dto.KnowledgeCategoryDTO, error) {
+	category, err := s.categoryRepo.FindByID(id)
+	if err != nil {
+		return nil, errors.New("catégorie introuvable")
+	}
+
+	if req.Name != "" {
+		category.Name = req.Name
+	}
+	if req.Description != "" {
+		category.Description = req.Description
+	}
+	if req.ParentID != nil {
+		category.ParentID = req.ParentID
+	}
+
+	if err := s.categoryRepo.Update(category); err != nil {
+		return nil, errors.New("erreur lors de la mise à jour de la catégorie")
+	}
+
+	updatedCategory, err := s.categoryRepo.FindByID(id)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération de la catégorie mise à jour")
+	}
+
+	categoryDTO := s.categoryToDTO(updatedCategory)
+	return &categoryDTO, nil
+}
+
+// Delete supprime une catégorie
+func (s *knowledgeCategoryService) Delete(id uint) error {
+	_, err := s.categoryRepo.FindByID(id)
+	if err != nil {
+		return errors.New("catégorie introuvable")
+	}
+
+	if err := s.categoryRepo.Delete(id); err != nil {
+		return errors.New("erreur lors de la suppression de la catégorie")
+	}
+
+	return nil
+}
+
+// categoryToDTO convertit un modèle KnowledgeCategory en DTO (pour knowledgeCategoryService)
+func (s *knowledgeCategoryService) categoryToDTO(category *models.KnowledgeCategory) dto.KnowledgeCategoryDTO {
+	categoryDTO := dto.KnowledgeCategoryDTO{
+		ID:          category.ID,
+		Name:        category.Name,
+		Description: category.Description,
+	}
+
+	if category.ParentID != nil {
+		categoryDTO.ParentID = category.ParentID
+	}
+
+	return categoryDTO
+}

@@ -16,8 +16,10 @@ type TicketService interface {
 	GetAll(page, limit int) (*dto.TicketListResponse, error)
 	GetByStatus(status string, page, limit int) (*dto.TicketListResponse, error)
 	GetByCategory(category string, page, limit int) (*dto.TicketListResponse, error)
+	GetBySource(source string, page, limit int) (*dto.TicketListResponse, error)
 	GetByAssignedTo(userID uint, page, limit int) (*dto.TicketListResponse, error)
 	GetByCreatedBy(userID uint, page, limit int) (*dto.TicketListResponse, error)
+	GetHistory(ticketID uint) ([]dto.TicketHistoryDTO, error)
 	Update(id uint, req dto.UpdateTicketRequest, updatedByID uint) (*dto.TicketDTO, error)
 	Assign(id uint, req dto.AssignTicketRequest, assignedByID uint) (*dto.TicketDTO, error)
 	ChangeStatus(id uint, status string, changedByID uint) (*dto.TicketDTO, error)
@@ -208,6 +210,54 @@ func (s *ticketService) GetByCreatedBy(userID uint, page, limit int) (*dto.Ticke
 			Total: int64(len(tickets)),
 		},
 	}, nil
+}
+
+// GetBySource récupère les tickets par source
+func (s *ticketService) GetBySource(source string, page, limit int) (*dto.TicketListResponse, error) {
+	tickets, err := s.ticketRepo.FindBySource(source)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des tickets")
+	}
+
+	ticketDTOs := make([]dto.TicketDTO, len(tickets))
+	for i, ticket := range tickets {
+		ticketDTOs[i] = s.ticketToDTO(&ticket)
+	}
+
+	return &dto.TicketListResponse{
+		Tickets: ticketDTOs,
+		Pagination: dto.PaginationDTO{
+			Page:  page,
+			Limit: limit,
+			Total: int64(len(tickets)),
+		},
+	}, nil
+}
+
+// GetHistory récupère l'historique d'un ticket
+func (s *ticketService) GetHistory(ticketID uint) ([]dto.TicketHistoryDTO, error) {
+	histories, err := s.historyRepo.FindByTicketID(ticketID)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération de l'historique")
+	}
+
+	historyDTOs := make([]dto.TicketHistoryDTO, len(histories))
+	for i, history := range histories {
+		userDTO := s.userToDTO(&history.User)
+		historyDTOs[i] = dto.TicketHistoryDTO{
+			ID:          history.ID,
+			TicketID:    history.TicketID,
+			User:        userDTO,
+			Action:      history.Action,
+			FieldName:   history.FieldName,
+			OldValue:    history.OldValue,
+			NewValue:    history.NewValue,
+			Description: history.Description,
+			CreatedAt:   history.CreatedAt,
+		}
+	}
+
+	return historyDTOs, nil
 }
 
 // Update met à jour un ticket

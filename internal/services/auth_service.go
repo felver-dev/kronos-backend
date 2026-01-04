@@ -13,6 +13,7 @@ import (
 
 // AuthService interface pour les opérations d'authentification
 type AuthService interface {
+	Register(req dto.RegisterRequest) (*dto.RegisterResponse, error)
 	Login(req dto.LoginRequest) (*dto.LoginResponse, error)
 	RefreshToken(refreshToken string) (string, error)
 	Logout(userID uint, tokenHash string) error
@@ -22,22 +23,117 @@ type AuthService interface {
 type authService struct {
 	userRepo    repositories.UserRepository
 	sessionRepo repositories.UserSessionRepository
+	roleRepo    repositories.RoleRepository
 }
 
 // NewAuthService crée une nouvelle instance de AuthService
-func NewAuthService(userRepo repositories.UserRepository, sessionRepo repositories.UserSessionRepository) AuthService {
+func NewAuthService(userRepo repositories.UserRepository, sessionRepo repositories.UserSessionRepository, roleRepo repositories.RoleRepository) AuthService {
 	return &authService{
 		userRepo:    userRepo,
 		sessionRepo: sessionRepo,
+		roleRepo:    roleRepo,
 	}
+}
+
+// Register crée un nouveau compte utilisateur et connecte automatiquement l'utilisateur
+func (s *authService) Register(req dto.RegisterRequest) (*dto.RegisterResponse, error) {
+	// Vérifier que l'username n'existe pas déjà
+	existingUser, _ := s.userRepo.FindByUsername(req.Username)
+	if existingUser != nil {
+		return nil, errors.New("ce nom d'utilisateur est déjà utilisé")
+	}
+
+	// Vérifier que l'email n'existe pas déjà
+	existingUser, _ = s.userRepo.FindByEmail(req.Email)
+	if existingUser != nil {
+		return nil, errors.New("cet email est déjà utilisé")
+	}
+
+	// Trouver le rôle par défaut (chercher "USER" ou "CLIENT", sinon prendre le premier rôle disponible)
+	defaultRole, err := s.roleRepo.FindByName("USER")
+	if err != nil {
+		// Si "USER" n'existe pas, essayer "CLIENT"
+		defaultRole, err = s.roleRepo.FindByName("CLIENT")
+		if err != nil {
+			// Si aucun rôle par défaut n'existe, récupérer tous les rôles et prendre le premier
+			roles, err := s.roleRepo.FindAll()
+			if err != nil || len(roles) == 0 {
+				return nil, errors.New("aucun rôle disponible dans le système")
+			}
+			defaultRole = &roles[0]
+		}
+	}
+
+	// Hasher le mot de passe
+	passwordHash, err := utils.HashPassword(req.Password)
+	if err != nil {
+		return nil, errors.New("erreur lors du hashage du mot de passe")
+	}
+
+	// Créer l'utilisateur (sans createdByID pour l'inscription publique)
+	user := &models.User{
+		Username:     req.Username,
+		Email:        req.Email,
+		PasswordHash: passwordHash,
+		FirstName:    req.FirstName,
+		LastName:     req.LastName,
+		RoleID:       defaultRole.ID,
+		IsActive:     true, // Par défaut actif
+		CreatedByID:  nil, // Pas de créateur pour l'inscription publique
+	}
+
+	if err := s.userRepo.Create(user); err != nil {
+		return nil, errors.New("erreur lors de la création du compte")
+	}
+
+	// Récupérer l'utilisateur créé avec ses relations
+	createdUser, err := s.userRepo.FindByID(user.ID)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération de l'utilisateur créé")
+	}
+
+	// Générer le token JWT
+	token, err := utils.GenerateToken(createdUser.ID, createdUser.Username, createdUser.Role.Name)
+	if err != nil {
+		return nil, errors.New("erreur lors de la génération du token")
+	}
+
+	// Générer le refresh token
+	refreshToken, err := utils.GenerateRefreshToken(createdUser.ID)
+	if err != nil {
+		return nil, errors.New("erreur lors de la génération du refresh token")
+	}
+
+	// Créer une session utilisateur
+	expiresAt := time.Now().Add(time.Duration(config.AppConfig.JWTExpirationHours) * time.Hour)
+	session := &models.UserSession{
+		UserID:           createdUser.ID,
+		TokenHash:        utils.HashString(token),
+		RefreshTokenHash: utils.HashString(refreshToken),
+		ExpiresAt:        expiresAt,
+		LastActivity:     time.Now(),
+	}
+	if err := s.sessionRepo.Create(session); err != nil {
+		return nil, errors.New("erreur lors de la création de la session")
+	}
+
+	// Convertir l'utilisateur en DTO
+	userDTO := s.userToDTO(createdUser)
+
+	// Retourner la réponse
+	return &dto.RegisterResponse{
+		Token:        token,
+		RefreshToken: refreshToken,
+		User:         userDTO,
+	}, nil
 }
 
 // Login authentifie un utilisateur et retourne un token JWT
 func (s *authService) Login(req dto.LoginRequest) (*dto.LoginResponse, error) {
-	// Trouver l'utilisateur par username
-	user, err := s.userRepo.FindByUsername(req.Username)
+	// Trouver l'utilisateur par email
+	user, err := s.userRepo.FindByEmail(req.Email)
 	if err != nil {
-		return nil, errors.New("nom d'utilisateur ou mot de passe incorrect")
+		return nil, errors.New("email ou mot de passe incorrect")
 	}
 
 	// Vérifier si l'utilisateur est actif
@@ -47,7 +143,7 @@ func (s *authService) Login(req dto.LoginRequest) (*dto.LoginResponse, error) {
 
 	// Vérifier le mot de passe
 	if !utils.CheckPasswordHash(req.Password, user.PasswordHash) {
-		return nil, errors.New("nom d'utilisateur ou mot de passe incorrect")
+		return nil, errors.New("email ou mot de passe incorrect")
 	}
 
 	// Générer le token JWT

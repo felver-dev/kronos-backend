@@ -22,6 +22,13 @@ type DelayService interface {
 	UpdateJustification(id uint, req dto.UpdateDelayJustificationRequest, userID uint) (*dto.DelayJustificationDTO, error)
 	ValidateJustification(id uint, req dto.ValidateDelayJustificationRequest, validatedByID uint) (*dto.DelayJustificationDTO, error)
 	GetJustificationByDelayID(delayID uint) (*dto.DelayJustificationDTO, error)
+	DeleteJustification(delayID uint, userID uint) error
+	GetJustificationsByUserID(userID uint) ([]dto.DelayJustificationDTO, error)
+	GetJustificationByTicketID(ticketID uint) (*dto.DelayJustificationDTO, error)
+	GetValidatedJustifications() ([]dto.DelayJustificationDTO, error)
+	GetRejectedJustifications() ([]dto.DelayJustificationDTO, error)
+	GetJustificationsHistory() ([]dto.DelayJustificationDTO, error)
+	RejectJustification(delayID uint, req dto.ValidateDelayJustificationRequest, rejectedByID uint) (*dto.DelayJustificationDTO, error)
 	GetStatusStats() (*dto.DelayStatusStatsDTO, error)
 }
 
@@ -290,6 +297,133 @@ func (s *delayService) GetJustificationByDelayID(delayID uint) (*dto.DelayJustif
 
 	justificationDTO := s.justificationToDTO(justification)
 	return &justificationDTO, nil
+}
+
+// DeleteJustification supprime une justification
+func (s *delayService) DeleteJustification(delayID uint, userID uint) error {
+	justification, err := s.delayJustificationRepo.FindByDelayID(delayID)
+	if err != nil {
+		return errors.New("justification introuvable")
+	}
+
+	// Vérifier que l'utilisateur est le créateur de la justification
+	if justification.UserID != userID {
+		return errors.New("vous n'êtes pas autorisé à supprimer cette justification")
+	}
+
+	// Vérifier que la justification n'est pas déjà validée ou rejetée
+	if justification.Status != "pending" {
+		return errors.New("impossible de supprimer une justification déjà validée ou rejetée")
+	}
+
+	if err := s.delayJustificationRepo.Delete(justification.ID); err != nil {
+		return errors.New("erreur lors de la suppression de la justification")
+	}
+
+	// Remettre le statut du retard à unjustified
+	delay, err := s.delayRepo.FindByID(delayID)
+	if err == nil {
+		delay.Status = "unjustified"
+		s.delayRepo.Update(delay)
+	}
+
+	return nil
+}
+
+// GetJustificationsByUserID récupère les justifications d'un utilisateur
+func (s *delayService) GetJustificationsByUserID(userID uint) ([]dto.DelayJustificationDTO, error) {
+	justifications, err := s.delayJustificationRepo.FindByUserID(userID)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des justifications")
+	}
+
+	justificationDTOs := make([]dto.DelayJustificationDTO, len(justifications))
+	for i, justification := range justifications {
+		justificationDTOs[i] = s.justificationToDTO(&justification)
+	}
+
+	return justificationDTOs, nil
+}
+
+// GetJustificationByTicketID récupère la justification d'un ticket
+func (s *delayService) GetJustificationByTicketID(ticketID uint) (*dto.DelayJustificationDTO, error) {
+	delay, err := s.delayRepo.FindByTicketID(ticketID)
+	if err != nil {
+		return nil, errors.New("retard introuvable pour ce ticket")
+	}
+
+	if delay.Justification == nil {
+		return nil, errors.New("aucune justification trouvée pour ce ticket")
+	}
+
+	justificationDTO := s.justificationToDTO(delay.Justification)
+	return &justificationDTO, nil
+}
+
+// GetValidatedJustifications récupère les justifications validées
+func (s *delayService) GetValidatedJustifications() ([]dto.DelayJustificationDTO, error) {
+	justifications, err := s.delayJustificationRepo.FindValidated()
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des justifications validées")
+	}
+
+	justificationDTOs := make([]dto.DelayJustificationDTO, len(justifications))
+	for i, justification := range justifications {
+		justificationDTOs[i] = s.justificationToDTO(&justification)
+	}
+
+	return justificationDTOs, nil
+}
+
+// GetRejectedJustifications récupère les justifications rejetées
+func (s *delayService) GetRejectedJustifications() ([]dto.DelayJustificationDTO, error) {
+	justifications, err := s.delayJustificationRepo.FindRejected()
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des justifications rejetées")
+	}
+
+	justificationDTOs := make([]dto.DelayJustificationDTO, len(justifications))
+	for i, justification := range justifications {
+		justificationDTOs[i] = s.justificationToDTO(&justification)
+	}
+
+	return justificationDTOs, nil
+}
+
+// GetJustificationsHistory récupère l'historique de toutes les justifications
+func (s *delayService) GetJustificationsHistory() ([]dto.DelayJustificationDTO, error) {
+	justifications, err := s.delayJustificationRepo.FindAll()
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération de l'historique")
+	}
+
+	justificationDTOs := make([]dto.DelayJustificationDTO, len(justifications))
+	for i, justification := range justifications {
+		justificationDTOs[i] = s.justificationToDTO(&justification)
+	}
+
+	return justificationDTOs, nil
+}
+
+// RejectJustification rejette une justification
+func (s *delayService) RejectJustification(delayID uint, req dto.ValidateDelayJustificationRequest, rejectedByID uint) (*dto.DelayJustificationDTO, error) {
+	justification, err := s.delayJustificationRepo.FindByDelayID(delayID)
+	if err != nil {
+		return nil, errors.New("justification introuvable")
+	}
+
+	// Vérifier que la justification est en attente
+	if justification.Status != "pending" {
+		return nil, errors.New("la justification a déjà été traitée")
+	}
+
+	// Rejeter la justification
+	rejectReq := dto.ValidateDelayJustificationRequest{
+		Validated: false,
+		Comment:   req.Comment,
+	}
+
+	return s.ValidateJustification(justification.ID, rejectReq, rejectedByID)
 }
 
 // GetStatusStats récupère les statistiques de retards par statut
