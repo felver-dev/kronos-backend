@@ -1,10 +1,13 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
+	"gorm.io/gorm"
 	"github.com/mcicare/itsm-backend/internal/models"
+	"github.com/mcicare/itsm-backend/internal/utils"
 )
 
 // AutoMigrate exécute les migrations automatiques pour créer les tables
@@ -96,9 +99,137 @@ func AutoMigrate() error {
 		return fmt.Errorf("échec des migrations: %w", err)
 	}
 
+	// Seed des rôles par défaut
+	if err := seedDefaultRoles(); err != nil {
+		log.Printf("⚠️  Erreur lors du seeding des rôles: %v", err)
+		// Ne pas bloquer les migrations si le seeding échoue
+	}
+
+	// Seed de l'utilisateur admin par défaut
+	if err := seedDefaultAdmin(); err != nil {
+		log.Printf("⚠️  Erreur lors du seeding de l'admin: %v", err)
+		// Ne pas bloquer les migrations si le seeding échoue
+	}
+
 	log.Println("✅ Migrations automatiques terminées avec succès")
 	log.Println("   Toutes les tables ont été créées avec leurs relations")
 
+	return nil
+}
+
+// seedDefaultRoles crée les rôles par défaut s'ils n'existent pas
+func seedDefaultRoles() error {
+	if DB == nil {
+		return fmt.Errorf("la base de données n'est pas initialisée")
+	}
+
+	log.Println("🌱 Seeding des rôles par défaut...")
+
+	defaultRoles := []models.Role{
+		{
+			Name:        "DSI",
+			Description: "DSI / Administrateur - Accès total",
+			IsSystem:    true,
+		},
+		{
+			Name:        "RESPONSABLE_IT",
+			Description: "Responsable IT - Supervision et validation",
+			IsSystem:    true,
+		},
+		{
+			Name:        "TECHNICIEN_IT",
+			Description: "Technicien IT - Traitement des tickets",
+			IsSystem:    true,
+		},
+		{
+			Name:        "USER",
+			Description: "Utilisateur standard - Accès limité",
+			IsSystem:    true,
+		},
+		{
+			Name:        "CLIENT",
+			Description: "Client - Accès client",
+			IsSystem:    true,
+		},
+	}
+
+	for _, role := range defaultRoles {
+		var existingRole models.Role
+		result := DB.Where("name = ?", role.Name).First(&existingRole)
+		
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			// Le rôle n'existe pas, le créer
+			if err := DB.Create(&role).Error; err != nil {
+				log.Printf("⚠️  Erreur lors de la création du rôle %s: %v", role.Name, err)
+			} else {
+				log.Printf("   ✅ Rôle créé: %s", role.Name)
+			}
+		} else if result.Error != nil {
+			// Autre erreur
+			log.Printf("⚠️  Erreur lors de la vérification du rôle %s: %v", role.Name, result.Error)
+		} else {
+			log.Printf("   ℹ️  Rôle déjà existant: %s", role.Name)
+		}
+	}
+
+	log.Println("✅ Seeding des rôles terminé")
+	return nil
+}
+
+// seedDefaultAdmin crée l'utilisateur admin par défaut s'il n'existe pas
+func seedDefaultAdmin() error {
+	if DB == nil {
+		return fmt.Errorf("la base de données n'est pas initialisée")
+	}
+
+	log.Println("🌱 Seeding de l'utilisateur admin par défaut...")
+
+	// Vérifier si l'admin existe déjà
+	var existingAdmin models.User
+	result := DB.Where("email = ?", "admin@mcicareci.com").First(&existingAdmin)
+	
+	if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		if result.Error == nil {
+			log.Println("   ℹ️  Utilisateur admin déjà existant")
+			return nil
+		}
+		// Autre erreur
+		return fmt.Errorf("erreur lors de la vérification de l'admin: %w", result.Error)
+	}
+
+	// Récupérer le rôle DSI
+	var dsiRole models.Role
+	if err := DB.Where("name = ?", "DSI").First(&dsiRole).Error; err != nil {
+		return fmt.Errorf("le rôle DSI n'existe pas, veuillez d'abord exécuter le seeding des rôles: %w", err)
+	}
+
+	// Hasher le mot de passe
+	passwordHash, err := utils.HashPassword("admin12345")
+	if err != nil {
+		return fmt.Errorf("erreur lors du hashage du mot de passe: %w", err)
+	}
+
+	// Créer l'utilisateur admin
+	admin := models.User{
+		Username:     "admin",
+		Email:        "admin@mcicareci.com",
+		PasswordHash: passwordHash,
+		FirstName:    "Administrateur",
+		LastName:     "Système",
+		RoleID:       dsiRole.ID,
+		IsActive:     true,
+		CreatedByID:  nil, // Pas de créateur pour l'admin système
+	}
+
+	if err := DB.Create(&admin).Error; err != nil {
+		return fmt.Errorf("erreur lors de la création de l'admin: %w", err)
+	}
+
+	log.Println("   ✅ Utilisateur admin créé:")
+	log.Printf("      Email: admin@mcicareci.com")
+	log.Printf("      Mot de passe: admin12345")
+	log.Printf("      Rôle: DSI")
+	log.Println("✅ Seeding de l'admin terminé")
 	return nil
 }
 
