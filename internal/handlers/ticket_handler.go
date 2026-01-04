@@ -366,3 +366,246 @@ func (h *TicketHandler) GetComments(c *gin.Context) {
 
 	utils.SuccessResponse(c, comments, "Commentaires récupérés avec succès")
 }
+
+// Reassign réassigne un ticket à un autre utilisateur
+// @Summary Réassigner un ticket
+// @Description Réassigne un ticket à un autre technicien
+// @Tags tickets
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "ID du ticket"
+// @Param request body dto.AssignTicketRequest true "Données de réassignation"
+// @Success 200 {object} dto.TicketDTO
+// @Failure 400 {object} utils.Response
+// @Router /tickets/{id}/reassign [post]
+func (h *TicketHandler) Reassign(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	var req dto.AssignTicketRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
+		return
+	}
+
+	reassignedByID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
+	ticket, err := h.ticketService.Assign(uint(id), req, reassignedByID.(uint))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, ticket, "Ticket réassigné avec succès")
+}
+
+// GetHistory récupère l'historique d'un ticket
+// @Summary Récupérer l'historique d'un ticket
+// @Description Récupère l'historique complet des modifications d'un ticket
+// @Tags tickets
+// @Security BearerAuth
+// @Produce json
+// @Param id path int true "ID du ticket"
+// @Success 200 {array} dto.TicketHistoryDTO
+// @Failure 404 {object} utils.Response
+// @Router /tickets/{id}/history [get]
+func (h *TicketHandler) GetHistory(c *gin.Context) {
+	idParam := c.Param("id")
+	ticketID, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID invalide")
+		return
+	}
+
+	history, err := h.ticketService.GetHistory(uint(ticketID))
+	if err != nil {
+		utils.NotFoundResponse(c, "Ticket introuvable")
+		return
+	}
+
+	utils.SuccessResponse(c, history, "Historique récupéré avec succès")
+}
+
+// GetBySource récupère les tickets par source
+// @Summary Récupérer les tickets par source
+// @Description Récupère les tickets filtrés par source (mail, appel, direct)
+// @Tags tickets
+// @Security BearerAuth
+// @Produce json
+// @Param source path string true "Source (mail, appel, direct)"
+// @Param page query int false "Numéro de page" default(1)
+// @Param limit query int false "Nombre d'éléments par page" default(20)
+// @Success 200 {object} dto.TicketListResponse
+// @Failure 400 {object} utils.Response
+// @Router /tickets/by-source/{source} [get]
+func (h *TicketHandler) GetBySource(c *gin.Context) {
+	source := c.Param("source")
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
+
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 100 {
+		limit = 20
+	}
+
+	response, err := h.ticketService.GetBySource(source, page, limit)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, response, "Tickets récupérés avec succès")
+}
+
+// GetByCategory récupère les tickets par catégorie
+// @Summary Récupérer les tickets par catégorie
+// @Description Récupère les tickets filtrés par catégorie (incident, demande, changement, developpement)
+// @Tags tickets
+// @Security BearerAuth
+// @Produce json
+// @Param category path string true "Catégorie (incident, demande, changement, developpement)"
+// @Param page query int false "Numéro de page" default(1)
+// @Param limit query int false "Nombre d'éléments par page" default(20)
+// @Success 200 {object} dto.TicketListResponse
+// @Failure 400 {object} utils.Response
+// @Router /tickets/by-category/{category} [get]
+func (h *TicketHandler) GetByCategory(c *gin.Context) {
+	category := c.Param("category")
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
+
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 100 {
+		limit = 20
+	}
+
+	response, err := h.ticketService.GetByCategory(category, page, limit)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, response, "Tickets récupérés avec succès")
+}
+
+// GetByStatus récupère les tickets par statut
+// @Summary Récupérer les tickets par statut
+// @Description Récupère les tickets filtrés par statut (ouvert, en_cours, en_attente, cloture)
+// @Tags tickets
+// @Security BearerAuth
+// @Produce json
+// @Param status path string true "Statut (ouvert, en_cours, en_attente, cloture)"
+// @Param page query int false "Numéro de page" default(1)
+// @Param limit query int false "Nombre d'éléments par page" default(20)
+// @Success 200 {object} dto.TicketListResponse
+// @Failure 400 {object} utils.Response
+// @Router /tickets/by-status/{status} [get]
+func (h *TicketHandler) GetByStatus(c *gin.Context) {
+	status := c.Param("status")
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
+
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 100 {
+		limit = 20
+	}
+
+	response, err := h.ticketService.GetByStatus(status, page, limit)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, response, "Tickets récupérés avec succès")
+}
+
+// GetByAssignee récupère les tickets assignés à un utilisateur
+// @Summary Récupérer les tickets par assigné
+// @Description Récupère les tickets assignés à un utilisateur spécifique
+// @Tags tickets
+// @Security BearerAuth
+// @Produce json
+// @Param userId path int true "ID de l'utilisateur"
+// @Param page query int false "Numéro de page" default(1)
+// @Param limit query int false "Nombre d'éléments par page" default(20)
+// @Success 200 {object} dto.TicketListResponse
+// @Failure 400 {object} utils.Response
+// @Router /tickets/by-assignee/{userId} [get]
+func (h *TicketHandler) GetByAssignee(c *gin.Context) {
+	userIDParam := c.Param("userId")
+	userID, err := strconv.ParseUint(userIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID utilisateur invalide")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
+
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 100 {
+		limit = 20
+	}
+
+	response, err := h.ticketService.GetByAssignedTo(uint(userID), page, limit)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, response, "Tickets récupérés avec succès")
+}
+
+// GetMyTickets récupère les tickets de l'utilisateur connecté
+// @Summary Récupérer mes tickets
+// @Description Récupère les tickets assignés à l'utilisateur connecté
+// @Tags tickets
+// @Security BearerAuth
+// @Produce json
+// @Param page query int false "Numéro de page" default(1)
+// @Param limit query int false "Nombre d'éléments par page" default(20)
+// @Success 200 {object} dto.TicketListResponse
+// @Failure 400 {object} utils.Response
+// @Router /tickets/my-tickets [get]
+func (h *TicketHandler) GetMyTickets(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
+
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 100 {
+		limit = 20
+	}
+
+	response, err := h.ticketService.GetByAssignedTo(userID.(uint), page, limit)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
+		return
+	}
+
+	utils.SuccessResponse(c, response, "Tickets récupérés avec succès")
+}
