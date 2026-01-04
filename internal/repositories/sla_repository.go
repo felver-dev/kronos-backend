@@ -22,6 +22,7 @@ type TicketSLARepository interface {
 	Create(ticketSLA *models.TicketSLA) error
 	FindByID(id uint) (*models.TicketSLA, error)
 	FindByTicketID(ticketID uint) (*models.TicketSLA, error)
+	FindBySLAID(slaID uint) ([]models.TicketSLA, error)
 	FindAll() ([]models.TicketSLA, error)
 	FindByStatus(status string) ([]models.TicketSLA, error)
 	FindViolated() ([]models.TicketSLA, error)
@@ -130,6 +131,13 @@ func (r *ticketSLARepository) FindByTicketID(ticketID uint) (*models.TicketSLA, 
 		return nil, err
 	}
 	return &ticketSLA, nil
+}
+
+// FindBySLAID trouve toutes les associations ticket-SLA par l'ID du SLA
+func (r *ticketSLARepository) FindBySLAID(slaID uint) ([]models.TicketSLA, error) {
+	var ticketSLAs []models.TicketSLA
+	err := database.DB.Preload("Ticket").Preload("SLA").Where("sla_id = ?", slaID).Find(&ticketSLAs).Error
+	return ticketSLAs, err
 }
 
 // FindAll récupère toutes les associations ticket-SLA

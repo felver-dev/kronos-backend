@@ -54,10 +54,10 @@ func (r *ticketAttachmentRepository) FindByUserID(userID uint) ([]models.TicketA
 	return attachments, err
 }
 
-// FindPrimaryByTicketID trouve l'image principale d'un ticket
+// FindPrimaryByTicketID trouve l'image principale d'un ticket (celle avec display_order = 0)
 func (r *ticketAttachmentRepository) FindPrimaryByTicketID(ticketID uint) (*models.TicketAttachment, error) {
 	var attachment models.TicketAttachment
-	err := database.DB.Preload("User").Where("ticket_id = ? AND is_primary = ?", ticketID, true).First(&attachment).Error
+	err := database.DB.Preload("User").Where("ticket_id = ? AND is_image = ? AND display_order = ?", ticketID, true, 0).First(&attachment).Error
 	if err != nil {
 		return nil, err
 	}

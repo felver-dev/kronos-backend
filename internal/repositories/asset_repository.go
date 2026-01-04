@@ -14,6 +14,7 @@ type AssetRepository interface {
 	FindByStatus(status string) ([]models.Asset, error)
 	FindByAssignedTo(userID uint) ([]models.Asset, error)
 	FindBySerialNumber(serialNumber string) (*models.Asset, error)
+	Search(query string, category string, limit int) ([]models.Asset, error)
 	Update(asset *models.Asset) error
 	Delete(id uint) error
 }
@@ -105,6 +106,27 @@ func (r *assetRepository) Update(asset *models.Asset) error {
 // Delete supprime un actif (soft delete)
 func (r *assetRepository) Delete(id uint) error {
 	return database.DB.Delete(&models.Asset{}, id).Error
+}
+
+// Search recherche des actifs par nom, description ou numéro de série
+func (r *assetRepository) Search(query string, category string, limit int) ([]models.Asset, error) {
+	var assets []models.Asset
+	searchPattern := "%" + query + "%"
+	
+	db := database.DB.Preload("Category").Preload("AssignedTo").Preload("AssignedTo.Role").
+		Where("name LIKE ? OR description LIKE ? OR serial_number LIKE ?", searchPattern, searchPattern, searchPattern)
+	
+	if category != "" {
+		db = db.Joins("JOIN asset_categories ON assets.category_id = asset_categories.id").
+			Where("asset_categories.name = ?", category)
+	}
+	
+	if limit > 0 {
+		db = db.Limit(limit)
+	}
+	
+	err := db.Order("created_at DESC").Find(&assets).Error
+	return assets, err
 }
 
 // Create crée une nouvelle catégorie d'actif

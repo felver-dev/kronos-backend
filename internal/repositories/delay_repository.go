@@ -26,6 +26,9 @@ type DelayJustificationRepository interface {
 	FindAll() ([]models.DelayJustification, error)
 	FindByStatus(status string) ([]models.DelayJustification, error)
 	FindPending() ([]models.DelayJustification, error)
+	FindByUserID(userID uint) ([]models.DelayJustification, error)
+	FindValidated() ([]models.DelayJustification, error)
+	FindRejected() ([]models.DelayJustification, error)
 	Update(justification *models.DelayJustification) error
 	Delete(id uint) error
 }
@@ -54,7 +57,7 @@ func (r *delayRepository) Create(delay *models.Delay) error {
 // FindByID trouve un retard par son ID
 func (r *delayRepository) FindByID(id uint) (*models.Delay, error) {
 	var delay models.Delay
-	err := database.DB.Preload("Ticket").Preload("User").Preload("Justification").Preload("Justification.User").Preload("Justification.Validator").First(&delay, id).Error
+	err := database.DB.Preload("Ticket").Preload("User").Preload("Justification").Preload("Justification.User").Preload("Justification.ValidatedBy").First(&delay, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +120,7 @@ func (r *delayJustificationRepository) Create(justification *models.DelayJustifi
 // FindByID trouve une justification par son ID
 func (r *delayJustificationRepository) FindByID(id uint) (*models.DelayJustification, error) {
 	var justification models.DelayJustification
-	err := database.DB.Preload("Delay").Preload("Delay.Ticket").Preload("User").Preload("Validator").Preload("Attachments").First(&justification, id).Error
+	err := database.DB.Preload("Delay").Preload("Delay.Ticket").Preload("User").Preload("ValidatedBy").First(&justification, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +130,7 @@ func (r *delayJustificationRepository) FindByID(id uint) (*models.DelayJustifica
 // FindByDelayID trouve une justification par l'ID du retard
 func (r *delayJustificationRepository) FindByDelayID(delayID uint) (*models.DelayJustification, error) {
 	var justification models.DelayJustification
-	err := database.DB.Preload("Delay").Preload("User").Preload("Validator").Preload("Attachments").Where("delay_id = ?", delayID).First(&justification).Error
+	err := database.DB.Preload("Delay").Preload("User").Preload("ValidatedBy").Where("delay_id = ?", delayID).First(&justification).Error
 	if err != nil {
 		return nil, err
 	}
@@ -137,14 +140,14 @@ func (r *delayJustificationRepository) FindByDelayID(delayID uint) (*models.Dela
 // FindAll récupère toutes les justifications
 func (r *delayJustificationRepository) FindAll() ([]models.DelayJustification, error) {
 	var justifications []models.DelayJustification
-	err := database.DB.Preload("Delay").Preload("User").Preload("Validator").Find(&justifications).Error
+	err := database.DB.Preload("Delay").Preload("User").Preload("ValidatedBy").Find(&justifications).Error
 	return justifications, err
 }
 
 // FindByStatus récupère les justifications par statut
 func (r *delayJustificationRepository) FindByStatus(status string) ([]models.DelayJustification, error) {
 	var justifications []models.DelayJustification
-	err := database.DB.Preload("Delay").Preload("User").Preload("Validator").Where("status = ?", status).Find(&justifications).Error
+	err := database.DB.Preload("Delay").Preload("User").Preload("ValidatedBy").Where("status = ?", status).Find(&justifications).Error
 	return justifications, err
 }
 
@@ -152,6 +155,27 @@ func (r *delayJustificationRepository) FindByStatus(status string) ([]models.Del
 func (r *delayJustificationRepository) FindPending() ([]models.DelayJustification, error) {
 	var justifications []models.DelayJustification
 	err := database.DB.Preload("Delay").Preload("User").Where("status = ?", "pending").Find(&justifications).Error
+	return justifications, err
+}
+
+// FindByUserID récupère les justifications d'un utilisateur
+func (r *delayJustificationRepository) FindByUserID(userID uint) ([]models.DelayJustification, error) {
+	var justifications []models.DelayJustification
+	err := database.DB.Preload("Delay").Preload("Delay.Ticket").Preload("User").Preload("ValidatedBy").Where("user_id = ?", userID).Order("created_at DESC").Find(&justifications).Error
+	return justifications, err
+}
+
+// FindValidated récupère les justifications validées
+func (r *delayJustificationRepository) FindValidated() ([]models.DelayJustification, error) {
+	var justifications []models.DelayJustification
+	err := database.DB.Preload("Delay").Preload("Delay.Ticket").Preload("User").Preload("ValidatedBy").Where("status = ?", "validated").Order("validated_at DESC").Find(&justifications).Error
+	return justifications, err
+}
+
+// FindRejected récupère les justifications rejetées
+func (r *delayJustificationRepository) FindRejected() ([]models.DelayJustification, error) {
+	var justifications []models.DelayJustification
+	err := database.DB.Preload("Delay").Preload("Delay.Ticket").Preload("User").Preload("ValidatedBy").Where("status = ?", "rejected").Order("validated_at DESC").Find(&justifications).Error
 	return justifications, err
 }
 

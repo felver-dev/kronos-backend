@@ -15,10 +15,12 @@ type TicketRepository interface {
 	FindByPriority(priority string) ([]models.Ticket, error)
 	FindByAssignedTo(userID uint) ([]models.Ticket, error)
 	FindByCreatedBy(userID uint) ([]models.Ticket, error)
+	FindBySource(source string) ([]models.Ticket, error)
 	Update(ticket *models.Ticket) error
 	Delete(id uint) error
 	CountByStatus(status string) (int64, error)
 	CountByCategory(category string) (int64, error)
+	Search(query string, status string, limit int) ([]models.Ticket, error)
 }
 
 // ticketRepository implémente TicketRepository
@@ -86,6 +88,13 @@ func (r *ticketRepository) FindByCreatedBy(userID uint) ([]models.Ticket, error)
 	return tickets, err
 }
 
+// FindBySource récupère les tickets par source
+func (r *ticketRepository) FindBySource(source string) ([]models.Ticket, error) {
+	var tickets []models.Ticket
+	err := database.DB.Preload("CreatedBy").Preload("AssignedTo").Where("source = ?", source).Find(&tickets).Error
+	return tickets, err
+}
+
 // Update met à jour un ticket
 func (r *ticketRepository) Update(ticket *models.Ticket) error {
 	return database.DB.Save(ticket).Error
@@ -108,4 +117,24 @@ func (r *ticketRepository) CountByCategory(category string) (int64, error) {
 	var count int64
 	err := database.DB.Model(&models.Ticket{}).Where("category = ?", category).Count(&count).Error
 	return count, err
+}
+
+// Search recherche des tickets par titre ou description
+func (r *ticketRepository) Search(query string, status string, limit int) ([]models.Ticket, error) {
+	var tickets []models.Ticket
+	searchPattern := "%" + query + "%"
+	
+	db := database.DB.Preload("CreatedBy").Preload("CreatedBy.Role").Preload("AssignedTo").Preload("AssignedTo.Role").
+		Where("title LIKE ? OR description LIKE ?", searchPattern, searchPattern)
+	
+	if status != "" {
+		db = db.Where("status = ?", status)
+	}
+	
+	if limit > 0 {
+		db = db.Limit(limit)
+	}
+	
+	err := db.Order("created_at DESC").Find(&tickets).Error
+	return tickets, err
 }
