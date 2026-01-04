@@ -70,10 +70,60 @@ definitions:
       warranty_expiry:
         type: string
     type: object
+  dto.AssetInventoryDTO:
+    properties:
+      assigned:
+        description: Nombre d'actifs assignés
+        type: integer
+      available:
+        description: Nombre d'actifs disponibles
+        type: integer
+      by_category:
+        additionalProperties:
+          type: integer
+        description: Répartition par catégorie
+        type: object
+      by_status:
+        additionalProperties:
+          type: integer
+        description: Répartition par statut
+        type: object
+      total:
+        description: Nombre total d'actifs
+        type: integer
+    type: object
+  dto.AssetSearchResultDTO:
+    properties:
+      category:
+        $ref: '#/definitions/dto.AssetCategoryDTO'
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      serial_number:
+        type: string
+      snippet:
+        description: Extrait de la description correspondant
+        type: string
+      status:
+        type: string
+    type: object
   dto.AssignAssetRequest:
     properties:
       user_id:
         description: ID de l'utilisateur (obligatoire)
+        type: integer
+    required:
+    - user_id
+    type: object
+  dto.AssignResponsibleRequest:
+    properties:
+      user_id:
+        description: ID de l'utilisateur responsable (obligatoire)
         type: integer
     required:
     - user_id
@@ -89,6 +139,59 @@ definitions:
     required:
     - user_id
     type: object
+  dto.AuditLogDTO:
+    properties:
+      action:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      entity_id:
+        type: integer
+      entity_type:
+        type: string
+      id:
+        type: integer
+      ip_address:
+        type: string
+      new_values:
+        type: object
+      old_values:
+        type: object
+      user:
+        $ref: '#/definitions/dto.UserDTO'
+      user_agent:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  dto.AuditLogListResponse:
+    properties:
+      logs:
+        items:
+          $ref: '#/definitions/dto.AuditLogDTO'
+        type: array
+      pagination:
+        $ref: '#/definitions/dto.PaginationDTO'
+    type: object
+  dto.AuditTrailDTO:
+    properties:
+      action:
+        type: string
+      created_at:
+        type: string
+      details:
+        type: string
+      entity_id:
+        type: integer
+      entity_type:
+        type: string
+      id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
   dto.AverageResolutionTimeDTO:
     properties:
       average_time:
@@ -103,6 +206,67 @@ definitions:
       unit:
         description: minutes
         type: string
+    type: object
+  dto.BackupConfigurationDTO:
+    properties:
+      auto_backup:
+        description: Si la sauvegarde automatique est activée
+        type: boolean
+      frequency:
+        description: daily, weekly, monthly
+        type: string
+      last_backup:
+        type: string
+      next_backup:
+        type: string
+      retention:
+        description: Nombre de jours de rétention
+        type: integer
+      time:
+        description: 'Heure de sauvegarde (format: HH:MM)'
+        type: string
+    type: object
+  dto.BackupExecutionResponse:
+    properties:
+      backup_id:
+        type: integer
+      estimated_time:
+        description: en secondes
+        type: integer
+      message:
+        type: string
+      status:
+        description: in_progress, completed, failed
+        type: string
+    type: object
+  dto.BudgetAlertDTO:
+    properties:
+      alert_type:
+        type: string
+      budget:
+        type: integer
+      created_at:
+        type: string
+      message:
+        type: string
+      percentage:
+        type: number
+      project_id:
+        type: integer
+      spent:
+        type: integer
+      ticket_id:
+        type: integer
+    type: object
+  dto.BudgetStatusDTO:
+    properties:
+      comparison:
+        $ref: '#/definitions/dto.TimeComparisonDTO'
+      status:
+        description: on_budget, over_budget, under_budget
+        type: string
+      ticket_id:
+        type: integer
     type: object
   dto.ChangeDTO:
     properties:
@@ -140,6 +304,20 @@ definitions:
         type: integer
       updated_at:
         type: string
+    type: object
+  dto.CreateAssetCategoryRequest:
+    properties:
+      description:
+        description: Description (optionnel)
+        type: string
+      name:
+        description: Nom (obligatoire)
+        type: string
+      parent_id:
+        description: ID catégorie parente (optionnel)
+        type: integer
+    required:
+    - name
     type: object
   dto.CreateAssetRequest:
     properties:
@@ -258,6 +436,45 @@ definitions:
     - content
     - title
     type: object
+  dto.CreateKnowledgeCategoryRequest:
+    properties:
+      description:
+        description: Description (optionnel)
+        type: string
+      name:
+        description: Nom (obligatoire)
+        type: string
+      parent_id:
+        description: ID catégorie parente (optionnel)
+        type: integer
+    required:
+    - name
+    type: object
+  dto.CreateRequestSourceRequest:
+    properties:
+      code:
+        type: string
+      description:
+        type: string
+      is_enabled:
+        type: boolean
+      name:
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  dto.CreateRoleRequest:
+    properties:
+      description:
+        description: Description (optionnel)
+        type: string
+      name:
+        description: Nom du rôle (obligatoire)
+        type: string
+    required:
+    - name
+    type: object
   dto.CreateSLARequest:
     properties:
       description:
@@ -316,6 +533,22 @@ definitions:
     - ticket_id
     - type_id
     type: object
+  dto.CreateServiceRequestTypeRequest:
+    properties:
+      default_deadline:
+        description: Délai par défaut en heures (obligatoire, min 1)
+        minimum: 1
+        type: integer
+      description:
+        description: Description (optionnel)
+        type: string
+      name:
+        description: Nom (obligatoire)
+        type: string
+    required:
+    - default_deadline
+    - name
+    type: object
   dto.CreateTicketCommentRequest:
     properties:
       comment:
@@ -370,17 +603,13 @@ definitions:
   dto.CreateTimeEntryRequest:
     properties:
       date:
-        description: Date au format "2006-01-02" (obligatoire)
+        description: 'Format: YYYY-MM-DD'
         type: string
       description:
-        description: Description (optionnel)
         type: string
       ticket_id:
-        description: ID du ticket (obligatoire)
         type: integer
       time_spent:
-        description: Temps passé en minutes (obligatoire, min 1)
-        minimum: 1
         type: integer
     required:
     - date
@@ -446,11 +675,20 @@ definitions:
       date:
         type: string
       task_count:
-        description: Nombre de tâches du jour
         type: integer
       total_time:
-        description: Temps total du jour en minutes
         type: integer
+    type: object
+  dto.DailyCalendarDTO:
+    properties:
+      date:
+        type: string
+      has_entry:
+        type: boolean
+      total_time:
+        type: integer
+      validated:
+        type: boolean
     type: object
   dto.DailyDeclarationDTO:
     properties:
@@ -461,15 +699,12 @@ definitions:
       id:
         type: integer
       task_count:
-        description: Nombre de tâches
         type: integer
       tasks:
-        description: Tâches déclarées (optionnel)
         items:
           $ref: '#/definitions/dto.TimeEntryDTO'
         type: array
       total_time:
-        description: Temps total en minutes
         type: integer
       updated_at:
         type: string
@@ -478,12 +713,47 @@ definitions:
       user_id:
         type: integer
       validated:
-        description: Si la déclaration a été validée
         type: boolean
       validated_at:
         type: string
       validated_by:
         type: integer
+      validation_comment:
+        type: string
+    type: object
+  dto.DailySummaryDTO:
+    properties:
+      date:
+        type: string
+      task_count:
+        type: integer
+      total_time:
+        type: integer
+      validated:
+        type: boolean
+    type: object
+  dto.DailyTaskDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      ticket:
+        $ref: '#/definitions/dto.TicketDTO'
+      ticket_id:
+        type: integer
+      time_spent:
+        type: integer
+    type: object
+  dto.DailyTaskRequest:
+    properties:
+      ticket_id:
+        type: integer
+      time_spent:
+        type: integer
+    required:
+    - ticket_id
+    - time_spent
     type: object
   dto.DashboardDTO:
     properties:
@@ -507,6 +777,19 @@ definitions:
         allOf:
         - $ref: '#/definitions/dto.TicketStatsDTO'
         description: Statistiques des tickets
+    type: object
+  dto.DelayAlertDTO:
+    properties:
+      delay_id:
+        type: integer
+      delay_time:
+        type: integer
+      detected_at:
+        type: string
+      ticket_id:
+        type: integer
+      user_id:
+        type: integer
     type: object
   dto.DelayDTO:
     properties:
@@ -580,6 +863,25 @@ definitions:
         description: Commentaire du validateur
         type: string
     type: object
+  dto.DelayedTicketDTO:
+    properties:
+      category:
+        description: Catégorie du ticket
+        type: string
+      delayed_by:
+        description: Nombre de jours de retard
+        type: integer
+      expected_date:
+        description: Date attendue de résolution
+        type: string
+      priority:
+        description: Priorité du ticket
+        type: string
+      ticket:
+        $ref: '#/definitions/dto.TicketDTO'
+      ticket_id:
+        type: integer
+    type: object
   dto.EfficiencyDTO:
     properties:
       actual_total:
@@ -601,6 +903,42 @@ definitions:
         $ref: '#/definitions/dto.UserDTO'
       user_id:
         type: integer
+    type: object
+  dto.EstimatedTimeDTO:
+    properties:
+      estimated_time:
+        type: integer
+      ticket_id:
+        type: integer
+    type: object
+  dto.ExecuteBackupRequest:
+    properties:
+      type:
+        description: full, incremental
+        type: string
+    type: object
+  dto.GlobalSearchResultDTO:
+    properties:
+      articles:
+        items:
+          $ref: '#/definitions/dto.KnowledgeArticleSearchResultDTO'
+        type: array
+      assets:
+        items:
+          $ref: '#/definitions/dto.AssetSearchResultDTO'
+        type: array
+      query:
+        type: string
+      tickets:
+        items:
+          $ref: '#/definitions/dto.TicketSearchResultDTO'
+        type: array
+      total:
+        type: integer
+      types:
+        items:
+          type: string
+        type: array
     type: object
   dto.IncidentDTO:
     properties:
@@ -633,6 +971,56 @@ definitions:
       urgency:
         description: low, medium, high, critical
         type: string
+    type: object
+  dto.IndividualPerformanceReportDTO:
+    properties:
+      average_resolution_time:
+        description: Temps moyen de résolution en minutes
+        type: number
+      breakdown:
+        additionalProperties: true
+        description: Répartition détaillée
+        type: object
+      efficiency:
+        description: Efficacité en %
+        type: number
+      period:
+        type: string
+      productivity:
+        description: Productivité (tickets/heure)
+        type: number
+      tickets_treated:
+        description: Nombre de tickets traités
+        type: integer
+      total_time_spent:
+        description: Temps total passé en minutes
+        type: integer
+      user:
+        $ref: '#/definitions/dto.UserDTO'
+      user_id:
+        type: integer
+    type: object
+  dto.KPIStatisticsDTO:
+    properties:
+      average_satisfaction:
+        description: en pourcentage (si disponible)
+        type: number
+      period:
+        type: string
+      report_production:
+        description: nombre de rapports produits
+        type: integer
+      resolution_rate:
+        description: taux de résolution en pourcentage
+        type: number
+      response_time:
+        description: temps de réponse moyen en minutes
+        type: number
+      tickets_registered:
+        type: integer
+      utilization_rate:
+        description: en pourcentage
+        type: number
     type: object
   dto.KnowledgeArticleDTO:
     properties:
@@ -699,15 +1087,15 @@ definitions:
     type: object
   dto.LoginRequest:
     properties:
+      email:
+        description: Email (obligatoire, format email)
+        type: string
       password:
         description: Mot de passe (obligatoire)
         type: string
-      username:
-        description: Nom d'utilisateur (obligatoire)
-        type: string
     required:
+    - email
     - password
-    - username
     type: object
   dto.LoginResponse:
     properties:
@@ -721,6 +1109,21 @@ definitions:
         allOf:
         - $ref: '#/definitions/dto.UserDTO'
         description: Informations de l'utilisateur connecté
+    type: object
+  dto.ModificationDTO:
+    properties:
+      created_at:
+        type: string
+      date:
+        type: string
+      field:
+        type: string
+      id:
+        type: integer
+      new_value: {}
+      old_value: {}
+      user_id:
+        type: integer
     type: object
   dto.NotificationDTO:
     properties:
@@ -757,6 +1160,19 @@ definitions:
       user_id:
         type: integer
     type: object
+  dto.OverloadAlertDTO:
+    properties:
+      actual_time:
+        type: integer
+      date:
+        type: string
+      max_time:
+        type: integer
+      message:
+        type: string
+      user_id:
+        type: integer
+    type: object
   dto.PaginationDTO:
     properties:
       limit:
@@ -770,6 +1186,17 @@ definitions:
         type: integer
       total_pages:
         description: Nombre total de pages
+        type: integer
+    type: object
+  dto.PendingJustificationAlertDTO:
+    properties:
+      created_at:
+        type: string
+      delay_id:
+        type: integer
+      justification_id:
+        type: integer
+      user_id:
         type: integer
     type: object
   dto.PerformanceDTO:
@@ -831,6 +1258,26 @@ definitions:
       user_id:
         type: integer
     type: object
+  dto.PerformanceStatisticsDTO:
+    properties:
+      average_resolution_time:
+        description: en minutes
+        type: number
+      efficiency:
+        description: en pourcentage
+        type: number
+      first_response_time:
+        description: en minutes
+        type: number
+      period:
+        type: string
+      productivity:
+        description: en pourcentage
+        type: number
+      sla_compliance:
+        description: en pourcentage
+        type: number
+    type: object
   dto.PerformanceStatsDTO:
     properties:
       average_efficiency:
@@ -872,6 +1319,19 @@ definitions:
       user:
         $ref: '#/definitions/dto.UserDTO'
       user_id:
+        type: integer
+    type: object
+  dto.ProjectTimeBudgetDTO:
+    properties:
+      budget:
+        type: integer
+      percentage:
+        type: number
+      project_id:
+        type: integer
+      remaining:
+        type: integer
+      spent:
         type: integer
     type: object
   dto.QualifyIncidentRequest:
@@ -924,6 +1384,115 @@ definitions:
     required:
     - refresh_token
     type: object
+  dto.RegisterRequest:
+    properties:
+      email:
+        description: Email (obligatoire, format email)
+        type: string
+      first_name:
+        description: Prénom (optionnel)
+        type: string
+      last_name:
+        description: Nom (optionnel)
+        type: string
+      password:
+        description: Mot de passe (obligatoire, min 6 caractères)
+        minLength: 6
+        type: string
+      username:
+        description: Nom d'utilisateur (obligatoire, min 3 caractères)
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  dto.RegisterResponse:
+    properties:
+      refresh_token:
+        description: Token de rafraîchissement (optionnel)
+        type: string
+      token:
+        description: Token JWT d'accès
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/dto.UserDTO'
+        description: Informations de l'utilisateur créé
+    type: object
+  dto.ReorderTicketAttachmentsRequest:
+    properties:
+      attachment_ids:
+        description: Liste des IDs dans le nouvel ordre
+        items:
+          type: integer
+        type: array
+    required:
+    - attachment_ids
+    type: object
+  dto.RequestSourceDTO:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      is_enabled:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.RoleDTO:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      is_system:
+        description: Si c'est un rôle système (ne peut pas être modifié/supprimé)
+        type: boolean
+      name:
+        description: 'Nom du rôle (ex: "DSI", "TECHNICIEN_IT")'
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.SLAComplianceReportDTO:
+    properties:
+      by_category:
+        additionalProperties:
+          format: float64
+          type: number
+        description: Conformité par catégorie
+        type: object
+      by_priority:
+        additionalProperties:
+          format: float64
+          type: number
+        description: Conformité par priorité
+        type: object
+      generated_at:
+        description: Date de génération
+        type: string
+      overall_compliance:
+        description: Conformité globale en %
+        type: number
+      period:
+        description: Période analysée
+        type: string
+      total_tickets:
+        type: integer
+      total_violations:
+        type: integer
+    type: object
   dto.SLADTO:
     properties:
       created_at:
@@ -974,6 +1543,28 @@ definitions:
         type: number
       total_violations:
         description: Nombre total de violations
+        type: integer
+    type: object
+  dto.SLAViolationDTO:
+    properties:
+      id:
+        type: integer
+      sla:
+        $ref: '#/definitions/dto.SLADTO'
+      sla_id:
+        type: integer
+      ticket:
+        $ref: '#/definitions/dto.TicketDTO'
+      ticket_id:
+        type: integer
+      unit:
+        description: minutes
+        type: string
+      violated_at:
+        description: Date de violation
+        type: string
+      violation_time:
+        description: Temps de violation en minutes
         type: integer
     type: object
   dto.ServiceRequestDTO:
@@ -1028,6 +1619,53 @@ definitions:
       name:
         description: 'Nom du type (ex: "Installation", "Configuration")'
         type: string
+    type: object
+  dto.SetProjectTimeBudgetRequest:
+    properties:
+      budget:
+        type: integer
+    required:
+    - budget
+    type: object
+  dto.StatisticsOverviewDTO:
+    properties:
+      performance:
+        $ref: '#/definitions/dto.PerformanceStatsDTO'
+      period:
+        type: string
+      sla:
+        $ref: '#/definitions/dto.SLAStatsDTO'
+      tickets:
+        $ref: '#/definitions/dto.TicketStatsDTO'
+      users:
+        $ref: '#/definitions/dto.UserStatsDTO'
+    type: object
+  dto.TicketAttachmentDTO:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      display_order:
+        type: integer
+      file_name:
+        type: string
+      file_path:
+        type: string
+      file_size:
+        type: integer
+      id:
+        type: integer
+      is_image:
+        type: boolean
+      mime_type:
+        type: string
+      thumbnail_path:
+        type: string
+      ticket_id:
+        type: integer
+      user:
+        $ref: '#/definitions/dto.UserDTO'
     type: object
   dto.TicketCommentDTO:
     properties:
@@ -1105,6 +1743,32 @@ definitions:
       updated_at:
         type: string
     type: object
+  dto.TicketHistoryDTO:
+    properties:
+      action:
+        description: created, updated, status_changed, assigned, etc.
+        type: string
+      created_at:
+        type: string
+      description:
+        description: Description de l'action (optionnel)
+        type: string
+      field_name:
+        description: Nom du champ modifié (optionnel)
+        type: string
+      id:
+        type: integer
+      new_value:
+        description: Nouvelle valeur (optionnel)
+        type: string
+      old_value:
+        description: Ancienne valeur (optionnel)
+        type: string
+      ticket_id:
+        type: integer
+      user:
+        $ref: '#/definitions/dto.UserDTO'
+    type: object
   dto.TicketListResponse:
     properties:
       pagination:
@@ -1137,6 +1801,28 @@ definitions:
         type: string
       violated_at:
         description: Date de violation (optionnel)
+        type: string
+    type: object
+  dto.TicketSearchResultDTO:
+    properties:
+      assigned_to:
+        $ref: '#/definitions/dto.UserDTO'
+      category:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        $ref: '#/definitions/dto.UserDTO'
+      id:
+        type: integer
+      priority:
+        type: string
+      snippet:
+        description: Extrait de la description correspondant
+        type: string
+      status:
+        type: string
+      title:
         type: string
     type: object
   dto.TicketStatsDTO:
@@ -1187,40 +1873,117 @@ definitions:
         description: Nombre d'incidents
         type: integer
     type: object
+  dto.TimeComparisonDTO:
+    properties:
+      actual_time:
+        type: integer
+      difference:
+        type: integer
+      estimated_time:
+        type: integer
+      percentage:
+        type: number
+      ticket_id:
+        type: integer
+    type: object
   dto.TimeEntryDTO:
     properties:
       created_at:
         type: string
       date:
-        description: Date de l'entrée
         type: string
       description:
         type: string
       id:
         type: integer
       ticket:
-        allOf:
-        - $ref: '#/definitions/dto.TicketDTO'
-        description: Ticket associé (optionnel)
+        $ref: '#/definitions/dto.TicketDTO'
       ticket_id:
         type: integer
       time_spent:
-        description: Temps passé en minutes
         type: integer
       updated_at:
         type: string
       user:
-        allOf:
-        - $ref: '#/definitions/dto.UserDTO'
-        description: Utilisateur (optionnel)
+        $ref: '#/definitions/dto.UserDTO'
       user_id:
         type: integer
       validated:
-        description: Si l'entrée a été validée
         type: boolean
       validated_at:
         type: string
       validated_by:
+        type: integer
+    type: object
+  dto.TimesheetHistoryDTO:
+    properties:
+      action:
+        type: string
+      created_at:
+        type: string
+      date:
+        type: string
+      details:
+        type: string
+      id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  dto.TimesheetHistoryEntryDTO:
+    properties:
+      action:
+        type: string
+      changes:
+        additionalProperties: true
+        type: object
+      created_at:
+        type: string
+      date:
+        type: string
+      details:
+        type: string
+      id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  dto.TrendDataDTO:
+    properties:
+      date:
+        type: string
+      value:
+        type: number
+    type: object
+  dto.TrendsStatisticsDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.TrendDataDTO'
+        type: array
+      forecast:
+        items:
+          $ref: '#/definitions/dto.TrendDataDTO'
+        type: array
+      metric:
+        type: string
+      period:
+        type: string
+      trend:
+        description: increasing, decreasing, stable
+        type: string
+    type: object
+  dto.UnderloadAlertDTO:
+    properties:
+      actual_time:
+        type: integer
+      date:
+        type: string
+      message:
+        type: string
+      min_time:
+        type: integer
+      user_id:
         type: integer
     type: object
   dto.UnreadCountDTO:
@@ -1228,6 +1991,47 @@ definitions:
       count:
         description: Nombre de notifications non lues
         type: integer
+    type: object
+  dto.UpdateAssetCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      parent_id:
+        description: nil pour retirer la catégorie parente
+        type: integer
+    type: object
+  dto.UpdateAssetRequest:
+    properties:
+      assigned_to:
+        description: nil pour retirer l'assignation
+        type: integer
+      category_id:
+        type: integer
+      location:
+        type: string
+      manufacturer:
+        type: string
+      model:
+        type: string
+      name:
+        type: string
+      notes:
+        type: string
+      purchase_date:
+        type: string
+      serial_number:
+        type: string
+      status:
+        enum:
+        - available
+        - in_use
+        - maintenance
+        - retired
+        type: string
+      warranty_expiry:
+        type: string
     type: object
   dto.UpdateChangeRequest:
     properties:
@@ -1242,6 +2046,14 @@ definitions:
       risk_description:
         description: Description du risque (optionnel)
         type: string
+    type: object
+  dto.UpdateDelayJustificationRequest:
+    properties:
+      justification:
+        description: Nouveau texte de justification
+        type: string
+    required:
+    - justification
     type: object
   dto.UpdateIncidentRequest:
     properties:
@@ -1261,6 +2073,118 @@ definitions:
         - high
         - critical
         type: string
+    type: object
+  dto.UpdateKnowledgeArticleRequest:
+    properties:
+      category_id:
+        type: integer
+      content:
+        type: string
+      is_published:
+        description: Statut de publication (optionnel)
+        type: boolean
+      title:
+        type: string
+    type: object
+  dto.UpdateKnowledgeCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      parent_id:
+        description: nil pour retirer la catégorie parente
+        type: integer
+    type: object
+  dto.UpdateRequestSourceRequest:
+    properties:
+      description:
+        type: string
+      is_enabled:
+        type: boolean
+      name:
+        type: string
+    type: object
+  dto.UpdateRiskRequest:
+    properties:
+      risk:
+        description: Risque (obligatoire)
+        enum:
+        - low
+        - medium
+        - high
+        - critical
+        type: string
+      risk_description:
+        description: Description du risque (optionnel)
+        type: string
+    required:
+    - risk
+    type: object
+  dto.UpdateRoleRequest:
+    properties:
+      description:
+        description: Description (optionnel)
+        type: string
+      name:
+        description: Nom (optionnel)
+        type: string
+    type: object
+  dto.UpdateSLARequest:
+    properties:
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      target_time:
+        minimum: 1
+        type: integer
+      unit:
+        enum:
+        - minutes
+        - hours
+        - days
+        type: string
+    type: object
+  dto.UpdateServiceRequestRequest:
+    properties:
+      deadline:
+        description: Date limite format "2006-01-02" (optionnel)
+        type: string
+      type_id:
+        description: ID du type (optionnel)
+        type: integer
+    type: object
+  dto.UpdateServiceRequestTypeRequest:
+    properties:
+      default_deadline:
+        minimum: 1
+        type: integer
+      description:
+        type: string
+      is_active:
+        description: Statut actif (optionnel)
+        type: boolean
+      name:
+        type: string
+    type: object
+  dto.UpdateSettingsRequest:
+    properties:
+      settings:
+        additionalProperties: true
+        description: Map de clé-valeur des paramètres à mettre à jour
+        type: object
+    type: object
+  dto.UpdateTicketAttachmentRequest:
+    properties:
+      description:
+        description: Description (optionnel)
+        type: string
+      display_order:
+        description: Ordre d'affichage (optionnel)
+        type: integer
     type: object
   dto.UpdateTicketRequest:
     properties:
@@ -1286,6 +2210,26 @@ definitions:
       title:
         description: Titre (optionnel)
         type: string
+    type: object
+  dto.UpdateTimeEntryRequest:
+    properties:
+      date:
+        description: 'Format: YYYY-MM-DD'
+        type: string
+      description:
+        type: string
+      time_spent:
+        type: integer
+    type: object
+  dto.UpdateUserPermissionsRequest:
+    properties:
+      permissions:
+        description: Liste des permissions (obligatoire)
+        items:
+          type: string
+        type: array
+    required:
+    - permissions
     type: object
   dto.UpdateUserRequest:
     properties:
@@ -1333,6 +2277,31 @@ definitions:
       username:
         type: string
     type: object
+  dto.UserPermissionsDTO:
+    properties:
+      permissions:
+        description: 'Liste des permissions (ex: ["tickets.create", "tickets.update"])'
+        items:
+          type: string
+        type: array
+      user:
+        $ref: '#/definitions/dto.UserDTO'
+      user_id:
+        type: integer
+    type: object
+  dto.UserStatsDTO:
+    properties:
+      active:
+        type: integer
+      average_tickets_per_user:
+        type: number
+      by_role:
+        additionalProperties:
+          type: integer
+        type: object
+      total:
+        type: integer
+    type: object
   dto.ValidateDelayJustificationRequest:
     properties:
       comment:
@@ -1357,21 +2326,42 @@ definitions:
     type: object
   dto.ValidateTimeEntryRequest:
     properties:
-      comment:
-        description: Commentaire de validation (optionnel)
-        type: string
       validated:
-        description: true pour valider, false pour invalider
         type: boolean
     required:
     - validated
+    type: object
+  dto.ValidationHistoryDTO:
+    properties:
+      entry_id:
+        type: integer
+      entry_type:
+        description: time_entry, daily, weekly
+        type: string
+      status:
+        description: validated, rejected
+        type: string
+      user_id:
+        type: integer
+      validated_at:
+        type: string
+      validated_by:
+        type: integer
+    type: object
+  dto.ValidationStatusDTO:
+    properties:
+      validated:
+        type: boolean
+      validated_at:
+        type: string
+      validated_by:
+        type: integer
     type: object
   dto.WeeklyDeclarationDTO:
     properties:
       created_at:
         type: string
       daily_breakdown:
-        description: Répartition par jour (optionnel)
         items:
           $ref: '#/definitions/dto.DailyBreakdownDTO'
         type: array
@@ -1382,10 +2372,8 @@ definitions:
       start_date:
         type: string
       task_count:
-        description: Nombre total de tâches
         type: integer
       total_time:
-        description: Temps total en minutes
         type: integer
       updated_at:
         type: string
@@ -1394,15 +2382,100 @@ definitions:
       user_id:
         type: integer
       validated:
-        description: Si la déclaration a été validée
         type: boolean
       validated_at:
         type: string
       validated_by:
         type: integer
-      week:
-        description: 'Format ISO: "2024-W03"'
+      validation_comment:
         type: string
+      week:
+        type: string
+    type: object
+  dto.WeeklySummaryDTO:
+    properties:
+      end_date:
+        type: string
+      start_date:
+        type: string
+      task_count:
+        type: integer
+      total_time:
+        type: integer
+      validated:
+        type: boolean
+      week:
+        type: string
+    type: object
+  dto.WeeklyTaskDTO:
+    properties:
+      created_at:
+        type: string
+      date:
+        type: string
+      id:
+        type: integer
+      ticket:
+        $ref: '#/definitions/dto.TicketDTO'
+      ticket_id:
+        type: integer
+      time_spent:
+        type: integer
+    type: object
+  dto.WeeklyTaskRequest:
+    properties:
+      date:
+        type: string
+      ticket_id:
+        type: integer
+      time_spent:
+        type: integer
+    required:
+    - date
+    - ticket_id
+    - time_spent
+    type: object
+  dto.WorkloadByAgentDTO:
+    properties:
+      average_time:
+        description: Temps moyen en minutes
+        type: number
+      ticket_count:
+        description: Nombre de tickets
+        type: integer
+      total_time:
+        description: Temps total en minutes
+        type: integer
+      user:
+        $ref: '#/definitions/dto.UserDTO'
+      user_id:
+        type: integer
+    type: object
+  dto.WorkloadDayDTO:
+    properties:
+      count:
+        type: integer
+      date:
+        type: string
+    type: object
+  dto.WorkloadStatisticsDTO:
+    properties:
+      average_per_day:
+        type: number
+      distribution:
+        items:
+          $ref: '#/definitions/dto.WorkloadDayDTO'
+        type: array
+      peak_day:
+        type: string
+      peak_day_count:
+        type: integer
+      period:
+        type: string
+      total_tickets:
+        type: integer
+      user_id:
+        type: integer
     type: object
   models.Project:
     properties:
@@ -1484,6 +2557,10 @@ definitions:
         type: integer
       id:
         type: integer
+      primary_image:
+        allOf:
+        - $ref: '#/definitions/models.TicketAttachment'
+        description: Image principale (optionnel)
       primary_image_id:
         description: ID de l'image principale (optionnel)
         type: integer
@@ -1500,6 +2577,42 @@ definitions:
         type: string
       updated_at:
         type: string
+    type: object
+  models.TicketAttachment:
+    properties:
+      created_at:
+        type: string
+      description:
+        description: Description optionnelle
+        type: string
+      display_order:
+        description: Ordre d'affichage (pour les galeries)
+        type: integer
+      file_name:
+        type: string
+      file_path:
+        type: string
+      file_size:
+        description: Taille en bytes (optionnel)
+        type: integer
+      id:
+        type: integer
+      is_image:
+        description: TRUE si c'est une image
+        type: boolean
+      mime_type:
+        type: string
+      thumbnail_path:
+        description: Chemin vers la miniature (pour les images)
+        type: string
+      ticket_id:
+        type: integer
+      user:
+        allOf:
+        - $ref: '#/definitions/models.User'
+        description: Utilisateur qui a uploadé
+      user_id:
+        type: integer
     type: object
   models.User:
     properties:
@@ -1672,6 +2785,38 @@ paths:
       summary: Récupérer un actif par ID
       tags:
       - assets
+    put:
+      consumes:
+      - application/json
+      description: Met à jour les informations d'un actif IT
+      parameters:
+      - description: ID de l'actif
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateAssetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AssetDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour un actif
+      tags:
+      - assets
   /assets/{id}/assign:
     post:
       consumes:
@@ -1709,13 +2854,512 @@ paths:
       summary: Assigner un actif à un utilisateur
       tags:
       - assets
+  /assets/{id}/assigned-user:
+    get:
+      description: Récupère l'utilisateur assigné à un actif IT
+      parameters:
+      - description: ID de l'actif
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer l'utilisateur assigné
+      tags:
+      - assets
+  /assets/{id}/link-ticket/{ticketId}:
+    post:
+      description: Lie un ticket à un actif IT
+      parameters:
+      - description: ID de l'actif
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID du ticket
+        in: path
+        name: ticketId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Lier un ticket à un actif
+      tags:
+      - assets
+  /assets/{id}/tickets:
+    get:
+      description: Récupère la liste des tickets liés à un actif IT
+      parameters:
+      - description: ID de l'actif
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TicketDTO'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les tickets liés
+      tags:
+      - assets
+  /assets/{id}/unassign-user:
+    delete:
+      description: Retire l'assignation d'un actif IT à un utilisateur
+      parameters:
+      - description: ID de l'actif
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AssetDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Retirer l'assignation d'un actif
+      tags:
+      - assets
+  /assets/{id}/unlink-ticket/{ticketId}:
+    delete:
+      description: Supprime la liaison entre un ticket et un actif IT
+      parameters:
+      - description: ID de l'actif
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID du ticket
+        in: path
+        name: ticketId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Délier un ticket d'un actif
+      tags:
+      - assets
+  /assets/by-category/{categoryId}:
+    get:
+      description: Récupère les actifs IT d'une catégorie spécifique
+      parameters:
+      - description: ID de la catégorie
+        in: path
+        name: categoryId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AssetDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les actifs par catégorie
+      tags:
+      - assets
+  /assets/by-user/{userId}:
+    get:
+      description: Récupère les actifs IT assignés à un utilisateur spécifique
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AssetDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les actifs par utilisateur
+      tags:
+      - assets
+  /assets/categories:
+    get:
+      description: Récupère la liste de toutes les catégories d'actifs IT
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AssetCategoryDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer toutes les catégories d'actifs
+      tags:
+      - assets
+    post:
+      consumes:
+      - application/json
+      description: Crée une nouvelle catégorie d'actif IT
+      parameters:
+      - description: Données de la catégorie
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateAssetCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.AssetCategoryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Créer une catégorie d'actif
+      tags:
+      - assets
+  /assets/categories/{id}:
+    delete:
+      description: Supprime une catégorie d'actif IT du système
+      parameters:
+      - description: ID de la catégorie
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Supprimer une catégorie d'actif
+      tags:
+      - assets
+    get:
+      description: Récupère une catégorie d'actif IT par son identifiant
+      parameters:
+      - description: ID de la catégorie
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AssetCategoryDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer une catégorie par ID
+      tags:
+      - assets
+    put:
+      consumes:
+      - application/json
+      description: Met à jour les informations d'une catégorie d'actif IT
+      parameters:
+      - description: ID de la catégorie
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateAssetCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AssetCategoryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour une catégorie d'actif
+      tags:
+      - assets
+  /assets/inventory:
+    get:
+      description: Récupère l'inventaire complet des actifs IT avec statistiques
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AssetInventoryDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer l'inventaire des actifs
+      tags:
+      - assets
+  /audit-logs:
+    get:
+      description: Récupère la liste des logs d'audit avec pagination et filtres
+      parameters:
+      - description: 'Numéro de page (défaut: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Nombre d''éléments par page (défaut: 50, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      - description: Filtrer par ID utilisateur
+        in: query
+        name: userId
+        type: integer
+      - description: Filtrer par action
+        in: query
+        name: action
+        type: string
+      - description: Filtrer par type d'entité
+        in: query
+        name: entityType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AuditLogListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Liste des logs d'audit
+      tags:
+      - audit
+  /audit-logs/{id}:
+    get:
+      description: Récupère les détails d'un log d'audit par son ID
+      parameters:
+      - description: ID du log d'audit
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AuditLogDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Détails d'un log d'audit
+      tags:
+      - audit
+  /audit-logs/by-action/{action}:
+    get:
+      description: Récupère tous les logs d'audit d'un type d'action
+      parameters:
+      - description: Type d'action (create, update, delete, etc.)
+        in: path
+        name: action
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AuditLogDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Logs d'audit par action
+      tags:
+      - audit
+  /audit-logs/by-entity/{entityType}/{entityId}:
+    get:
+      description: Récupère tous les logs d'audit d'une entité spécifique
+      parameters:
+      - description: Type d'entité (ticket, user, asset, etc.)
+        in: path
+        name: entityType
+        required: true
+        type: string
+      - description: ID de l'entité
+        in: path
+        name: entityId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AuditLogDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Logs d'audit par entité
+      tags:
+      - audit
+  /audit-logs/by-user/{userId}:
+    get:
+      description: Récupère tous les logs d'audit d'un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: 'Date de début (format: 2006-01-02)'
+        in: query
+        name: startDate
+        type: string
+      - description: 'Date de fin (format: 2006-01-02)'
+        in: query
+        name: endDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AuditLogDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Logs d'audit par utilisateur
+      tags:
+      - audit
   /auth/login:
     post:
       consumes:
       - application/json
-      description: Authentifie un utilisateur et retourne un token JWT
+      description: Authentifie un utilisateur avec son email et mot de passe, retourne
+        un token JWT
       parameters:
-      - description: Identifiants de connexion
+      - description: Identifiants de connexion (email et mot de passe)
         in: body
         name: request
         required: true
@@ -1807,6 +3451,33 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
       summary: Rafraîchir le token
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Crée un nouveau compte utilisateur et connecte automatiquement
+        l'utilisateur
+      parameters:
+      - description: Données d'inscription
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.RegisterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Inscription utilisateur
       tags:
       - auth
   /changes:
@@ -1960,7 +3631,65 @@ paths:
       summary: Mettre à jour un changement
       tags:
       - changes
+  /changes/{id}/assign-responsible:
+    post:
+      consumes:
+      - application/json
+      description: Assigne un responsable à un changement
+      parameters:
+      - description: ID du changement
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID du responsable
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AssignResponsibleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ChangeDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Assigner un responsable
+      tags:
+      - changes
   /changes/{id}/result:
+    get:
+      description: Récupère le résultat post-changement d'un changement
+      parameters:
+      - description: ID du changement
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le résultat d'un changement
+      tags:
+      - changes
     post:
       consumes:
       - application/json
@@ -1995,6 +3724,94 @@ paths:
       security:
       - BearerAuth: []
       summary: Enregistrer le résultat d'un changement
+      tags:
+      - changes
+  /changes/{id}/risk:
+    put:
+      consumes:
+      - application/json
+      description: Met à jour le niveau de risque d'un changement
+      parameters:
+      - description: ID du changement
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données de risque
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateRiskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ChangeDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour le risque
+      tags:
+      - changes
+  /changes/by-responsible/{userId}:
+    get:
+      description: Récupère les changements assignés à un responsable spécifique
+      parameters:
+      - description: ID du responsable
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ChangeDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les changements par responsable
+      tags:
+      - changes
+  /changes/by-risk/{riskLevel}:
+    get:
+      description: Récupère les changements filtrés par niveau de risque (low, medium,
+        high, critical)
+      parameters:
+      - description: Niveau de risque (low, medium, high, critical)
+        in: path
+        name: riskLevel
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ChangeDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les changements par risque
       tags:
       - changes
   /daily-declarations/{id}:
@@ -2185,6 +4002,120 @@ paths:
       summary: Créer une justification de retard
       tags:
       - delays
+  /delays/{delayId}/justification:
+    delete:
+      description: Supprime une justification de retard (seulement si en attente)
+      parameters:
+      - description: ID du retard
+        in: path
+        name: delayId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Supprimer une justification de retard
+      tags:
+      - delays
+    get:
+      description: Récupère la justification d'un retard par l'ID du retard
+      parameters:
+      - description: ID du retard
+        in: path
+        name: delayId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DelayJustificationDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer la justification d'un retard
+      tags:
+      - delays
+    put:
+      consumes:
+      - application/json
+      description: Met à jour une justification de retard (avant validation)
+      parameters:
+      - description: ID du retard
+        in: path
+        name: delayId
+        required: true
+        type: integer
+      - description: Nouvelle justification
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateDelayJustificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DelayJustificationDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour une justification de retard
+      tags:
+      - delays
+  /delays/{delayId}/justification/reject:
+    post:
+      consumes:
+      - application/json
+      description: Rejette une justification de retard
+      parameters:
+      - description: ID du retard
+        in: path
+        name: delayId
+        required: true
+        type: integer
+      - description: Commentaire de rejet
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ValidateDelayJustificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DelayJustificationDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Rejeter une justification de retard
+      tags:
+      - delays
   /delays/{id}:
     get:
       consumes:
@@ -2251,6 +4182,69 @@ paths:
       security:
       - BearerAuth: []
       summary: Valider une justification de retard
+      tags:
+      - delays
+  /delays/justifications/history:
+    get:
+      description: Récupère l'historique de toutes les justifications
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DelayJustificationDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Historique des justifications
+      tags:
+      - delays
+  /delays/justifications/rejected:
+    get:
+      description: Récupère toutes les justifications rejetées
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DelayJustificationDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les justifications rejetées
+      tags:
+      - delays
+  /delays/justifications/validated:
+    get:
+      description: Récupère toutes les justifications validées
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DelayJustificationDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les justifications validées
       tags:
       - delays
   /incidents:
@@ -2404,6 +4398,68 @@ paths:
       summary: Mettre à jour un incident
       tags:
       - incidents
+  /incidents/{id}/link-asset:
+    post:
+      consumes:
+      - application/json
+      description: Lie un actif IT à un incident
+      parameters:
+      - description: ID de l'incident
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID de l'actif
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties:
+            type: integer
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Lier un actif à un incident
+      tags:
+      - incidents
+  /incidents/{id}/linked-assets:
+    get:
+      description: Récupère la liste des actifs IT liés à un incident
+      parameters:
+      - description: ID de l'incident
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AssetDTO'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les actifs liés
+      tags:
+      - incidents
   /incidents/{id}/qualify:
     post:
       consumes:
@@ -2441,6 +4497,32 @@ paths:
       summary: Qualifier un incident
       tags:
       - incidents
+  /incidents/{id}/resolution-time:
+    get:
+      description: Récupère le temps de résolution d'un incident en minutes
+      parameters:
+      - description: ID de l'incident
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le temps de résolution
+      tags:
+      - incidents
   /incidents/{id}/resolve:
     post:
       consumes:
@@ -2472,7 +4554,112 @@ paths:
       summary: Résoudre un incident
       tags:
       - incidents
+  /incidents/{id}/unlink-asset/{assetId}:
+    delete:
+      description: Supprime la liaison entre un incident et un actif IT
+      parameters:
+      - description: ID de l'incident
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID de l'actif
+        in: path
+        name: assetId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Délier un actif d'un incident
+      tags:
+      - incidents
+  /incidents/by-impact/{impact}:
+    get:
+      description: Récupère les incidents filtrés par impact (low, medium, high, critical)
+      parameters:
+      - description: Impact (low, medium, high, critical)
+        in: path
+        name: impact
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.IncidentDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les incidents par impact
+      tags:
+      - incidents
+  /incidents/by-urgency/{urgency}:
+    get:
+      description: Récupère les incidents filtrés par urgence (low, medium, high,
+        critical)
+      parameters:
+      - description: Urgence (low, medium, high, critical)
+        in: path
+        name: urgency
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.IncidentDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les incidents par urgence
+      tags:
+      - incidents
   /knowledge-base/articles:
+    get:
+      description: Récupère la liste de tous les articles (publiés et non publiés)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.KnowledgeArticleDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer tous les articles
+      tags:
+      - knowledge-base
     post:
       consumes:
       - application/json
@@ -2565,6 +4752,153 @@ paths:
       summary: Récupérer un article par ID
       tags:
       - knowledge-base
+    put:
+      consumes:
+      - application/json
+      description: Met à jour les informations d'un article de la base de connaissances
+      parameters:
+      - description: ID de l'article
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateKnowledgeArticleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.KnowledgeArticleDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour un article
+      tags:
+      - knowledge-base
+  /knowledge-base/articles/{id}/publish:
+    post:
+      consumes:
+      - application/json
+      description: Change le statut de publication d'un article
+      parameters:
+      - description: ID de l'article
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Statut de publication
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties:
+            type: boolean
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.KnowledgeArticleDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Publier/Dépublier un article
+      tags:
+      - knowledge-base
+  /knowledge-base/articles/{id}/view:
+    post:
+      description: Incrémente le compteur de vues d'un article (appelé automatiquement
+        lors de la consultation)
+      parameters:
+      - description: ID de l'article
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Incrémenter le compteur de vues
+      tags:
+      - knowledge-base
+  /knowledge-base/articles/by-author/{authorId}:
+    get:
+      description: Récupère les articles créés par un auteur spécifique
+      parameters:
+      - description: ID de l'auteur
+        in: path
+        name: authorId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.KnowledgeArticleDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les articles par auteur
+      tags:
+      - knowledge-base
+  /knowledge-base/articles/by-category/{categoryId}:
+    get:
+      description: Récupère les articles d'une catégorie spécifique
+      parameters:
+      - description: ID de la catégorie
+        in: path
+        name: categoryId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.KnowledgeArticleDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les articles par catégorie
+      tags:
+      - knowledge-base
   /knowledge-base/articles/published:
     get:
       consumes:
@@ -2615,6 +4949,135 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
       summary: Rechercher des articles
+      tags:
+      - knowledge-base
+  /knowledge-base/categories:
+    get:
+      description: Récupère la liste de toutes les catégories de la base de connaissances
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.KnowledgeCategoryDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer toutes les catégories
+      tags:
+      - knowledge-base
+    post:
+      consumes:
+      - application/json
+      description: Crée une nouvelle catégorie dans la base de connaissances
+      parameters:
+      - description: Données de la catégorie
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateKnowledgeCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.KnowledgeCategoryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Créer une catégorie
+      tags:
+      - knowledge-base
+  /knowledge-base/categories/{id}:
+    delete:
+      description: Supprime une catégorie de la base de connaissances
+      parameters:
+      - description: ID de la catégorie
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Supprimer une catégorie
+      tags:
+      - knowledge-base
+    get:
+      description: Récupère une catégorie de la base de connaissances par son identifiant
+      parameters:
+      - description: ID de la catégorie
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.KnowledgeCategoryDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer une catégorie par ID
+      tags:
+      - knowledge-base
+    put:
+      consumes:
+      - application/json
+      description: Met à jour les informations d'une catégorie
+      parameters:
+      - description: ID de la catégorie
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateKnowledgeCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.KnowledgeCategoryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour une catégorie
       tags:
       - knowledge-base
   /notifications:
@@ -2932,6 +5395,63 @@ paths:
       summary: Récupérer un projet par ID
       tags:
       - projects
+  /projects/{id}/time-budget:
+    get:
+      description: Récupère le budget temps d'un projet
+      parameters:
+      - description: ID du projet
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProjectTimeBudgetDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le budget temps d'un projet
+      tags:
+      - timesheet
+    post:
+      consumes:
+      - application/json
+      description: Définit le budget temps d'un projet
+      parameters:
+      - description: ID du projet
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données du budget
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SetProjectTimeBudgetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Définir le budget temps d'un projet
+      tags:
+      - timesheet
   /reports/custom:
     post:
       consumes:
@@ -2985,6 +5505,105 @@ paths:
       summary: Récupérer le tableau de bord
       tags:
       - reports
+  /reports/export/{format}:
+    get:
+      consumes:
+      - application/json
+      description: Exporte un rapport dans un format spécifique (PDF, Excel, CSV)
+      parameters:
+      - description: Format d'export (pdf, excel, csv)
+        in: path
+        name: format
+        required: true
+        type: string
+      - description: Type de rapport (dashboard, tickets, sla, performance)
+        in: query
+        name: reportType
+        required: true
+        type: string
+      - description: 'Période (défaut: month)'
+        in: query
+        name: period
+        type: string
+      produces:
+      - application/pdf
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      - text/csv
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Exporter un rapport
+      tags:
+      - reports
+  /reports/performance/individual/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Récupère le rapport de performance d'un utilisateur spécifique
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: 'Période (défaut: month)'
+        in: query
+        name: period
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IndividualPerformanceReportDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le rapport de performance individuel
+      tags:
+      - reports
+  /reports/sla/compliance:
+    get:
+      consumes:
+      - application/json
+      description: Récupère le rapport de conformité des SLA
+      parameters:
+      - description: 'Période (défaut: month)'
+        in: query
+        name: period
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SLAComplianceReportDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le rapport de conformité SLA
+      tags:
+      - reports
   /reports/tickets/average-resolution-time:
     get:
       consumes:
@@ -3032,6 +5651,34 @@ paths:
       summary: Récupérer le rapport de nombre de tickets
       tags:
       - reports
+  /reports/tickets/delayed:
+    get:
+      consumes:
+      - application/json
+      description: Récupère le rapport des tickets qui ont dépassé leur délai
+      parameters:
+      - description: 'Période (défaut: month)'
+        in: query
+        name: period
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DelayedTicketDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le rapport des tickets en retard
+      tags:
+      - reports
   /reports/tickets/distribution:
     get:
       consumes:
@@ -3053,6 +5700,297 @@ paths:
       summary: Récupérer la distribution des types de tickets
       tags:
       - reports
+  /reports/workload/by-agent:
+    get:
+      consumes:
+      - application/json
+      description: Récupère la charge de travail (nombre de tickets) par agent
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.WorkloadByAgentDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer la charge de travail par agent
+      tags:
+      - reports
+  /roles:
+    get:
+      description: Récupère la liste de tous les rôles du système
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.RoleDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer tous les rôles
+      tags:
+      - roles
+    post:
+      consumes:
+      - application/json
+      description: Crée un nouveau rôle dans le système
+      parameters:
+      - description: Données du rôle
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.RoleDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Créer un rôle
+      tags:
+      - roles
+  /roles/{id}:
+    delete:
+      description: Supprime un rôle du système
+      parameters:
+      - description: ID du rôle
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Supprimer un rôle
+      tags:
+      - roles
+    get:
+      description: Récupère un rôle par son identifiant
+      parameters:
+      - description: ID du rôle
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RoleDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer un rôle par ID
+      tags:
+      - roles
+    put:
+      consumes:
+      - application/json
+      description: Met à jour les informations d'un rôle
+      parameters:
+      - description: ID du rôle
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RoleDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour un rôle
+      tags:
+      - roles
+  /search:
+    get:
+      description: Effectue une recherche dans tous les types (tickets, actifs, articles)
+      parameters:
+      - description: Terme de recherche
+        in: query
+        name: q
+        required: true
+        type: string
+      - description: Types à rechercher (tickets,assets,articles) - séparés par des
+          virgules
+        in: query
+        name: types
+        type: string
+      - description: 'Limite de résultats (défaut: 20, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GlobalSearchResultDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Recherche globale
+      tags:
+      - search
+  /search/assets:
+    get:
+      description: Effectue une recherche dans les actifs IT
+      parameters:
+      - description: Terme de recherche
+        in: query
+        name: q
+        required: true
+        type: string
+      - description: Filtrer par catégorie
+        in: query
+        name: category
+        type: string
+      - description: 'Limite de résultats (défaut: 20, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AssetSearchResultDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Rechercher dans les actifs
+      tags:
+      - search
+  /search/knowledge-base:
+    get:
+      description: Effectue une recherche dans les articles de la base de connaissances
+      parameters:
+      - description: Terme de recherche
+        in: query
+        name: q
+        required: true
+        type: string
+      - description: Filtrer par catégorie
+        in: query
+        name: category
+        type: string
+      - description: 'Limite de résultats (défaut: 20, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.KnowledgeArticleSearchResultDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Rechercher dans la base de connaissances
+      tags:
+      - search
+  /search/tickets:
+    get:
+      description: Effectue une recherche dans les tickets
+      parameters:
+      - description: Terme de recherche
+        in: query
+        name: q
+        required: true
+        type: string
+      - description: Filtrer par statut
+        in: query
+        name: status
+        type: string
+      - description: 'Limite de résultats (défaut: 20, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TicketSearchResultDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Rechercher dans les tickets
+      tags:
+      - search
   /service-requests:
     get:
       consumes:
@@ -3168,6 +6106,68 @@ paths:
       summary: Récupérer une demande de service par ID
       tags:
       - service-requests
+    put:
+      consumes:
+      - application/json
+      description: Met à jour les informations d'une demande de service
+      parameters:
+      - description: ID de la demande de service
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateServiceRequestRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ServiceRequestDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour une demande de service
+      tags:
+      - service-requests
+  /service-requests/{id}/deadline:
+    get:
+      description: Récupère le délai de traitement d'une demande de service
+      parameters:
+      - description: ID de la demande de service
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le délai de traitement
+      tags:
+      - service-requests
   /service-requests/{id}/validate:
     post:
       consumes:
@@ -3205,6 +6205,411 @@ paths:
       summary: Valider une demande de service
       tags:
       - service-requests
+  /service-requests/{id}/validation-status:
+    get:
+      description: Récupère le statut de validation d'une demande de service
+      parameters:
+      - description: ID de la demande de service
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le statut de validation
+      tags:
+      - service-requests
+  /service-requests/types:
+    get:
+      description: Récupère la liste de tous les types de demandes de service paramétrables
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ServiceRequestTypeDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer tous les types de demandes
+      tags:
+      - service-requests
+    post:
+      consumes:
+      - application/json
+      description: Crée un nouveau type de demande de service paramétrable
+      parameters:
+      - description: Données du type
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateServiceRequestTypeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ServiceRequestTypeDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Créer un type de demande
+      tags:
+      - service-requests
+  /service-requests/types/{id}:
+    delete:
+      description: Supprime un type de demande de service du système
+      parameters:
+      - description: ID du type
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Supprimer un type
+      tags:
+      - service-requests
+    get:
+      description: Récupère un type de demande de service par son identifiant
+      parameters:
+      - description: ID du type
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ServiceRequestTypeDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer un type par ID
+      tags:
+      - service-requests
+    put:
+      consumes:
+      - application/json
+      description: Met à jour les informations d'un type de demande de service
+      parameters:
+      - description: ID du type
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateServiceRequestTypeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ServiceRequestTypeDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour un type
+      tags:
+      - service-requests
+  /settings:
+    get:
+      description: Récupère tous les paramètres généraux du système
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les paramètres généraux
+      tags:
+      - settings
+    put:
+      consumes:
+      - application/json
+      description: Met à jour les paramètres généraux du système
+      parameters:
+      - description: Paramètres à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSettingsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour les paramètres généraux
+      tags:
+      - settings
+  /settings/backup:
+    get:
+      description: Récupère la configuration de sauvegarde du système
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.BackupConfigurationDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer la configuration de sauvegarde
+      tags:
+      - settings
+    put:
+      consumes:
+      - application/json
+      description: Met à jour la configuration de sauvegarde du système
+      parameters:
+      - description: Configuration de sauvegarde
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BackupConfigurationDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.BackupConfigurationDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour la configuration de sauvegarde
+      tags:
+      - settings
+  /settings/backup/execute:
+    post:
+      consumes:
+      - application/json
+      description: Exécute une sauvegarde manuelle du système
+      parameters:
+      - description: Type de sauvegarde (optionnel)
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/dto.ExecuteBackupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.BackupExecutionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Exécuter une sauvegarde manuelle
+      tags:
+      - settings
+  /settings/sources:
+    get:
+      description: Récupère la liste de toutes les sources de demande configurées
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.RequestSourceDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les sources de demande
+      tags:
+      - settings
+    post:
+      consumes:
+      - application/json
+      description: Crée une nouvelle source de demande
+      parameters:
+      - description: Données de la source
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateRequestSourceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.RequestSourceDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Créer une source de demande
+      tags:
+      - settings
+  /settings/sources/{id}:
+    delete:
+      description: Supprime une source de demande
+      parameters:
+      - description: ID de la source
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Supprimer une source de demande
+      tags:
+      - settings
+    get:
+      description: Récupère une source de demande par son identifiant
+      parameters:
+      - description: ID de la source
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RequestSourceDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer une source par ID
+      tags:
+      - settings
+    put:
+      consumes:
+      - application/json
+      description: Met à jour une source de demande
+      parameters:
+      - description: ID de la source
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateRequestSourceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RequestSourceDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour une source de demande
+      tags:
+      - settings
   /sla:
     get:
       consumes:
@@ -3260,6 +6665,30 @@ paths:
       tags:
       - sla
   /sla/{id}:
+    delete:
+      description: Supprime un SLA du système
+      parameters:
+      - description: ID du SLA
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Supprimer un SLA
+      tags:
+      - sla
     get:
       consumes:
       - application/json
@@ -3288,6 +6717,120 @@ paths:
       security:
       - BearerAuth: []
       summary: Récupérer un SLA par ID
+      tags:
+      - sla
+    put:
+      consumes:
+      - application/json
+      description: Met à jour les informations d'un SLA
+      parameters:
+      - description: ID du SLA
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSLARequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SLADTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour un SLA
+      tags:
+      - sla
+  /sla/{id}/compliance:
+    get:
+      description: Récupère le taux de conformité d'un SLA (pourcentage de tickets
+        respectant le SLA)
+      parameters:
+      - description: ID du SLA
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le taux de conformité
+      tags:
+      - sla
+  /sla/{id}/violations:
+    get:
+      description: Récupère la liste des violations d'un SLA spécifique
+      parameters:
+      - description: ID du SLA
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.SLAViolationDTO'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les violations d'un SLA
+      tags:
+      - sla
+  /sla/compliance-report:
+    get:
+      description: Génère un rapport de conformité des SLA au format PDF ou Excel
+      parameters:
+      - description: Période (week, month)
+        in: query
+        name: period
+        type: string
+      - description: Format (pdf, excel)
+        in: query
+        name: format
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Générer un rapport de conformité
       tags:
       - sla
   /sla/tickets/{ticket_id}/status:
@@ -3321,6 +6864,169 @@ paths:
       summary: Récupérer le statut SLA d'un ticket
       tags:
       - sla
+  /sla/violations:
+    get:
+      description: Récupère toutes les violations de SLA avec filtres optionnels
+      parameters:
+      - description: Période (week, month)
+        in: query
+        name: period
+        type: string
+      - description: Catégorie de ticket
+        in: query
+        name: category
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.SLAViolationDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer toutes les violations
+      tags:
+      - sla
+  /stats/kpi:
+    get:
+      description: Récupère les indicateurs de succès (KPI) du système
+      parameters:
+      - description: 'Période (week, month, quarter, year) - défaut: month'
+        in: query
+        name: period
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.KPIStatisticsDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Indicateurs de succès (KPI)
+      tags:
+      - statistics
+  /stats/overview:
+    get:
+      description: Récupère une vue d'ensemble des statistiques du système
+      parameters:
+      - description: 'Période (week, month, quarter, year) - défaut: month'
+        in: query
+        name: period
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StatisticsOverviewDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Vue d'ensemble des statistiques
+      tags:
+      - statistics
+  /stats/performance:
+    get:
+      description: Récupère les statistiques de performance globales
+      parameters:
+      - description: 'Période (week, month, quarter, year) - défaut: month'
+        in: query
+        name: period
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PerformanceStatisticsDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Statistiques de performance
+      tags:
+      - statistics
+  /stats/trends:
+    get:
+      description: Récupère les tendances pour une métrique donnée
+      parameters:
+      - description: Métrique (tickets, resolution_time, sla_compliance, etc.)
+        in: query
+        name: metric
+        required: true
+        type: string
+      - description: 'Période (1month, 3months, 6months, year) - défaut: 3months'
+        in: query
+        name: period
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TrendsStatisticsDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Tendances
+      tags:
+      - statistics
+  /stats/workload:
+    get:
+      description: Récupère les statistiques de charge de travail
+      parameters:
+      - description: 'Période (week, month, quarter, year) - défaut: month'
+        in: query
+        name: period
+        type: string
+      - description: ID de l'utilisateur (optionnel)
+        in: query
+        name: userId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.WorkloadStatisticsDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Statistiques de charge de travail
+      tags:
+      - statistics
   /tickets:
     get:
       description: Récupère la liste des tickets avec pagination
@@ -3492,6 +7198,349 @@ paths:
       summary: Assigner un ticket
       tags:
       - tickets
+  /tickets/{id}/attachments:
+    get:
+      description: Récupère la liste de toutes les pièces jointes d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Récupérer uniquement les images
+        in: query
+        name: images_only
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TicketAttachmentDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les pièces jointes d'un ticket
+      tags:
+      - tickets
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload une pièce jointe (image ou document) pour un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Fichier à uploader
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Description de la pièce jointe
+        in: formData
+        name: description
+        type: string
+      - description: Ordre d'affichage
+        in: formData
+        name: display_order
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.TicketAttachmentDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Uploader une pièce jointe
+      tags:
+      - tickets
+  /tickets/{id}/attachments/{attachmentId}:
+    delete:
+      description: Supprime une pièce jointe d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID de la pièce jointe
+        in: path
+        name: attachmentId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Supprimer une pièce jointe
+      tags:
+      - tickets
+    get:
+      description: Récupère les informations d'une pièce jointe par son ID
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID de la pièce jointe
+        in: path
+        name: attachmentId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TicketAttachmentDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer une pièce jointe
+      tags:
+      - tickets
+    put:
+      consumes:
+      - application/json
+      description: Met à jour les informations d'une pièce jointe
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID de la pièce jointe
+        in: path
+        name: attachmentId
+        required: true
+        type: integer
+      - description: Données à mettre à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTicketAttachmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TicketAttachmentDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour une pièce jointe
+      tags:
+      - tickets
+  /tickets/{id}/attachments/{attachmentId}/download:
+    get:
+      description: Télécharge une pièce jointe
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID de la pièce jointe
+        in: path
+        name: attachmentId
+        required: true
+        type: integer
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: Fichier téléchargeable
+          schema:
+            type: file
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Télécharger une pièce jointe
+      tags:
+      - tickets
+  /tickets/{id}/attachments/{attachmentId}/set-primary:
+    put:
+      description: Définit une image comme image principale du ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID de la pièce jointe
+        in: path
+        name: attachmentId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TicketAttachmentDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Définir une image comme principale
+      tags:
+      - tickets
+  /tickets/{id}/attachments/{attachmentId}/thumbnail:
+    get:
+      description: Récupère la miniature d'une image
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID de la pièce jointe
+        in: path
+        name: attachmentId
+        required: true
+        type: integer
+      produces:
+      - image/*
+      responses:
+        "200":
+          description: Miniature de l'image
+          schema:
+            type: file
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer la miniature d'une image
+      tags:
+      - tickets
+  /tickets/{id}/attachments/images:
+    get:
+      description: Récupère la liste de toutes les images d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TicketAttachmentDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les images d'un ticket
+      tags:
+      - tickets
+  /tickets/{id}/attachments/reorder:
+    put:
+      consumes:
+      - application/json
+      description: Réorganise l'ordre d'affichage des pièces jointes d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Liste des IDs dans le nouvel ordre
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ReorderTicketAttachmentsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Réorganiser les pièces jointes
+      tags:
+      - tickets
+  /tickets/{id}/audit-trail:
+    get:
+      description: Récupère la piste d'audit complète d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AuditLogDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Piste d'audit d'un ticket
+      tags:
+      - tickets
   /tickets/{id}/close:
     post:
       description: Ferme un ticket
@@ -3576,6 +7625,155 @@ paths:
       summary: Ajouter un commentaire
       tags:
       - tickets
+  /tickets/{id}/estimated-time:
+    get:
+      description: Récupère le temps estimé d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.EstimatedTimeDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le temps estimé d'un ticket
+      tags:
+      - timesheet
+    post:
+      consumes:
+      - application/json
+      description: Définit le temps estimé d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Temps estimé en minutes
+        in: body
+        name: estimatedTime
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Définir le temps estimé d'un ticket
+      tags:
+      - timesheet
+    put:
+      consumes:
+      - application/json
+      description: Met à jour le temps estimé d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Nouveau temps estimé en minutes
+        in: body
+        name: estimatedTime
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour le temps estimé d'un ticket
+      tags:
+      - timesheet
+  /tickets/{id}/history:
+    get:
+      description: Récupère l'historique complet des modifications d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TicketHistoryDTO'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer l'historique d'un ticket
+      tags:
+      - tickets
+  /tickets/{id}/reassign:
+    post:
+      consumes:
+      - application/json
+      description: Réassigne un ticket à un autre technicien
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données de réassignation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AssignTicketRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TicketDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Réassigner un ticket
+      tags:
+      - tickets
   /tickets/{id}/status:
     put:
       consumes:
@@ -3609,6 +7807,256 @@ paths:
       security:
       - BearerAuth: []
       summary: Changer le statut d'un ticket
+      tags:
+      - tickets
+  /tickets/{id}/time-comparison:
+    get:
+      description: Récupère la comparaison entre le temps estimé et le temps réel
+        d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TimeComparisonDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Comparer temps estimé vs réel
+      tags:
+      - timesheet
+  /tickets/{id}/time-entries:
+    get:
+      description: Récupère toutes les entrées de temps associées à un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TimeEntryDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les entrées de temps d'un ticket
+      tags:
+      - timesheet
+  /tickets/{ticketId}/delay-justification:
+    get:
+      description: Récupère la justification de retard d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DelayJustificationDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer la justification d'un ticket
+      tags:
+      - tickets
+  /tickets/by-assignee/{userId}:
+    get:
+      description: Récupère les tickets assignés à un utilisateur spécifique
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - default: 1
+        description: Numéro de page
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Nombre d'éléments par page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TicketListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les tickets par assigné
+      tags:
+      - tickets
+  /tickets/by-category/{category}:
+    get:
+      description: Récupère les tickets filtrés par catégorie (incident, demande,
+        changement, developpement)
+      parameters:
+      - description: Catégorie (incident, demande, changement, developpement)
+        in: path
+        name: category
+        required: true
+        type: string
+      - default: 1
+        description: Numéro de page
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Nombre d'éléments par page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TicketListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les tickets par catégorie
+      tags:
+      - tickets
+  /tickets/by-source/{source}:
+    get:
+      description: Récupère les tickets filtrés par source (mail, appel, direct)
+      parameters:
+      - description: Source (mail, appel, direct)
+        in: path
+        name: source
+        required: true
+        type: string
+      - default: 1
+        description: Numéro de page
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Nombre d'éléments par page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TicketListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les tickets par source
+      tags:
+      - tickets
+  /tickets/by-status/{status}:
+    get:
+      description: Récupère les tickets filtrés par statut (ouvert, en_cours, en_attente,
+        cloture)
+      parameters:
+      - description: Statut (ouvert, en_cours, en_attente, cloture)
+        in: path
+        name: status
+        required: true
+        type: string
+      - default: 1
+        description: Numéro de page
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Nombre d'éléments par page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TicketListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les tickets par statut
+      tags:
+      - tickets
+  /tickets/my-tickets:
+    get:
+      description: Récupère les tickets assignés à l'utilisateur connecté
+      parameters:
+      - default: 1
+        description: Numéro de page
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Nombre d'éléments par page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TicketListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer mes tickets
       tags:
       - tickets
   /time-entries:
@@ -3763,6 +8211,936 @@ paths:
       summary: Valider une entrée de temps
       tags:
       - time-entries
+  /timesheet/alerts/budget:
+    get:
+      description: Récupère toutes les alertes de budget
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.BudgetAlertDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les alertes de budget
+      tags:
+      - timesheet
+  /timesheet/alerts/delays:
+    get:
+      description: Récupère toutes les alertes de retard
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DelayAlertDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les alertes de retard
+      tags:
+      - timesheet
+  /timesheet/alerts/justifications-pending:
+    get:
+      description: Récupère toutes les alertes de justifications en attente
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.PendingJustificationAlertDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les alertes de justifications en attente
+      tags:
+      - timesheet
+  /timesheet/alerts/overload:
+    get:
+      description: Récupère toutes les alertes de surcharge
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.OverloadAlertDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les alertes de surcharge
+      tags:
+      - timesheet
+  /timesheet/alerts/reminders:
+    post:
+      consumes:
+      - application/json
+      description: Envoie des rappels aux utilisateurs spécifiés
+      parameters:
+      - description: Liste des IDs utilisateurs
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            type: integer
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Envoyer des rappels
+      tags:
+      - timesheet
+  /timesheet/alerts/underload:
+    get:
+      description: Récupère toutes les alertes de sous-charge
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.UnderloadAlertDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les alertes de sous-charge
+      tags:
+      - timesheet
+  /timesheet/audit-trail:
+    get:
+      description: Récupère la piste d'audit du timesheet dans une plage de dates
+      parameters:
+      - description: 'Date de début (format: YYYY-MM-DD)'
+        in: query
+        name: startDate
+        type: string
+      - description: 'Date de fin (format: YYYY-MM-DD)'
+        in: query
+        name: endDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AuditTrailDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer la piste d'audit
+      tags:
+      - timesheet
+  /timesheet/budget-alerts:
+    get:
+      description: Récupère toutes les alertes de budget
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.BudgetAlertDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les alertes de budget
+      tags:
+      - timesheet
+  /timesheet/budget-status/{id}:
+    get:
+      description: Récupère le statut du budget (on_budget, over_budget, under_budget)
+        d'un ticket
+      parameters:
+      - description: ID du ticket
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.BudgetStatusDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le statut du budget d'un ticket
+      tags:
+      - timesheet
+  /timesheet/daily/{date}:
+    get:
+      description: Récupère la déclaration journalière d'une date
+      parameters:
+      - description: 'Date (format: YYYY-MM-DD)'
+        in: path
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DailyDeclarationDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer une déclaration journalière
+      tags:
+      - timesheet
+    post:
+      consumes:
+      - application/json
+      description: Crée ou met à jour une déclaration journalière
+      parameters:
+      - description: 'Date (format: YYYY-MM-DD)'
+        in: path
+        name: date
+        required: true
+        type: string
+      - description: Liste des tâches
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.DailyTaskRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DailyDeclarationDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Créer ou mettre à jour une déclaration journalière
+      tags:
+      - timesheet
+  /timesheet/daily/{date}/summary:
+    get:
+      description: Récupère le résumé (temps total, nombre de tâches) d'une déclaration
+        journalière
+      parameters:
+      - description: 'Date (format: YYYY-MM-DD)'
+        in: path
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DailySummaryDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le résumé d'une déclaration journalière
+      tags:
+      - timesheet
+  /timesheet/daily/{date}/tasks:
+    get:
+      description: Récupère toutes les tâches d'une déclaration journalière
+      parameters:
+      - description: 'Date (format: YYYY-MM-DD)'
+        in: path
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DailyTaskDTO'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les tâches d'une déclaration journalière
+      tags:
+      - timesheet
+    post:
+      consumes:
+      - application/json
+      description: Crée une nouvelle tâche dans une déclaration journalière
+      parameters:
+      - description: 'Date (format: YYYY-MM-DD)'
+        in: path
+        name: date
+        required: true
+        type: string
+      - description: Données de la tâche
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DailyTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.DailyTaskDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Créer une tâche journalière
+      tags:
+      - timesheet
+  /timesheet/daily/{date}/tasks/{taskId}:
+    delete:
+      description: Supprime une tâche d'une déclaration journalière
+      parameters:
+      - description: 'Date (format: YYYY-MM-DD)'
+        in: path
+        name: date
+        required: true
+        type: string
+      - description: ID de la tâche
+        in: path
+        name: taskId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Supprimer une tâche journalière
+      tags:
+      - timesheet
+  /timesheet/daily/calendar:
+    get:
+      description: Récupère le calendrier des déclarations journalières dans une plage
+        de dates
+      parameters:
+      - description: 'Date de début (format: YYYY-MM-DD)'
+        in: query
+        name: startDate
+        type: string
+      - description: 'Date de fin (format: YYYY-MM-DD)'
+        in: query
+        name: endDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DailyCalendarDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le calendrier journalier
+      tags:
+      - timesheet
+  /timesheet/daily/range:
+    get:
+      description: Récupère toutes les déclarations journalières dans une plage de
+        dates
+      parameters:
+      - description: 'Date de début (format: YYYY-MM-DD)'
+        in: query
+        name: startDate
+        type: string
+      - description: 'Date de fin (format: YYYY-MM-DD)'
+        in: query
+        name: endDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DailyDeclarationDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les déclarations journalières dans une plage
+      tags:
+      - timesheet
+  /timesheet/entries:
+    get:
+      description: Récupère la liste de toutes les entrées de temps
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TimeEntryDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer toutes les entrées de temps
+      tags:
+      - timesheet
+    post:
+      consumes:
+      - application/json
+      description: Crée une nouvelle entrée de temps dans le timesheet
+      parameters:
+      - description: Données de l'entrée de temps
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTimeEntryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.TimeEntryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Créer une entrée de temps
+      tags:
+      - timesheet
+  /timesheet/entries/{id}:
+    get:
+      description: Récupère une entrée de temps par son identifiant
+      parameters:
+      - description: ID de l'entrée de temps
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TimeEntryDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer une entrée de temps par ID
+      tags:
+      - timesheet
+    put:
+      consumes:
+      - application/json
+      description: Met à jour une entrée de temps
+      parameters:
+      - description: ID de l'entrée de temps
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données de mise à jour
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTimeEntryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TimeEntryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour une entrée de temps
+      tags:
+      - timesheet
+  /timesheet/entries/{id}/validate:
+    post:
+      consumes:
+      - application/json
+      description: Valide une entrée de temps
+      parameters:
+      - description: ID de l'entrée de temps
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Données de validation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ValidateTimeEntryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TimeEntryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Valider une entrée de temps
+      tags:
+      - timesheet
+  /timesheet/entries/by-date/{date}:
+    get:
+      description: Récupère toutes les entrées de temps d'une date spécifique
+      parameters:
+      - description: 'Date (format: YYYY-MM-DD)'
+        in: path
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TimeEntryDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les entrées de temps d'une date
+      tags:
+      - timesheet
+  /timesheet/entries/pending-validation:
+    get:
+      description: Récupère toutes les entrées de temps en attente de validation
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TimeEntryDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les entrées en attente de validation
+      tags:
+      - timesheet
+  /timesheet/history:
+    get:
+      description: Récupère l'historique du timesheet dans une plage de dates
+      parameters:
+      - description: 'Date de début (format: YYYY-MM-DD)'
+        in: query
+        name: startDate
+        type: string
+      - description: 'Date de fin (format: YYYY-MM-DD)'
+        in: query
+        name: endDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TimesheetHistoryDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer l'historique du timesheet
+      tags:
+      - timesheet
+  /timesheet/history/{entryId}:
+    get:
+      description: Récupère une entrée détaillée de l'historique
+      parameters:
+      - description: ID de l'entrée
+        in: path
+        name: entryId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TimesheetHistoryEntryDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer une entrée de l'historique
+      tags:
+      - timesheet
+  /timesheet/modifications:
+    get:
+      description: Récupère toutes les modifications du timesheet dans une plage de
+        dates
+      parameters:
+      - description: 'Date de début (format: YYYY-MM-DD)'
+        in: query
+        name: startDate
+        type: string
+      - description: 'Date de fin (format: YYYY-MM-DD)'
+        in: query
+        name: endDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ModificationDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les modifications
+      tags:
+      - timesheet
+  /timesheet/validation-history:
+    get:
+      description: Récupère l'historique de toutes les validations
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ValidationHistoryDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer l'historique de validation
+      tags:
+      - timesheet
+  /timesheet/weekly/{week}:
+    get:
+      description: Récupère la déclaration hebdomadaire d'une semaine
+      parameters:
+      - description: 'Semaine (format: YYYY-Www)'
+        in: path
+        name: week
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.WeeklyDeclarationDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer une déclaration hebdomadaire
+      tags:
+      - timesheet
+    post:
+      consumes:
+      - application/json
+      description: Crée ou met à jour une déclaration hebdomadaire
+      parameters:
+      - description: 'Semaine (format: YYYY-Www)'
+        in: path
+        name: week
+        required: true
+        type: string
+      - description: Liste des tâches
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.WeeklyTaskRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.WeeklyDeclarationDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Créer ou mettre à jour une déclaration hebdomadaire
+      tags:
+      - timesheet
+  /timesheet/weekly/{week}/daily-breakdown:
+    get:
+      description: Récupère la répartition quotidienne d'une déclaration hebdomadaire
+      parameters:
+      - description: 'Semaine (format: YYYY-Www)'
+        in: path
+        name: week
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DailyBreakdownDTO'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer la répartition quotidienne
+      tags:
+      - timesheet
+  /timesheet/weekly/{week}/summary:
+    get:
+      description: Récupère le résumé (temps total, nombre de tâches) d'une déclaration
+        hebdomadaire
+      parameters:
+      - description: 'Semaine (format: YYYY-Www)'
+        in: path
+        name: week
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.WeeklySummaryDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le résumé d'une déclaration hebdomadaire
+      tags:
+      - timesheet
+  /timesheet/weekly/{week}/tasks:
+    get:
+      description: Récupère toutes les tâches d'une déclaration hebdomadaire
+      parameters:
+      - description: 'Semaine (format: YYYY-Www)'
+        in: path
+        name: week
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.WeeklyTaskDTO'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les tâches d'une déclaration hebdomadaire
+      tags:
+      - timesheet
+  /timesheet/weekly/{week}/validate:
+    post:
+      description: Valide une déclaration hebdomadaire
+      parameters:
+      - description: 'Semaine (format: YYYY-Www)'
+        in: path
+        name: week
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.WeeklyDeclarationDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Valider une déclaration hebdomadaire
+      tags:
+      - timesheet
+  /timesheet/weekly/{week}/validation-status:
+    get:
+      description: Récupère le statut de validation d'une déclaration hebdomadaire
+      parameters:
+      - description: 'Semaine (format: YYYY-Www)'
+        in: path
+        name: week
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ValidationStatusDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer le statut de validation
+      tags:
+      - timesheet
   /users:
     get:
       description: Récupère la liste de tous les utilisateurs
@@ -3908,6 +9286,111 @@ paths:
       summary: Mettre à jour un utilisateur
       tags:
       - users
+  /users/{id}/avatar:
+    delete:
+      description: Supprime l'avatar d'un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Supprimer l'avatar d'un utilisateur
+      tags:
+      - users
+    get:
+      description: Récupère l'avatar d'un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - image/*
+      responses:
+        "200":
+          description: Image de l'avatar
+          schema:
+            type: file
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer l'avatar d'un utilisateur
+      tags:
+      - users
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload un avatar pour un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Fichier image (JPG, PNG, max 2MB)
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Uploader un avatar
+      tags:
+      - users
+  /users/{id}/avatar/thumbnail:
+    get:
+      description: Récupère la miniature de l'avatar d'un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - image/*
+      responses:
+        "200":
+          description: Miniature de l'avatar
+          schema:
+            type: file
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer la miniature de l'avatar
+      tags:
+      - users
   /users/{id}/password:
     put:
       consumes:
@@ -3941,6 +9424,117 @@ paths:
       security:
       - BearerAuth: []
       summary: Changer le mot de passe
+      tags:
+      - users
+  /users/{id}/permissions:
+    get:
+      description: Récupère la liste des permissions d'un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserPermissionsDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les permissions d'un utilisateur
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Met à jour la liste des permissions d'un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Liste des permissions
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserPermissionsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UserPermissionsDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mettre à jour les permissions d'un utilisateur
+      tags:
+      - users
+  /users/{id}/time-entries:
+    get:
+      description: Récupère toutes les entrées de temps d'un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TimeEntryDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les entrées de temps d'un utilisateur
+      tags:
+      - timesheet
+  /users/{userId}/delay-justifications:
+    get:
+      description: Récupère toutes les justifications de retards d'un utilisateur
+      parameters:
+      - description: ID de l'utilisateur
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DelayJustificationDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Récupérer les justifications d'un utilisateur
       tags:
       - users
   /weekly-declarations/{id}:
