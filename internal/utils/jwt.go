@@ -64,7 +64,7 @@ func GenerateRefreshToken(userID uint) (string, error) {
 }
 
 // ValidateToken valide un token JWT et retourne les claims
-// Retourne une erreur si le token est invalide ou expiré
+// ou une erreur si le token est invalide ou expiré
 func ValidateToken(tokenString string) (*Claims, error) {
 	claims := &Claims{}
 

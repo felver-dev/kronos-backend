@@ -3,18 +3,20 @@ package repositories
 import (
 	"github.com/mcicare/itsm-backend/database"
 	"github.com/mcicare/itsm-backend/internal/models"
+	"github.com/mcicare/itsm-backend/internal/scope"
 )
 
 // AssetRepository interface pour les opérations sur les actifs IT
 type AssetRepository interface {
 	Create(asset *models.Asset) error
 	FindByID(id uint) (*models.Asset, error)
-	FindAll() ([]models.Asset, error)
-	FindByCategory(categoryID uint) ([]models.Asset, error)
-	FindByStatus(status string) ([]models.Asset, error)
+	FindAll(scope interface{}) ([]models.Asset, error) // scope peut être *scope.QueryScope ou nil
+	FindByCategory(scope interface{}, categoryID uint) ([]models.Asset, error)
+	CountByCategory(categoryID uint) (int64, error)
+	FindByStatus(scope interface{}, status string) ([]models.Asset, error)
 	FindByAssignedTo(userID uint) ([]models.Asset, error)
 	FindBySerialNumber(serialNumber string) (*models.Asset, error)
-	Search(query string, category string, limit int) ([]models.Asset, error)
+	Search(scope interface{}, query string, category string, limit int) ([]models.Asset, error) // scope peut être *scope.QueryScope ou nil
 	Update(asset *models.Asset) error
 	Delete(id uint) error
 }
@@ -24,7 +26,9 @@ type AssetCategoryRepository interface {
 	Create(category *models.AssetCategory) error
 	FindByID(id uint) (*models.AssetCategory, error)
 	FindAll() ([]models.AssetCategory, error)
+	FindPaginated(page, limit int) ([]models.AssetCategory, int64, error)
 	FindByParentID(parentID uint) ([]models.AssetCategory, error)
+	CountByParentID(parentID uint) (int64, error)
 	Update(category *models.AssetCategory) error
 	Delete(id uint) error
 }
@@ -61,23 +65,75 @@ func (r *assetRepository) FindByID(id uint) (*models.Asset, error) {
 }
 
 // FindAll récupère tous les actifs
-func (r *assetRepository) FindAll() ([]models.Asset, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *assetRepository) FindAll(scopeParam interface{}) ([]models.Asset, error) {
 	var assets []models.Asset
-	err := database.DB.Preload("Category").Preload("AssignedTo").Find(&assets).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.Asset{}).Preload("Category").Preload("AssignedTo")
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyAssetScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&assets).Error
 	return assets, err
 }
 
 // FindByCategory récupère les actifs par catégorie
-func (r *assetRepository) FindByCategory(categoryID uint) ([]models.Asset, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *assetRepository) FindByCategory(scopeParam interface{}, categoryID uint) ([]models.Asset, error) {
 	var assets []models.Asset
-	err := database.DB.Preload("Category").Preload("AssignedTo").Where("category_id = ?", categoryID).Find(&assets).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.Asset{}).Where("category_id = ?", categoryID)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyAssetScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&assets).Error
 	return assets, err
 }
 
+// CountByCategory compte le nombre d'actifs par catégorie
+func (r *assetRepository) CountByCategory(categoryID uint) (int64, error) {
+	var count int64
+	// Utiliser une requête explicite pour compter les actifs avec cette catégorie
+	// Note: GORM gère automatiquement les soft deletes avec DeletedAt
+	err := database.DB.Model(&models.Asset{}).
+		Where("category_id = ?", categoryID).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 // FindByStatus récupère les actifs par statut
-func (r *assetRepository) FindByStatus(status string) ([]models.Asset, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *assetRepository) FindByStatus(scopeParam interface{}, status string) ([]models.Asset, error) {
 	var assets []models.Asset
-	err := database.DB.Preload("Category").Preload("AssignedTo").Where("status = ?", status).Find(&assets).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.Asset{}).
+		Preload("Category").Preload("AssignedTo").
+		Where("status = ?", status)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyAssetScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&assets).Error
 	return assets, err
 }
 
@@ -109,12 +165,21 @@ func (r *assetRepository) Delete(id uint) error {
 }
 
 // Search recherche des actifs par nom, description ou numéro de série
-func (r *assetRepository) Search(query string, category string, limit int) ([]models.Asset, error) {
+func (r *assetRepository) Search(scopeParam interface{}, query string, category string, limit int) ([]models.Asset, error) {
 	var assets []models.Asset
 	searchPattern := "%" + query + "%"
 	
-	db := database.DB.Preload("Category").Preload("AssignedTo").Preload("AssignedTo.Role").
-		Where("name LIKE ? OR description LIKE ? OR serial_number LIKE ?", searchPattern, searchPattern, searchPattern)
+	// Construire la requête de base
+	db := database.DB.Model(&models.Asset{}).
+		Preload("Category").Preload("AssignedTo").Preload("AssignedTo.Role").
+		Where("assets.name LIKE ? OR assets.description LIKE ? OR assets.serial_number LIKE ?", searchPattern, searchPattern, searchPattern)
+	
+	// Appliquer le scope si fourni (doit être fait avant les autres filtres)
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			db = scope.ApplyAssetScope(db, queryScope)
+		}
+	}
 	
 	if category != "" {
 		db = db.Joins("JOIN asset_categories ON assets.category_id = asset_categories.id").
@@ -125,7 +190,7 @@ func (r *assetRepository) Search(query string, category string, limit int) ([]mo
 		db = db.Limit(limit)
 	}
 	
-	err := db.Order("created_at DESC").Find(&assets).Error
+	err := db.Order("assets.created_at DESC").Find(&assets).Error
 	return assets, err
 }
 
@@ -151,11 +216,51 @@ func (r *assetCategoryRepository) FindAll() ([]models.AssetCategory, error) {
 	return categories, err
 }
 
+// FindPaginated récupère les catégories avec pagination
+func (r *assetCategoryRepository) FindPaginated(page, limit int) ([]models.AssetCategory, int64, error) {
+	var categories []models.AssetCategory
+	var total int64
+
+	// Compter le total
+	err := database.DB.Model(&models.AssetCategory{}).Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Calculer l'offset
+	offset := (page - 1) * limit
+
+	// Récupérer les catégories avec pagination
+	err = database.DB.Preload("Parent").
+		Order("name ASC").
+		Limit(limit).
+		Offset(offset).
+		Find(&categories).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return categories, total, nil
+}
+
 // FindByParentID récupère les catégories enfants d'une catégorie parente
 func (r *assetCategoryRepository) FindByParentID(parentID uint) ([]models.AssetCategory, error) {
 	var categories []models.AssetCategory
 	err := database.DB.Where("parent_id = ?", parentID).Find(&categories).Error
 	return categories, err
+}
+
+// CountByParentID compte le nombre de catégories enfants d'une catégorie parente
+func (r *assetCategoryRepository) CountByParentID(parentID uint) (int64, error) {
+	var count int64
+	// Utiliser une requête explicite pour compter les catégories avec ce parent_id
+	err := database.DB.Model(&models.AssetCategory{}).
+		Where("parent_id = ?", parentID).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 // Update met à jour une catégorie

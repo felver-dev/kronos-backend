@@ -68,9 +68,14 @@ func (h *TimesheetHandler) CreateTimeEntry(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /timesheet/entries [get]
 func (h *TimesheetHandler) GetTimeEntries(c *gin.Context) {
-	entries, err := h.timesheetService.GetTimeEntries()
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	entries, err := h.timesheetService.GetTimeEntries(queryScope)
 	if err != nil {
-		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des entrées de temps")
+		// Logger l'erreur pour le débogage
+		c.Error(err)
+		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des entrées de temps: "+err.Error())
 		return
 	}
 
@@ -174,20 +179,37 @@ func (h *TimesheetHandler) GetTimeEntriesByTicketID(c *gin.Context) {
 
 // GetTimeEntriesByUserID récupère les entrées de temps d'un utilisateur
 // @Summary Récupérer les entrées de temps d'un utilisateur
-// @Description Récupère toutes les entrées de temps d'un utilisateur
+// @Description Récupère toutes les entrées de temps d'un utilisateur. Pour « Mon tableau de bord », seul son propre ID est autorisé sauf si timesheet.view_all ou timesheet.view_team.
 // @Tags timesheet
 // @Security BearerAuth
 // @Produce json
 // @Param id path int true "ID de l'utilisateur"
 // @Success 200 {array} dto.TimeEntryDTO
+// @Failure 403 {object} utils.Response "Seul son propre ID est autorisé sans view_all/view_team"
 // @Failure 500 {object} utils.Response
 // @Router /users/{id}/time-entries [get]
 func (h *TimesheetHandler) GetTimeEntriesByUserID(c *gin.Context) {
+	authUserID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
 	userIDParam := c.Param("id")
 	userID, err := strconv.ParseUint(userIDParam, 10, 32)
 	if err != nil {
 		utils.BadRequestResponse(c, "ID utilisateur invalide")
 		return
+	}
+
+	// « Mon tableau de bord » : n'afficher que les stats de la personne connectée
+	// Seul son propre ID est autorisé sauf si view_all ou view_team
+	if uint(userID) != authUserID.(uint) {
+		queryScope := utils.GetScopeFromContext(c)
+		if queryScope == nil || (!queryScope.HasPermission("timesheet.view_all") && !queryScope.HasPermission("timesheet.view_team")) {
+			utils.ForbiddenResponse(c, "Vous ne pouvez consulter que vos propres entrées de temps")
+			return
+		}
 	}
 
 	entries, err := h.timesheetService.GetTimeEntriesByUserID(uint(userID))
@@ -258,6 +280,32 @@ func (h *TimesheetHandler) GetDailyDeclaration(c *gin.Context) {
 		return
 	}
 
+	// Si l'utilisateur a la permission de voir toutes les déclarations, chercher toutes les déclarations de cette date
+	// et retourner celle de l'utilisateur connecté s'il en a une, sinon la première trouvée
+	if utils.RequirePermission(c, "timesheet.view_all") {
+		// Pour un admin, chercher toutes les déclarations de cette date
+		startDate := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
+		endDate := startDate.Add(24 * time.Hour)
+		declarations, err := h.timesheetService.GetAllDailyRange(startDate, endDate)
+		if err != nil || len(declarations) == 0 {
+			utils.NotFoundResponse(c, "Déclaration introuvable")
+			return
+		}
+		
+		// Chercher d'abord la déclaration de l'utilisateur connecté
+		for _, decl := range declarations {
+			if decl.UserID == userID.(uint) {
+				utils.SuccessResponse(c, decl, "Déclaration récupérée avec succès")
+				return
+			}
+		}
+		
+		// Sinon, retourner la première déclaration trouvée
+		utils.SuccessResponse(c, declarations[0], "Déclaration récupérée avec succès")
+		return
+	}
+
+	// Sinon, chercher seulement la déclaration de l'utilisateur connecté
 	declaration, err := h.timesheetService.GetDailyDeclaration(date, userID.(uint))
 	if err != nil {
 		utils.NotFoundResponse(c, "Déclaration introuvable")
@@ -531,10 +579,35 @@ func (h *TimesheetHandler) GetDailyRange(c *gin.Context) {
 		return
 	}
 
+	// Si l'utilisateur a la permission de voir toutes les déclarations, récupérer toutes les déclarations
+	if utils.RequirePermission(c, "timesheet.view_all") {
+		declarations, err := h.timesheetService.GetAllDailyRange(startDate, endDate)
+		if err != nil {
+			// Logger l'erreur pour le débogage mais retourner un tableau vide pour éviter de faire planter la page
+			c.Error(err)
+			utils.SuccessResponse(c, []dto.DailyDeclarationDTO{}, "Aucune déclaration trouvée")
+			return
+		}
+		// S'assurer qu'on ne retourne jamais nil
+		if declarations == nil {
+			declarations = []dto.DailyDeclarationDTO{}
+		}
+		utils.SuccessResponse(c, declarations, "Déclarations récupérées avec succès")
+		return
+	}
+
+	// Sinon, récupérer seulement les déclarations de l'utilisateur
 	declarations, err := h.timesheetService.GetDailyRange(userID.(uint), startDate, endDate)
 	if err != nil {
-		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des déclarations")
+		// Logger l'erreur pour le débogage mais retourner un tableau vide pour éviter de faire planter la page
+		c.Error(err)
+		utils.SuccessResponse(c, []dto.DailyDeclarationDTO{}, "Aucune déclaration trouvée")
 		return
+	}
+	
+	// S'assurer qu'on ne retourne jamais nil
+	if declarations == nil {
+		declarations = []dto.DailyDeclarationDTO{}
 	}
 
 	utils.SuccessResponse(c, declarations, "Déclarations récupérées avec succès")
@@ -762,7 +835,7 @@ func (h *TimesheetHandler) GetWeeklyValidationStatus(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "ID du ticket"
-// @Param estimatedTime body int true "Temps estimé en minutes"
+// @Param request body dto.SetEstimatedTimeRequest true "Temps estimé en minutes"
 // @Success 200 {object} utils.Response
 // @Failure 400 {object} utils.Response
 // @Router /tickets/{id}/estimated-time [post]
@@ -774,8 +847,8 @@ func (h *TimesheetHandler) SetTicketEstimatedTime(c *gin.Context) {
 		return
 	}
 
-	var estimatedTime int
-	if err := c.ShouldBindJSON(&estimatedTime); err != nil {
+	var req dto.SetEstimatedTimeRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
 		return
 	}
@@ -786,7 +859,7 @@ func (h *TimesheetHandler) SetTicketEstimatedTime(c *gin.Context) {
 		return
 	}
 
-	err = h.timesheetService.SetTicketEstimatedTime(uint(ticketID), estimatedTime, userID.(uint))
+	err = h.timesheetService.SetTicketEstimatedTime(uint(ticketID), req.EstimatedTime, userID.(uint))
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return
@@ -830,7 +903,7 @@ func (h *TimesheetHandler) GetTicketEstimatedTime(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "ID du ticket"
-// @Param estimatedTime body int true "Nouveau temps estimé en minutes"
+// @Param request body dto.SetEstimatedTimeRequest true "Nouveau temps estimé en minutes"
 // @Success 200 {object} utils.Response
 // @Failure 400 {object} utils.Response
 // @Router /tickets/{id}/estimated-time [put]
@@ -842,8 +915,8 @@ func (h *TimesheetHandler) UpdateTicketEstimatedTime(c *gin.Context) {
 		return
 	}
 
-	var estimatedTime int
-	if err := c.ShouldBindJSON(&estimatedTime); err != nil {
+	var req dto.SetEstimatedTimeRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
 		return
 	}
@@ -854,7 +927,7 @@ func (h *TimesheetHandler) UpdateTicketEstimatedTime(c *gin.Context) {
 		return
 	}
 
-	err = h.timesheetService.UpdateTicketEstimatedTime(uint(ticketID), estimatedTime, userID.(uint))
+	err = h.timesheetService.UpdateTicketEstimatedTime(uint(ticketID), req.EstimatedTime, userID.(uint))
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return
@@ -901,6 +974,10 @@ func (h *TimesheetHandler) GetTicketTimeComparison(c *gin.Context) {
 // @Failure 404 {object} utils.Response
 // @Router /projects/{id}/time-budget [get]
 func (h *TimesheetHandler) GetProjectTimeBudget(c *gin.Context) {
+	if !utils.RequireAnyPermission(c, "timesheet.view_budget", "timesheet.view_all") {
+		utils.ForbiddenResponse(c, "Permission insuffisante pour accéder au budget temps")
+		return
+	}
 	projectIDParam := c.Param("id")
 	projectID, err := strconv.ParseUint(projectIDParam, 10, 32)
 	if err != nil {
@@ -930,6 +1007,10 @@ func (h *TimesheetHandler) GetProjectTimeBudget(c *gin.Context) {
 // @Failure 400 {object} utils.Response
 // @Router /projects/{id}/time-budget [post]
 func (h *TimesheetHandler) SetProjectTimeBudget(c *gin.Context) {
+	if !utils.RequireAnyPermission(c, "timesheet.view_budget", "timesheet.view_all") {
+		utils.ForbiddenResponse(c, "Permission insuffisante pour accéder au budget temps")
+		return
+	}
 	projectIDParam := c.Param("id")
 	projectID, err := strconv.ParseUint(projectIDParam, 10, 32)
 	if err != nil {
@@ -968,9 +1049,15 @@ func (h *TimesheetHandler) SetProjectTimeBudget(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /timesheet/budget-alerts [get]
 func (h *TimesheetHandler) GetBudgetAlerts(c *gin.Context) {
+	if !utils.RequireAnyPermission(c, "timesheet.view_budget", "timesheet.view_all") {
+		utils.ForbiddenResponse(c, "Permission insuffisante pour accéder au budget temps")
+		return
+	}
 	alerts, err := h.timesheetService.GetBudgetAlerts()
 	if err != nil {
-		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des alertes")
+		// Logger l'erreur pour le débogage
+		c.Error(err)
+		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des alertes: "+err.Error())
 		return
 	}
 
@@ -988,6 +1075,10 @@ func (h *TimesheetHandler) GetBudgetAlerts(c *gin.Context) {
 // @Failure 404 {object} utils.Response
 // @Router /timesheet/budget-status/{id} [get]
 func (h *TimesheetHandler) GetTicketBudgetStatus(c *gin.Context) {
+	if !utils.RequireAnyPermission(c, "timesheet.view_budget", "timesheet.view_all") {
+		utils.ForbiddenResponse(c, "Permission insuffisante pour accéder au budget temps")
+		return
+	}
 	ticketIDParam := c.Param("id")
 	ticketID, err := strconv.ParseUint(ticketIDParam, 10, 32)
 	if err != nil {
@@ -1031,6 +1122,10 @@ func (h *TimesheetHandler) ValidateTimeEntry(c *gin.Context) {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
 		return
 	}
+	if req.Validated == nil {
+		utils.BadRequestResponse(c, "Le champ validated est requis")
+		return
+	}
 
 	validatedByID, exists := c.Get("user_id")
 	if !exists {
@@ -1057,7 +1152,10 @@ func (h *TimesheetHandler) ValidateTimeEntry(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /timesheet/entries/pending-validation [get]
 func (h *TimesheetHandler) GetPendingValidationEntries(c *gin.Context) {
-	entries, err := h.timesheetService.GetPendingValidationEntries()
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	entries, err := h.timesheetService.GetPendingValidationEntries(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des entrées")
 		return
@@ -1116,6 +1214,10 @@ func (h *TimesheetHandler) GetDelayAlerts(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /timesheet/alerts/budget [get]
 func (h *TimesheetHandler) GetBudgetAlertsForTimesheet(c *gin.Context) {
+	if !utils.RequireAnyPermission(c, "timesheet.view_budget", "timesheet.view_all") {
+		utils.ForbiddenResponse(c, "Permission insuffisante pour accéder au budget temps")
+		return
+	}
 	alerts, err := h.timesheetService.GetBudgetAlertsForTimesheet()
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des alertes")

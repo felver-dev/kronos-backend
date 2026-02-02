@@ -9,6 +9,7 @@ import (
 type TicketAttachmentRepository interface {
 	Create(attachment *models.TicketAttachment) error
 	FindByID(id uint) (*models.TicketAttachment, error)
+	FindByIDBasic(id uint) (*models.TicketAttachment, error)
 	FindByTicketID(ticketID uint) ([]models.TicketAttachment, error)
 	FindByUserID(userID uint) ([]models.TicketAttachment, error)
 	FindPrimaryByTicketID(ticketID uint) (*models.TicketAttachment, error)
@@ -40,10 +41,21 @@ func (r *ticketAttachmentRepository) FindByID(id uint) (*models.TicketAttachment
 	return &attachment, nil
 }
 
+// FindByIDBasic retourne une pièce jointe sans préchargements (pour download/thumbnail)
+func (r *ticketAttachmentRepository) FindByIDBasic(id uint) (*models.TicketAttachment, error) {
+	var attachment models.TicketAttachment
+	err := database.DB.Select("id", "ticket_id", "user_id", "file_path", "thumbnail_path", "is_image").
+		First(&attachment, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &attachment, nil
+}
+
 // FindByTicketID récupère toutes les pièces jointes d'un ticket
 func (r *ticketAttachmentRepository) FindByTicketID(ticketID uint) ([]models.TicketAttachment, error) {
 	var attachments []models.TicketAttachment
-	err := database.DB.Preload("User").Preload("User.Role").Where("ticket_id = ?", ticketID).Order("display_order ASC, created_at ASC").Find(&attachments).Error
+	err := database.DB.Where("ticket_id = ?", ticketID).Order("display_order ASC, created_at ASC").Find(&attachments).Error
 	return attachments, err
 }
 
@@ -67,7 +79,7 @@ func (r *ticketAttachmentRepository) FindPrimaryByTicketID(ticketID uint) (*mode
 // FindImagesByTicketID récupère toutes les images d'un ticket
 func (r *ticketAttachmentRepository) FindImagesByTicketID(ticketID uint) ([]models.TicketAttachment, error) {
 	var attachments []models.TicketAttachment
-	err := database.DB.Preload("User").Preload("User.Role").Where("ticket_id = ? AND is_image = ?", ticketID, true).Order("display_order ASC, created_at ASC").Find(&attachments).Error
+	err := database.DB.Where("ticket_id = ? AND is_image = ?", ticketID, true).Order("display_order ASC, created_at ASC").Find(&attachments).Error
 	return attachments, err
 }
 

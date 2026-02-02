@@ -14,9 +14,9 @@ type IncidentService interface {
 	Create(req dto.CreateIncidentRequest, createdByID uint) (*dto.IncidentDTO, error)
 	GetByID(id uint) (*dto.IncidentDTO, error)
 	GetByTicketID(ticketID uint) (*dto.IncidentDTO, error)
-	GetAll() ([]dto.IncidentDTO, error)
-	GetByImpact(impact string) ([]dto.IncidentDTO, error)
-	GetByUrgency(urgency string) ([]dto.IncidentDTO, error)
+	GetAll(scope interface{}) ([]dto.IncidentDTO, error) // scope peut être *scope.QueryScope ou nil
+	GetByImpact(scope interface{}, impact string) ([]dto.IncidentDTO, error)
+	GetByUrgency(scope interface{}, urgency string) ([]dto.IncidentDTO, error)
 	Update(id uint, req dto.UpdateIncidentRequest, updatedByID uint) (*dto.IncidentDTO, error)
 	Qualify(id uint, req dto.QualifyIncidentRequest, qualifiedByID uint) (*dto.IncidentDTO, error)
 	LinkAsset(incidentID uint, assetID uint, linkedByID uint) error
@@ -137,8 +137,9 @@ func (s *incidentService) GetByTicketID(ticketID uint) (*dto.IncidentDTO, error)
 }
 
 // GetAll récupère tous les incidents
-func (s *incidentService) GetAll() ([]dto.IncidentDTO, error) {
-	incidents, err := s.incidentRepo.FindAll()
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *incidentService) GetAll(scopeParam interface{}) ([]dto.IncidentDTO, error) {
+	incidents, err := s.incidentRepo.FindAll(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des incidents")
 	}
@@ -152,8 +153,9 @@ func (s *incidentService) GetAll() ([]dto.IncidentDTO, error) {
 }
 
 // GetByImpact récupère les incidents par impact
-func (s *incidentService) GetByImpact(impact string) ([]dto.IncidentDTO, error) {
-	incidents, err := s.incidentRepo.FindByImpact(impact)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *incidentService) GetByImpact(scopeParam interface{}, impact string) ([]dto.IncidentDTO, error) {
+	incidents, err := s.incidentRepo.FindByImpact(scopeParam, impact)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des incidents")
 	}
@@ -167,8 +169,9 @@ func (s *incidentService) GetByImpact(impact string) ([]dto.IncidentDTO, error) 
 }
 
 // GetByUrgency récupère les incidents par urgence
-func (s *incidentService) GetByUrgency(urgency string) ([]dto.IncidentDTO, error) {
-	incidents, err := s.incidentRepo.FindByUrgency(urgency)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *incidentService) GetByUrgency(scopeParam interface{}, urgency string) ([]dto.IncidentDTO, error) {
+	incidents, err := s.incidentRepo.FindByUrgency(scopeParam, urgency)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des incidents")
 	}
@@ -445,19 +448,52 @@ func (s *incidentService) ticketToDTO(ticket *models.Ticket) dto.TicketDTO {
 
 // userToDTO convertit un modèle User en DTO UserDTO (méthode utilitaire)
 func (s *incidentService) userToDTO(user *models.User) dto.UserDTO {
-	return dto.UserDTO{
-		ID:        user.ID,
-		Username:  user.Username,
-		Email:     user.Email,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Avatar:    user.Avatar,
-		Role:      user.Role.Name,
-		IsActive:  user.IsActive,
-		LastLogin: user.LastLogin,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+	userDTO := dto.UserDTO{
+		ID:         user.ID,
+		Username:   user.Username,
+		Email:      user.Email,
+		FirstName:  user.FirstName,
+		LastName:   user.LastName,
+		DepartmentID: user.DepartmentID,
+		Avatar:     user.Avatar,
+		Role:       user.Role.Name,
+		IsActive:   user.IsActive,
+		LastLogin:  user.LastLogin,
+		CreatedAt:  user.CreatedAt,
+		UpdatedAt:  user.UpdatedAt,
 	}
+
+	// Inclure le département complet si présent
+	if user.Department != nil {
+		departmentDTO := dto.DepartmentDTO{
+			ID:          user.Department.ID,
+			Name:        user.Department.Name,
+			Code:        user.Department.Code,
+			Description: user.Department.Description,
+			OfficeID:    user.Department.OfficeID,
+			IsActive:    user.Department.IsActive,
+			CreatedAt:   user.Department.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			UpdatedAt:   user.Department.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		}
+		if user.Department.Office != nil {
+			departmentDTO.Office = &dto.OfficeDTO{
+				ID:        user.Department.Office.ID,
+				Name:      user.Department.Office.Name,
+				Country:   user.Department.Office.Country,
+				City:      user.Department.Office.City,
+				Commune:   user.Department.Office.Commune,
+				Address:   user.Department.Office.Address,
+				Longitude: user.Department.Office.Longitude,
+				Latitude:  user.Department.Office.Latitude,
+				IsActive:  user.Department.Office.IsActive,
+				CreatedAt: user.Department.Office.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+				UpdatedAt: user.Department.Office.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			}
+		}
+		userDTO.Department = &departmentDTO
+	}
+
+	return userDTO
 }
 
 // assetToDTO convertit un modèle Asset en DTO AssetDTO (méthode utilitaire)

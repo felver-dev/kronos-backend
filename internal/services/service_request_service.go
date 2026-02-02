@@ -14,10 +14,10 @@ type ServiceRequestService interface {
 	Create(req dto.CreateServiceRequestRequest, createdByID uint) (*dto.ServiceRequestDTO, error)
 	GetByID(id uint) (*dto.ServiceRequestDTO, error)
 	GetByTicketID(ticketID uint) (*dto.ServiceRequestDTO, error)
-	GetAll() ([]dto.ServiceRequestDTO, error)
-	GetByType(typeID uint) ([]dto.ServiceRequestDTO, error)
-	GetValidated() ([]dto.ServiceRequestDTO, error)
-	GetPendingValidation() ([]dto.ServiceRequestDTO, error)
+	GetAll(scope interface{}) ([]dto.ServiceRequestDTO, error) // scope peut être *scope.QueryScope ou nil
+	GetByType(scope interface{}, typeID uint) ([]dto.ServiceRequestDTO, error)
+	GetValidated(scope interface{}) ([]dto.ServiceRequestDTO, error)
+	GetPendingValidation(scope interface{}) ([]dto.ServiceRequestDTO, error)
 	Update(id uint, req dto.UpdateServiceRequestRequest, updatedByID uint) (*dto.ServiceRequestDTO, error)
 	Validate(id uint, req dto.ValidateServiceRequestRequest, validatedByID uint) (*dto.ServiceRequestDTO, error)
 	Delete(id uint) error
@@ -158,8 +158,8 @@ func (s *serviceRequestService) GetByTicketID(ticketID uint) (*dto.ServiceReques
 }
 
 // GetAll récupère toutes les demandes de service
-func (s *serviceRequestService) GetAll() ([]dto.ServiceRequestDTO, error) {
-	serviceRequests, err := s.serviceRequestRepo.FindAll()
+func (s *serviceRequestService) GetAll(scopeParam interface{}) ([]dto.ServiceRequestDTO, error) {
+	serviceRequests, err := s.serviceRequestRepo.FindAll(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des demandes de service")
 	}
@@ -173,8 +173,8 @@ func (s *serviceRequestService) GetAll() ([]dto.ServiceRequestDTO, error) {
 }
 
 // GetByType récupère les demandes de service par type
-func (s *serviceRequestService) GetByType(typeID uint) ([]dto.ServiceRequestDTO, error) {
-	serviceRequests, err := s.serviceRequestRepo.FindByType(typeID)
+func (s *serviceRequestService) GetByType(scopeParam interface{}, typeID uint) ([]dto.ServiceRequestDTO, error) {
+	serviceRequests, err := s.serviceRequestRepo.FindByType(scopeParam, typeID)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des demandes de service")
 	}
@@ -188,8 +188,8 @@ func (s *serviceRequestService) GetByType(typeID uint) ([]dto.ServiceRequestDTO,
 }
 
 // GetValidated récupère les demandes de service validées
-func (s *serviceRequestService) GetValidated() ([]dto.ServiceRequestDTO, error) {
-	serviceRequests, err := s.serviceRequestRepo.FindValidated()
+func (s *serviceRequestService) GetValidated(scopeParam interface{}) ([]dto.ServiceRequestDTO, error) {
+	serviceRequests, err := s.serviceRequestRepo.FindValidated(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des demandes de service")
 	}
@@ -203,8 +203,8 @@ func (s *serviceRequestService) GetValidated() ([]dto.ServiceRequestDTO, error) 
 }
 
 // GetPendingValidation récupère les demandes de service en attente de validation
-func (s *serviceRequestService) GetPendingValidation() ([]dto.ServiceRequestDTO, error) {
-	serviceRequests, err := s.serviceRequestRepo.FindPendingValidation()
+func (s *serviceRequestService) GetPendingValidation(scopeParam interface{}) ([]dto.ServiceRequestDTO, error) {
+	serviceRequests, err := s.serviceRequestRepo.FindPendingValidation(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des demandes de service")
 	}
@@ -512,17 +512,50 @@ func (s *serviceRequestService) ticketToDTO(ticket *models.Ticket) dto.TicketDTO
 
 // userToDTO convertit un modèle User en DTO UserDTO (méthode utilitaire)
 func (s *serviceRequestService) userToDTO(user *models.User) dto.UserDTO {
-	return dto.UserDTO{
-		ID:        user.ID,
-		Username:  user.Username,
-		Email:     user.Email,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Avatar:    user.Avatar,
-		Role:      user.Role.Name,
-		IsActive:  user.IsActive,
-		LastLogin: user.LastLogin,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+	userDTO := dto.UserDTO{
+		ID:         user.ID,
+		Username:   user.Username,
+		Email:      user.Email,
+		FirstName:  user.FirstName,
+		LastName:   user.LastName,
+		DepartmentID: user.DepartmentID,
+		Avatar:     user.Avatar,
+		Role:       user.Role.Name,
+		IsActive:   user.IsActive,
+		LastLogin:  user.LastLogin,
+		CreatedAt:  user.CreatedAt,
+		UpdatedAt:  user.UpdatedAt,
 	}
+
+	// Inclure le département complet si présent
+	if user.Department != nil {
+		departmentDTO := dto.DepartmentDTO{
+			ID:          user.Department.ID,
+			Name:        user.Department.Name,
+			Code:        user.Department.Code,
+			Description: user.Department.Description,
+			OfficeID:    user.Department.OfficeID,
+			IsActive:    user.Department.IsActive,
+			CreatedAt:   user.Department.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			UpdatedAt:   user.Department.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		}
+		if user.Department.Office != nil {
+			departmentDTO.Office = &dto.OfficeDTO{
+				ID:        user.Department.Office.ID,
+				Name:      user.Department.Office.Name,
+				Country:   user.Department.Office.Country,
+				City:      user.Department.Office.City,
+				Commune:   user.Department.Office.Commune,
+				Address:   user.Department.Office.Address,
+				Longitude: user.Department.Office.Longitude,
+				Latitude:  user.Department.Office.Latitude,
+				IsActive:  user.Department.Office.IsActive,
+				CreatedAt: user.Department.Office.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+				UpdatedAt: user.Department.Office.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			}
+		}
+		userDTO.Department = &departmentDTO
+	}
+
+	return userDTO
 }

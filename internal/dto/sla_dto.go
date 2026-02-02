@@ -18,13 +18,13 @@ type SLADTO struct {
 
 // CreateSLARequest représente la requête de création d'un SLA
 type CreateSLARequest struct {
-	Name           string  `json:"name" binding:"required"`                                                            // Nom (obligatoire)
-	Description    string  `json:"description,omitempty"`                                                              // Description (optionnel)
-	TicketCategory string  `json:"ticket_category" binding:"required,oneof=incident demande changement developpement"` // Catégorie (obligatoire)
-	Priority       *string `json:"priority,omitempty" binding:"omitempty,oneof=low medium high critical"`              // Priorité (optionnel)
-	TargetTime     int     `json:"target_time" binding:"required,min=1"`                                               // Temps cible en minutes (obligatoire, min 1)
-	Unit           string  `json:"unit,omitempty" binding:"omitempty,oneof=minutes hours days"`                        // Unité (optionnel, défaut: minutes)
-	IsActive       bool    `json:"is_active,omitempty"`                                                                // Statut actif (optionnel, défaut: true)
+	Name           string  `json:"name" binding:"required"`                                    // Nom (obligatoire)
+	Description    string  `json:"description,omitempty"`                                      // Description (optionnel)
+	TicketCategory string  `json:"ticket_category" binding:"required"`                        // Catégorie (obligatoire) - slug de la catégorie de ticket
+	Priority       *string `json:"priority,omitempty" binding:"omitempty,oneof=low medium high critical"` // Priorité (optionnel)
+	TargetTime     int     `json:"target_time" binding:"required,min=1"`                       // Temps cible en minutes (obligatoire, min 1)
+	Unit           string  `json:"unit,omitempty" binding:"omitempty,oneof=minutes hours days"` // Unité (optionnel, défaut: minutes)
+	IsActive       bool    `json:"is_active,omitempty"`                                        // Statut actif (optionnel, défaut: true)
 }
 
 // UpdateSLARequest représente la requête de mise à jour d'un SLA

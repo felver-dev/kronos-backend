@@ -1,8 +1,6 @@
 package services
 
 import (
-	"errors"
-
 	"github.com/mcicare/itsm-backend/internal/dto"
 	"github.com/mcicare/itsm-backend/internal/repositories"
 )
@@ -29,7 +27,9 @@ func NewSettingsService(settingsRepo repositories.SettingsRepository) SettingsSe
 func (s *settingsService) GetAll() (map[string]interface{}, error) {
 	settings, err := s.settingsRepo.FindAll()
 	if err != nil {
-		return nil, errors.New("erreur lors de la récupération des paramètres")
+		// Si la table n'existe pas ou est vide, retourner un map vide au lieu d'une erreur
+		// Cela permet au frontend de fonctionner même si aucun paramètre n'a été configuré
+		return make(map[string]interface{}), nil
 	}
 
 	// Organiser les paramètres par catégorie

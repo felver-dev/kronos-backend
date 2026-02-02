@@ -6,9 +6,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mcicare/itsm-backend/internal/dto"
 	"github.com/mcicare/itsm-backend/internal/services"
 	"github.com/mcicare/itsm-backend/internal/utils"
 )
+
+// Alias pour la doc Swagger (évite "cannot find type definition: dto.DailyDeclarationDTO")
+type dailyDeclarationDTO = dto.DailyDeclarationDTO
 
 // DailyDeclarationHandler gère les handlers des déclarations journalières
 type DailyDeclarationHandler struct {
@@ -30,7 +34,7 @@ func NewDailyDeclarationHandler(dailyDeclarationService services.DailyDeclaratio
 // @Accept json
 // @Produce json
 // @Param id path int true "ID de la déclaration"
-// @Success 200 {object} dto.DailyDeclarationDTO
+// @Success 200 {object} dailyDeclarationDTO
 // @Failure 400 {object} utils.Response
 // @Failure 404 {object} utils.Response
 // @Router /daily-declarations/{id} [get]
@@ -60,7 +64,7 @@ func (h *DailyDeclarationHandler) GetByID(c *gin.Context) {
 // @Produce json
 // @Param user_id path int true "ID de l'utilisateur"
 // @Param date query string true "Date (format: YYYY-MM-DD)"
-// @Success 200 {object} dto.DailyDeclarationDTO
+// @Success 200 {object} dailyDeclarationDTO
 // @Failure 400 {object} utils.Response
 // @Failure 404 {object} utils.Response
 // @Router /daily-declarations/users/{user_id}/by-date [get]
@@ -101,7 +105,7 @@ func (h *DailyDeclarationHandler) GetByUserIDAndDate(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_id path int true "ID de l'utilisateur"
-// @Success 200 {array} dto.DailyDeclarationDTO
+// @Success 200 {array} dailyDeclarationDTO
 // @Failure 400 {object} utils.Response
 // @Router /daily-declarations/users/{user_id} [get]
 func (h *DailyDeclarationHandler) GetByUserID(c *gin.Context) {
@@ -129,7 +133,7 @@ func (h *DailyDeclarationHandler) GetByUserID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "ID de la déclaration"
-// @Success 200 {object} dto.DailyDeclarationDTO
+// @Success 200 {object} dailyDeclarationDTO
 // @Failure 400 {object} utils.Response
 // @Failure 401 {object} utils.Response
 // @Router /daily-declarations/{id}/validate [post]

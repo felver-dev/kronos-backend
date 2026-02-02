@@ -9,7 +9,38 @@ type GlobalSearchResultDTO struct {
 	Tickets []TicketSearchResultDTO       `json:"tickets,omitempty"`
 	Assets  []AssetSearchResultDTO        `json:"assets,omitempty"`
 	Articles []KnowledgeArticleSearchResultDTO `json:"articles,omitempty"`
+	Users   []UserSearchResultDTO         `json:"users,omitempty"`
+	TimeEntries []TimeEntrySearchResultDTO `json:"time_entries,omitempty"`
 	Total   int                           `json:"total"`
+}
+
+// UserSearchResultDTO représente un résultat de recherche d'utilisateur
+type UserSearchResultDTO struct {
+	ID        uint       `json:"id"`
+	Username  string     `json:"username"`
+	Email     string     `json:"email"`
+	FirstName string     `json:"first_name,omitempty"`
+	LastName  string     `json:"last_name,omitempty"`
+	Department *DepartmentDTO `json:"department,omitempty"`
+	Role      string     `json:"role"`
+	IsActive  bool       `json:"is_active"`
+	Snippet   string     `json:"snippet,omitempty"`
+	CreatedAt time.Time  `json:"created_at"`
+}
+
+// TimeEntrySearchResultDTO représente un résultat de recherche d'entrée de temps
+type TimeEntrySearchResultDTO struct {
+	ID          uint       `json:"id"`
+	TicketID    uint       `json:"ticket_id"`
+	Ticket      *TicketDTO `json:"ticket,omitempty"`
+	UserID      uint       `json:"user_id"`
+	User        *UserDTO   `json:"user,omitempty"`
+	TimeSpent   int        `json:"time_spent"`
+	Date        time.Time  `json:"date"`
+	Description string     `json:"description,omitempty"`
+	Snippet     string     `json:"snippet,omitempty"`
+	Validated   bool       `json:"validated"`
+	CreatedAt   time.Time  `json:"created_at"`
 }
 
 // TicketSearchResultDTO représente un résultat de recherche de ticket

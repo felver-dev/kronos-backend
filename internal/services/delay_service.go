@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"sync"
 	"time"
 
 	"github.com/mcicare/itsm-backend/internal/dto"
@@ -13,10 +14,10 @@ import (
 type DelayService interface {
 	GetByID(id uint) (*dto.DelayDTO, error)
 	GetByTicketID(ticketID uint) (*dto.DelayDTO, error)
-	GetAll() ([]dto.DelayDTO, error)
-	GetByUserID(userID uint) ([]dto.DelayDTO, error)
-	GetByStatus(status string) ([]dto.DelayDTO, error)
-	GetUnjustified() ([]dto.DelayDTO, error)
+	GetAll(scope interface{}) ([]dto.DelayDTO, error) // scope peut être *scope.QueryScope ou nil
+	GetByUserID(scope interface{}, userID uint) ([]dto.DelayDTO, error)
+	GetByStatus(scope interface{}, status string) ([]dto.DelayDTO, error)
+	GetUnjustified(scope interface{}) ([]dto.DelayDTO, error)
 	Delete(id uint) error
 	CreateJustification(delayID uint, req dto.CreateDelayJustificationRequest, userID uint) (*dto.DelayJustificationDTO, error)
 	UpdateJustification(id uint, req dto.UpdateDelayJustificationRequest, userID uint) (*dto.DelayJustificationDTO, error)
@@ -49,6 +50,10 @@ type delayService struct {
 	delayRepo              repositories.DelayRepository
 	delayJustificationRepo repositories.DelayJustificationRepository
 	userRepo               repositories.UserRepository
+	ticketRepo             repositories.TicketRepository
+	syncMu                 sync.Mutex
+	lastSync               time.Time
+	syncing                bool
 }
 
 // NewDelayService crée une nouvelle instance de DelayService
@@ -56,11 +61,13 @@ func NewDelayService(
 	delayRepo repositories.DelayRepository,
 	delayJustificationRepo repositories.DelayJustificationRepository,
 	userRepo repositories.UserRepository,
+	ticketRepo repositories.TicketRepository,
 ) DelayService {
 	return &delayService{
 		delayRepo:              delayRepo,
 		delayJustificationRepo: delayJustificationRepo,
 		userRepo:               userRepo,
+		ticketRepo:             ticketRepo,
 	}
 }
 
@@ -87,8 +94,10 @@ func (s *delayService) GetByTicketID(ticketID uint) (*dto.DelayDTO, error) {
 }
 
 // GetAll récupère tous les retards
-func (s *delayService) GetAll() ([]dto.DelayDTO, error) {
-	delays, err := s.delayRepo.FindAll()
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *delayService) GetAll(scopeParam interface{}) ([]dto.DelayDTO, error) {
+	s.triggerSyncDelaysFromTickets()
+	delays, err := s.delayRepo.FindAll(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des retards")
 	}
@@ -102,8 +111,10 @@ func (s *delayService) GetAll() ([]dto.DelayDTO, error) {
 }
 
 // GetByUserID récupère les retards d'un utilisateur
-func (s *delayService) GetByUserID(userID uint) ([]dto.DelayDTO, error) {
-	delays, err := s.delayRepo.FindByUserID(userID)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *delayService) GetByUserID(scopeParam interface{}, userID uint) ([]dto.DelayDTO, error) {
+	s.triggerSyncDelaysFromTickets()
+	delays, err := s.delayRepo.FindByUserID(scopeParam, userID)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des retards")
 	}
@@ -116,9 +127,97 @@ func (s *delayService) GetByUserID(userID uint) ([]dto.DelayDTO, error) {
 	return delayDTOs, nil
 }
 
+func (s *delayService) triggerSyncDelaysFromTickets() {
+	s.syncMu.Lock()
+	if s.syncing || (!s.lastSync.IsZero() && time.Since(s.lastSync) < 2*time.Minute) {
+		s.syncMu.Unlock()
+		return
+	}
+	s.syncing = true
+	s.lastSync = time.Now()
+	s.syncMu.Unlock()
+
+	go func() {
+		s.syncDelaysFromTickets()
+		s.syncMu.Lock()
+		s.syncing = false
+		s.syncMu.Unlock()
+	}()
+}
+
+func (s *delayService) syncDelaysFromTickets() {
+	page := 1
+	limit := 500
+	for {
+		tickets, total, err := s.ticketRepo.FindAll(nil, page, limit, nil) // nil scope = pas de filtre (utilisé en interne)
+		if err != nil {
+			return
+		}
+		for _, ticket := range tickets {
+			if ticket.EstimatedTime == nil || *ticket.EstimatedTime <= 0 || ticket.ActualTime == nil {
+				continue
+			}
+			estimated := *ticket.EstimatedTime
+			actual := *ticket.ActualTime
+			delayTime := actual - estimated
+
+			if delayTime <= 0 {
+				if existing, err := s.delayRepo.FindByTicketID(ticket.ID); err == nil && existing != nil {
+					if existing.Status == "unjustified" {
+						_ = s.delayRepo.Delete(existing.ID)
+					}
+				}
+				continue
+			}
+
+			percentage := float64(delayTime) / float64(estimated) * 100
+			if percentage > 999.99 {
+				percentage = 999.99
+			}
+			existing, err := s.delayRepo.FindByTicketID(ticket.ID)
+			ownerID := ticket.CreatedByID
+			if ticket.AssignedToID != nil {
+				ownerID = *ticket.AssignedToID
+			}
+			if err != nil || existing == nil {
+				tid := ticket.ID
+				delay := &models.Delay{
+					TicketID:        &tid,
+					UserID:          ownerID,
+					EstimatedTime:   estimated,
+					ActualTime:      actual,
+					DelayTime:       delayTime,
+					DelayPercentage: percentage,
+					Status:          "unjustified",
+					DetectedAt:      time.Now(),
+				}
+				_ = s.delayRepo.Create(delay)
+				continue
+			}
+
+			existing.EstimatedTime = estimated
+			existing.ActualTime = actual
+			existing.DelayTime = delayTime
+			existing.DelayPercentage = percentage
+			if ownerID != 0 {
+				existing.UserID = ownerID
+			}
+			if existing.Status == "rejected" {
+				existing.Status = "unjustified"
+			}
+			_ = s.delayRepo.Update(existing)
+		}
+		if page*limit >= int(total) {
+			break
+		}
+		page++
+	}
+}
+
 // GetByStatus récupère les retards par statut
-func (s *delayService) GetByStatus(status string) ([]dto.DelayDTO, error) {
-	delays, err := s.delayRepo.FindByStatus(status)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *delayService) GetByStatus(scopeParam interface{}, status string) ([]dto.DelayDTO, error) {
+	delays, err := s.delayRepo.FindByStatus(scopeParam, status)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des retards")
 	}
@@ -132,8 +231,8 @@ func (s *delayService) GetByStatus(status string) ([]dto.DelayDTO, error) {
 }
 
 // GetUnjustified récupère les retards non justifiés
-func (s *delayService) GetUnjustified() ([]dto.DelayDTO, error) {
-	delays, err := s.delayRepo.FindUnjustified()
+func (s *delayService) GetUnjustified(scopeParam interface{}) ([]dto.DelayDTO, error) {
+	delays, err := s.delayRepo.FindUnjustified(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des retards")
 	}
@@ -257,7 +356,7 @@ func (s *delayService) ValidateJustification(id uint, req dto.ValidateDelayJusti
 	justification.ValidatedAt = &now
 	justification.ValidationComment = req.Comment
 
-	if req.Validated {
+	if req.Validated != nil && *req.Validated {
 		justification.Status = "validated"
 	} else {
 		justification.Status = "rejected"
@@ -270,7 +369,7 @@ func (s *delayService) ValidateJustification(id uint, req dto.ValidateDelayJusti
 	// Mettre à jour le statut du retard
 	delay, err := s.delayRepo.FindByID(justification.DelayID)
 	if err == nil {
-		if req.Validated {
+		if req.Validated != nil && *req.Validated {
 			delay.Status = "justified"
 		} else {
 			delay.Status = "unjustified"
@@ -418,8 +517,9 @@ func (s *delayService) RejectJustification(delayID uint, req dto.ValidateDelayJu
 	}
 
 	// Rejeter la justification
+	validated := false
 	rejectReq := dto.ValidateDelayJustificationRequest{
-		Validated: false,
+		Validated: &validated,
 		Comment:   req.Comment,
 	}
 
@@ -427,11 +527,12 @@ func (s *delayService) RejectJustification(delayID uint, req dto.ValidateDelayJu
 }
 
 // GetStatusStats récupère les statistiques de retards par statut
+// Note: Cette méthode est utilisée en interne, donc on passe nil pour le scope
 func (s *delayService) GetStatusStats() (*dto.DelayStatusStatsDTO, error) {
-	unjustified, _ := s.delayRepo.FindByStatus("unjustified")
-	pending, _ := s.delayRepo.FindByStatus("pending")
-	justified, _ := s.delayRepo.FindByStatus("justified")
-	rejected, _ := s.delayRepo.FindByStatus("rejected")
+	unjustified, _ := s.delayRepo.FindByStatus(nil, "unjustified")
+	pending, _ := s.delayRepo.FindByStatus(nil, "pending")
+	justified, _ := s.delayRepo.FindByStatus(nil, "justified")
+	rejected, _ := s.delayRepo.FindByStatus(nil, "rejected")
 
 	return &dto.DelayStatusStatsDTO{
 		Unjustified: len(unjustified),
@@ -443,9 +544,13 @@ func (s *delayService) GetStatusStats() (*dto.DelayStatusStatsDTO, error) {
 
 // delayToDTO convertit un modèle Delay en DTO
 func (s *delayService) delayToDTO(delay *models.Delay) dto.DelayDTO {
+	var ticketID uint
+	if delay.TicketID != nil {
+		ticketID = *delay.TicketID
+	}
 	delayDTO := dto.DelayDTO{
 		ID:              delay.ID,
-		TicketID:        delay.TicketID,
+		TicketID:        ticketID,
 		UserID:          delay.UserID,
 		EstimatedTime:   delay.EstimatedTime,
 		ActualTime:      delay.ActualTime,
@@ -457,9 +562,8 @@ func (s *delayService) delayToDTO(delay *models.Delay) dto.DelayDTO {
 		UpdatedAt:       delay.UpdatedAt,
 	}
 
-	// Convertir le ticket si présent
-	if delay.Ticket.ID != 0 {
-		ticketDTO := s.ticketToDTO(&delay.Ticket)
+	if delay.Ticket != nil && delay.Ticket.ID != 0 {
+		ticketDTO := s.ticketToDTO(delay.Ticket)
 		delayDTO.Ticket = &ticketDTO
 	}
 
@@ -490,6 +594,16 @@ func (s *delayService) justificationToDTO(justification *models.DelayJustificati
 		UpdatedAt:     justification.UpdatedAt,
 	}
 
+	if justification.Delay.ID != 0 {
+		if justification.Delay.TicketID != nil {
+			justificationDTO.TicketID = justification.Delay.TicketID
+		}
+		if justification.Delay.Ticket != nil && justification.Delay.Ticket.ID != 0 {
+			justificationDTO.TicketCode = justification.Delay.Ticket.Code
+			justificationDTO.TicketTitle = justification.Delay.Ticket.Title
+		}
+	}
+
 	if justification.ValidatedByID != nil {
 		justificationDTO.ValidatedBy = justification.ValidatedByID
 	}
@@ -513,6 +627,7 @@ func (s *delayService) justificationToDTO(justification *models.DelayJustificati
 func (s *delayService) ticketToDTO(ticket *models.Ticket) dto.TicketDTO {
 	ticketDTO := dto.TicketDTO{
 		ID:          ticket.ID,
+		Code:        ticket.Code,
 		Title:       ticket.Title,
 		Description: ticket.Description,
 		Category:    ticket.Category,

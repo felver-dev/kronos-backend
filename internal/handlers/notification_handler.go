@@ -3,8 +3,11 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mcicare/itsm-backend/internal/dto"
 	"github.com/mcicare/itsm-backend/internal/services"
 	"github.com/mcicare/itsm-backend/internal/utils"
 )
@@ -45,7 +48,118 @@ func (h *NotificationHandler) GetByUserID(c *gin.Context) {
 		return
 	}
 
+	// S'assurer qu'on retourne toujours un tableau vide [] au lieu de null
+	if notifications == nil {
+		notifications = []dto.NotificationDTO{}
+	}
+
 	utils.SuccessResponse(c, notifications, "Notifications récupérées avec succès")
+}
+
+// GetUnread récupère uniquement les notifications non lues (pour la cloche)
+// @Summary Récupérer les notifications non lues
+// @Description Récupère les notifications non lues de l'utilisateur connecté (affichage cloche)
+// @Tags notifications
+// @Security BearerAuth
+// @Produce json
+// @Success 200 {array} dto.NotificationDTO
+// @Router /notifications/unread [get]
+func (h *NotificationHandler) GetUnread(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+
+	notifications, err := h.notificationService.GetUnreadByUserID(userID.(uint))
+	if err != nil {
+		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des notifications")
+		return
+	}
+	if notifications == nil {
+		notifications = []dto.NotificationDTO{}
+	}
+	utils.SuccessResponse(c, notifications, "Notifications non lues récupérées avec succès")
+}
+
+// List récupère l'historique des notifications avec filtres et pagination (page historique)
+// @Summary Historique des notifications
+// @Description Liste des notifications avec filtres (utilisateur, filiale, date, lu/non lu) et pagination
+// @Tags notifications
+// @Security BearerAuth
+// @Produce json
+// @Param page query int false "Page"
+// @Param limit query int false "Limite par page"
+// @Param is_read query bool false "Filtrer par lu (true) / non lu (false)"
+// @Param date_from query string false "Date début (ISO)"
+// @Param date_to query string false "Date fin (ISO)"
+// @Param user_id query int false "Filtrer par utilisateur (admin)"
+// @Param filiale_id query int false "Filtrer par filiale (admin)"
+// @Success 200 {object} dto.NotificationListResponse
+// @Router /notifications/history [get]
+func (h *NotificationHandler) List(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		utils.UnauthorizedResponse(c, "Utilisateur non authentifié")
+		return
+	}
+	uid := userID.(uint)
+
+	opts := services.NotificationListOpts{Page: 1, Limit: 20}
+	if v := c.Query("page"); v != "" {
+		if p, err := strconv.Atoi(v); err == nil && p >= 1 {
+			opts.Page = p
+		}
+	}
+	if v := c.Query("limit"); v != "" {
+		if l, err := strconv.Atoi(v); err == nil && l >= 1 && l <= 100 {
+			opts.Limit = l
+		}
+	}
+	if v := c.Query("is_read"); v == "true" {
+		t := true
+		opts.IsRead = &t
+	} else if v == "false" {
+		f := false
+		opts.IsRead = &f
+	}
+	if v := c.Query("date_from"); v != "" {
+		if t, err := time.Parse(time.RFC3339, v); err == nil {
+			opts.DateFrom = &t
+		}
+	}
+	if v := c.Query("date_to"); v != "" {
+		if t, err := time.Parse(time.RFC3339, v); err == nil {
+			opts.DateTo = &t
+		}
+	}
+	if v := c.Query("search"); v != "" {
+		opts.Search = strings.TrimSpace(v)
+	}
+	// Filiale : tout le monde peut filtrer par filiale (mes notifications pour les non-admin, ou vue admin)
+	if v := c.Query("filiale_id"); v != "" {
+		if id, err := strconv.ParseUint(v, 10, 32); err == nil {
+			f := uint(id)
+			opts.FilterFilialeID = &f
+		}
+	}
+
+	scope := utils.GetScopeFromContext(c)
+	if scope != nil && scope.HasPermission("users.view_all") {
+		if v := c.Query("user_id"); v != "" {
+			if id, err := strconv.ParseUint(v, 10, 32); err == nil {
+				u := uint(id)
+				opts.FilterUserID = &u
+			}
+		}
+	}
+
+	resp, err := h.notificationService.List(uid, opts)
+	if err != nil {
+		utils.InternalServerErrorResponse(c, err.Error())
+		return
+	}
+	utils.SuccessResponse(c, resp, "Historique récupéré avec succès")
 }
 
 // MarkAsRead marque une notification comme lue

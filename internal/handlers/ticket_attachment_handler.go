@@ -175,6 +175,7 @@ func (h *TicketAttachmentHandler) UploadAttachment(c *gin.Context) {
 // @Failure 400 {object} utils.Response
 // @Router /tickets/{id}/attachments [get]
 func (h *TicketAttachmentHandler) GetAttachments(c *gin.Context) {
+	start := time.Now()
 	ticketIDParam := c.Param("id")
 	ticketID, err := strconv.ParseUint(ticketIDParam, 10, 32)
 	if err != nil {
@@ -190,6 +191,7 @@ func (h *TicketAttachmentHandler) GetAttachments(c *gin.Context) {
 		return
 	}
 
+	fmt.Printf("PERF GetAttachments ticket=%d imagesOnly=%v count=%d dur=%s\n", ticketID, imagesOnly, len(attachments), time.Since(start))
 	utils.SuccessResponse(c, attachments, "Pièces jointes récupérées avec succès")
 }
 
@@ -204,6 +206,7 @@ func (h *TicketAttachmentHandler) GetAttachments(c *gin.Context) {
 // @Failure 400 {object} utils.Response
 // @Router /tickets/{id}/attachments/images [get]
 func (h *TicketAttachmentHandler) GetImages(c *gin.Context) {
+	start := time.Now()
 	ticketIDParam := c.Param("id")
 	ticketID, err := strconv.ParseUint(ticketIDParam, 10, 32)
 	if err != nil {
@@ -217,6 +220,7 @@ func (h *TicketAttachmentHandler) GetImages(c *gin.Context) {
 		return
 	}
 
+	fmt.Printf("PERF GetImages ticket=%d count=%d dur=%s\n", ticketID, len(images), time.Since(start))
 	utils.SuccessResponse(c, images, "Images récupérées avec succès")
 }
 
@@ -260,6 +264,13 @@ func (h *TicketAttachmentHandler) GetByID(c *gin.Context) {
 // @Failure 404 {object} utils.Response
 // @Router /tickets/{id}/attachments/{attachmentId}/download [get]
 func (h *TicketAttachmentHandler) Download(c *gin.Context) {
+	start := time.Now()
+	ticketIDParam := c.Param("id")
+	ticketID, err := strconv.ParseUint(ticketIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID de ticket invalide")
+		return
+	}
 	attachmentIDParam := c.Param("attachmentId")
 	attachmentID, err := strconv.ParseUint(attachmentIDParam, 10, 32)
 	if err != nil {
@@ -267,12 +278,13 @@ func (h *TicketAttachmentHandler) Download(c *gin.Context) {
 		return
 	}
 
-	filePath, err := h.attachmentService.GetFilePath(uint(attachmentID))
+	filePath, err := h.attachmentService.GetFilePathForTicket(uint(ticketID), uint(attachmentID))
 	if err != nil {
 		utils.NotFoundResponse(c, err.Error())
 		return
 	}
 
+	fmt.Printf("PERF DownloadAttachment id=%d dur=%s\n", attachmentID, time.Since(start))
 	c.File(filePath)
 }
 
@@ -288,6 +300,13 @@ func (h *TicketAttachmentHandler) Download(c *gin.Context) {
 // @Failure 404 {object} utils.Response
 // @Router /tickets/{id}/attachments/{attachmentId}/thumbnail [get]
 func (h *TicketAttachmentHandler) GetThumbnail(c *gin.Context) {
+	start := time.Now()
+	ticketIDParam := c.Param("id")
+	ticketID, err := strconv.ParseUint(ticketIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID de ticket invalide")
+		return
+	}
 	attachmentIDParam := c.Param("attachmentId")
 	attachmentID, err := strconv.ParseUint(attachmentIDParam, 10, 32)
 	if err != nil {
@@ -295,12 +314,13 @@ func (h *TicketAttachmentHandler) GetThumbnail(c *gin.Context) {
 		return
 	}
 
-	thumbnailPath, err := h.attachmentService.GetThumbnailPath(uint(attachmentID))
+	thumbnailPath, err := h.attachmentService.GetThumbnailPathForTicket(uint(ticketID), uint(attachmentID))
 	if err != nil {
 		utils.NotFoundResponse(c, err.Error())
 		return
 	}
 
+	fmt.Printf("PERF GetThumbnail id=%d dur=%s\n", attachmentID, time.Since(start))
 	c.File(thumbnailPath)
 }
 

@@ -96,7 +96,10 @@ func (h *TimeEntryHandler) GetByID(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /time-entries [get]
 func (h *TimeEntryHandler) GetAll(c *gin.Context) {
-	timeEntries, err := h.timeEntryService.GetAll()
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	timeEntries, err := h.timeEntryService.GetAll(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des entrées de temps")
 		return
@@ -129,6 +132,10 @@ func (h *TimeEntryHandler) Validate(c *gin.Context) {
 	var req dto.ValidateTimeEntryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
+		return
+	}
+	if req.Validated == nil {
+		utils.BadRequestResponse(c, "Le champ validated est requis")
 		return
 	}
 

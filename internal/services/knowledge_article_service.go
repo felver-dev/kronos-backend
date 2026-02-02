@@ -12,11 +12,11 @@ import (
 type KnowledgeArticleService interface {
 	Create(req dto.CreateKnowledgeArticleRequest, authorID uint) (*dto.KnowledgeArticleDTO, error)
 	GetByID(id uint) (*dto.KnowledgeArticleDTO, error)
-	GetAll() ([]dto.KnowledgeArticleDTO, error)
-	GetPublished() ([]dto.KnowledgeArticleDTO, error)
-	GetByCategory(categoryID uint) ([]dto.KnowledgeArticleDTO, error)
-	GetByAuthor(authorID uint) ([]dto.KnowledgeArticleDTO, error)
-	Search(query string) ([]dto.KnowledgeArticleSearchResultDTO, error)
+	GetAll(scope interface{}) ([]dto.KnowledgeArticleDTO, error) // scope peut être *scope.QueryScope ou nil
+	GetPublished(scope interface{}) ([]dto.KnowledgeArticleDTO, error)
+	GetByCategory(scope interface{}, categoryID uint) ([]dto.KnowledgeArticleDTO, error)
+	GetByAuthor(scope interface{}, authorID uint) ([]dto.KnowledgeArticleDTO, error) // scope peut être *scope.QueryScope ou nil
+	Search(scope interface{}, query string) ([]dto.KnowledgeArticleSearchResultDTO, error)
 	Update(id uint, req dto.UpdateKnowledgeArticleRequest, updatedByID uint) (*dto.KnowledgeArticleDTO, error)
 	Publish(id uint, published bool, updatedByID uint) (*dto.KnowledgeArticleDTO, error)
 	Delete(id uint) error
@@ -103,8 +103,8 @@ func (s *knowledgeArticleService) GetByID(id uint) (*dto.KnowledgeArticleDTO, er
 }
 
 // GetAll récupère tous les articles
-func (s *knowledgeArticleService) GetAll() ([]dto.KnowledgeArticleDTO, error) {
-	articles, err := s.articleRepo.FindAll()
+func (s *knowledgeArticleService) GetAll(scopeParam interface{}) ([]dto.KnowledgeArticleDTO, error) {
+	articles, err := s.articleRepo.FindAll(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des articles")
 	}
@@ -118,8 +118,8 @@ func (s *knowledgeArticleService) GetAll() ([]dto.KnowledgeArticleDTO, error) {
 }
 
 // GetPublished récupère les articles publiés
-func (s *knowledgeArticleService) GetPublished() ([]dto.KnowledgeArticleDTO, error) {
-	articles, err := s.articleRepo.FindPublished()
+func (s *knowledgeArticleService) GetPublished(scopeParam interface{}) ([]dto.KnowledgeArticleDTO, error) {
+	articles, err := s.articleRepo.FindPublished(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des articles")
 	}
@@ -133,8 +133,8 @@ func (s *knowledgeArticleService) GetPublished() ([]dto.KnowledgeArticleDTO, err
 }
 
 // GetByCategory récupère les articles d'une catégorie
-func (s *knowledgeArticleService) GetByCategory(categoryID uint) ([]dto.KnowledgeArticleDTO, error) {
-	articles, err := s.articleRepo.FindByCategory(categoryID)
+func (s *knowledgeArticleService) GetByCategory(scopeParam interface{}, categoryID uint) ([]dto.KnowledgeArticleDTO, error) {
+	articles, err := s.articleRepo.FindByCategory(scopeParam, categoryID)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des articles")
 	}
@@ -148,8 +148,8 @@ func (s *knowledgeArticleService) GetByCategory(categoryID uint) ([]dto.Knowledg
 }
 
 // GetByAuthor récupère les articles d'un auteur
-func (s *knowledgeArticleService) GetByAuthor(authorID uint) ([]dto.KnowledgeArticleDTO, error) {
-	articles, err := s.articleRepo.FindByAuthor(authorID)
+func (s *knowledgeArticleService) GetByAuthor(scopeParam interface{}, authorID uint) ([]dto.KnowledgeArticleDTO, error) {
+	articles, err := s.articleRepo.FindByAuthor(scopeParam, authorID)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des articles")
 	}
@@ -163,8 +163,8 @@ func (s *knowledgeArticleService) GetByAuthor(authorID uint) ([]dto.KnowledgeArt
 }
 
 // Search recherche des articles
-func (s *knowledgeArticleService) Search(query string) ([]dto.KnowledgeArticleSearchResultDTO, error) {
-	articles, err := s.articleRepo.Search(query)
+func (s *knowledgeArticleService) Search(scopeParam interface{}, searchQuery string) ([]dto.KnowledgeArticleSearchResultDTO, error) {
+	articles, err := s.articleRepo.Search(scopeParam, searchQuery)
 	if err != nil {
 		return nil, errors.New("erreur lors de la recherche des articles")
 	}

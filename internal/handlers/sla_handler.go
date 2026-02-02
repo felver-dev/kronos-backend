@@ -35,6 +35,12 @@ func NewSLAHandler(slaService services.SLAService) *SLAHandler {
 // @Failure 401 {object} utils.Response
 // @Router /sla [post]
 func (h *SLAHandler) Create(c *gin.Context) {
+	// Vérifier la permission
+	if !utils.RequirePermission(c, "sla.create") {
+		utils.ForbiddenResponse(c, "Permission insuffisante: sla.create")
+		return
+	}
+
 	var req dto.CreateSLARequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
@@ -147,6 +153,12 @@ func (h *SLAHandler) GetTicketSLAStatus(c *gin.Context) {
 // @Failure 400 {object} utils.Response
 // @Router /sla/{id} [put]
 func (h *SLAHandler) Update(c *gin.Context) {
+	// Vérifier la permission
+	if !utils.RequirePermission(c, "sla.update") {
+		utils.ForbiddenResponse(c, "Permission insuffisante: sla.update")
+		return
+	}
+
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
@@ -186,6 +198,12 @@ func (h *SLAHandler) Update(c *gin.Context) {
 // @Failure 404 {object} utils.Response
 // @Router /sla/{id} [delete]
 func (h *SLAHandler) Delete(c *gin.Context) {
+	// Vérifier la permission
+	if !utils.RequirePermission(c, "sla.delete") {
+		utils.ForbiddenResponse(c, "Permission insuffisante: sla.delete")
+		return
+	}
+
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
@@ -247,7 +265,10 @@ func (h *SLAHandler) GetViolations(c *gin.Context) {
 		return
 	}
 
-	violations, err := h.slaService.GetViolations(uint(id))
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	violations, err := h.slaService.GetViolations(queryScope, uint(id))
 	if err != nil {
 		utils.NotFoundResponse(c, "SLA introuvable")
 		return
@@ -271,7 +292,10 @@ func (h *SLAHandler) GetAllViolations(c *gin.Context) {
 	period := c.Query("period")
 	category := c.Query("category")
 
-	violations, err := h.slaService.GetAllViolations(period, category)
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	violations, err := h.slaService.GetAllViolations(queryScope, period, category)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des violations")
 		return
@@ -304,4 +328,26 @@ func (h *SLAHandler) GetComplianceReport(c *gin.Context) {
 	// Pour l'instant, on retourne les données JSON
 	// TODO: Implémenter la génération de PDF/Excel
 	utils.SuccessResponse(c, report, "Rapport généré avec succès")
+}
+
+// RecalculateSLAStatuses recalcule les statuts SLA pour tous les tickets ouverts
+// @Summary Recalculer les statuts SLA
+// @Description Recalcule les statuts SLA pour tous les tickets ouverts qui ont un SLA associé
+// @Tags sla
+// @Security BearerAuth
+// @Produce json
+// @Success 200 {object} map[string]interface{} "Nombre de statuts mis à jour"
+// @Failure 500 {object} utils.Response
+// @Router /sla/recalculate [post]
+func (h *SLAHandler) RecalculateSLAStatuses(c *gin.Context) {
+	updatedCount, err := h.slaService.RecalculateSLAStatuses()
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Erreur lors du recalcul des statuts SLA", err.Error())
+		return
+	}
+
+	utils.SuccessResponse(c, map[string]interface{}{
+		"updated_count": updatedCount,
+		"message":       "Statuts SLA recalculés avec succès",
+	}, "Statuts SLA recalculés avec succès")
 }

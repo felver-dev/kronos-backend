@@ -7,7 +7,7 @@ import (
 )
 
 // SetupTicketRoutes configure les routes des tickets
-func SetupTicketRoutes(router *gin.RouterGroup, ticketHandler *handlers.TicketHandler, ticketAttachmentHandler *handlers.TicketAttachmentHandler) {
+func SetupTicketRoutes(router *gin.RouterGroup, ticketHandler *handlers.TicketHandler, ticketAttachmentHandler *handlers.TicketAttachmentHandler, ticketCategoryHandler *handlers.TicketCategoryHandler, ticketSolutionHandler *handlers.TicketSolutionHandler) {
 	tickets := router.Group("/tickets")
 	tickets.Use(middleware.AuthMiddleware())
 	{
@@ -16,10 +16,20 @@ func SetupTicketRoutes(router *gin.RouterGroup, ticketHandler *handlers.TicketHa
 
 		// Routes statiques (sans paramètres) en premier
 		tickets.GET("/my-tickets", ticketHandler.GetMyTickets)
+		tickets.GET("/panier", ticketHandler.GetMyPanier)
 		tickets.GET("/by-source/:source", ticketHandler.GetBySource)
 		tickets.GET("/by-category/:category", ticketHandler.GetByCategory)
 		tickets.GET("/by-status/:status", ticketHandler.GetByStatus)
+		tickets.GET("/by-department/:departmentId", ticketHandler.GetByDepartment)
 		tickets.GET("/by-assignee/:userId", ticketHandler.GetByAssignee)
+
+		// Routes pour les catégories (doivent être avant les routes avec :id)
+		tickets.GET("/categories", ticketCategoryHandler.GetAll)
+		tickets.POST("/categories", ticketCategoryHandler.Create)
+		tickets.GET("/categories/slug/:slug", ticketCategoryHandler.GetBySlug)
+		tickets.GET("/categories/:id", ticketCategoryHandler.GetByID)
+		tickets.PUT("/categories/:id", ticketCategoryHandler.Update)
+		tickets.DELETE("/categories/:id", ticketCategoryHandler.Delete)
 
 		// Routes spécifiques avec plus de segments - doivent être avant la route générique :id
 		// Routes pour les pièces jointes
@@ -34,12 +44,23 @@ func SetupTicketRoutes(router *gin.RouterGroup, ticketHandler *handlers.TicketHa
 		tickets.DELETE("/:id/attachments/:attachmentId", ticketAttachmentHandler.Delete)
 		tickets.PUT("/:id/attachments/reorder", ticketAttachmentHandler.Reorder)
 
+		// Routes pour les solutions (doivent être avant les routes génériques)
+		tickets.GET("/:id/solutions", ticketSolutionHandler.GetByTicketID)
+		tickets.POST("/:id/solutions", ticketSolutionHandler.Create)
+		tickets.GET("/solutions/:id", ticketSolutionHandler.GetByID)
+		tickets.PUT("/solutions/:id", ticketSolutionHandler.Update)
+		tickets.DELETE("/solutions/:id", ticketSolutionHandler.Delete)
+		tickets.POST("/solutions/:id/publish-to-kb", ticketSolutionHandler.PublishToKB)
+
 		// Autres routes spécifiques
 		tickets.POST("/:id/assign", ticketHandler.Assign)
 		tickets.PUT("/:id/status", ticketHandler.ChangeStatus)
+		tickets.POST("/:id/validate", ticketHandler.ValidateTicket) // Valider un ticket résolu
 		tickets.POST("/:id/close", ticketHandler.Close)
 		tickets.POST("/:id/comments", ticketHandler.AddComment)
 		tickets.GET("/:id/comments", ticketHandler.GetComments)
+		tickets.PUT("/:id/comments/:commentId", ticketHandler.UpdateComment)
+		tickets.DELETE("/:id/comments/:commentId", ticketHandler.DeleteComment)
 		tickets.POST("/:id/reassign", ticketHandler.Reassign)
 		tickets.GET("/:id/history", ticketHandler.GetHistory)
 

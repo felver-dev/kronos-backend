@@ -5,9 +5,12 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mcicare/itsm-backend/internal/dto"
 	"github.com/mcicare/itsm-backend/internal/services"
 	"github.com/mcicare/itsm-backend/internal/utils"
 )
+
+type weeklyDeclarationDTO = dto.WeeklyDeclarationDTO
 
 // WeeklyDeclarationHandler gère les handlers des déclarations hebdomadaires
 type WeeklyDeclarationHandler struct {
@@ -29,7 +32,7 @@ func NewWeeklyDeclarationHandler(weeklyDeclarationService services.WeeklyDeclara
 // @Accept json
 // @Produce json
 // @Param id path int true "ID de la déclaration"
-// @Success 200 {object} dto.WeeklyDeclarationDTO
+// @Success 200 {object} weeklyDeclarationDTO
 // @Failure 400 {object} utils.Response
 // @Failure 404 {object} utils.Response
 // @Router /weekly-declarations/{id} [get]
@@ -59,7 +62,7 @@ func (h *WeeklyDeclarationHandler) GetByID(c *gin.Context) {
 // @Produce json
 // @Param user_id path int true "ID de l'utilisateur"
 // @Param week query string true "Semaine (format: YYYY-WW)"
-// @Success 200 {object} dto.WeeklyDeclarationDTO
+// @Success 200 {object} weeklyDeclarationDTO
 // @Failure 400 {object} utils.Response
 // @Failure 404 {object} utils.Response
 // @Router /weekly-declarations/users/{user_id}/by-week [get]
@@ -94,7 +97,7 @@ func (h *WeeklyDeclarationHandler) GetByUserIDAndWeek(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_id path int true "ID de l'utilisateur"
-// @Success 200 {array} dto.WeeklyDeclarationDTO
+// @Success 200 {array} weeklyDeclarationDTO
 // @Failure 400 {object} utils.Response
 // @Router /weekly-declarations/users/{user_id} [get]
 func (h *WeeklyDeclarationHandler) GetByUserID(c *gin.Context) {
@@ -122,7 +125,7 @@ func (h *WeeklyDeclarationHandler) GetByUserID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "ID de la déclaration"
-// @Success 200 {object} dto.WeeklyDeclarationDTO
+// @Success 200 {object} weeklyDeclarationDTO
 // @Failure 400 {object} utils.Response
 // @Failure 401 {object} utils.Response
 // @Router /weekly-declarations/{id}/validate [post]

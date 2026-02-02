@@ -12,12 +12,12 @@ import (
 
 // AuditService interface pour les opérations sur les logs d'audit
 type AuditService interface {
-	GetAll(page, limit int, userID *uint, action, entityType string) (*dto.AuditLogListResponse, error)
+	GetAll(scope interface{}, page, limit int, userID *uint, action, entityType string) (*dto.AuditLogListResponse, error) // scope peut être *scope.QueryScope ou nil
 	GetByID(id uint) (*dto.AuditLogDTO, error)
-	GetByUserID(userID uint, startDate, endDate *time.Time) ([]dto.AuditLogDTO, error)
-	GetByAction(action string) ([]dto.AuditLogDTO, error)
-	GetByEntity(entityType string, entityID uint) ([]dto.AuditLogDTO, error)
-	GetTicketAuditTrail(ticketID uint) ([]dto.AuditLogDTO, error)
+	GetByUserID(scope interface{}, userID uint, startDate, endDate *time.Time) ([]dto.AuditLogDTO, error)
+	GetByAction(scope interface{}, action string) ([]dto.AuditLogDTO, error)
+	GetByEntity(scope interface{}, entityType string, entityID uint) ([]dto.AuditLogDTO, error)
+	GetTicketAuditTrail(scope interface{}, ticketID uint) ([]dto.AuditLogDTO, error)
 }
 
 // auditService implémente AuditService
@@ -33,7 +33,8 @@ func NewAuditService(auditLogRepo repositories.AuditLogRepository) AuditService 
 }
 
 // GetAll récupère tous les logs d'audit avec pagination et filtres
-func (s *auditService) GetAll(page, limit int, userID *uint, action, entityType string) (*dto.AuditLogListResponse, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *auditService) GetAll(scopeParam interface{}, page, limit int, userID *uint, action, entityType string) (*dto.AuditLogListResponse, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -41,64 +42,14 @@ func (s *auditService) GetAll(page, limit int, userID *uint, action, entityType 
 		limit = 50
 	}
 
-	// TODO: Implémenter la pagination et les filtres dans le repository
-	// Pour l'instant, on récupère les logs récents
-	logs, err := s.auditLogRepo.FindRecent(limit * page)
+	// Récupérer les logs paginés + le total via le repository
+	logs, total, err := s.auditLogRepo.FindPaginated(scopeParam, page, limit, userID, action, entityType)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des logs d'audit")
 	}
 
-	// Filtrer par userID si fourni
-	if userID != nil {
-		filtered := []models.AuditLog{}
-		for _, log := range logs {
-			if log.UserID != nil && *log.UserID == *userID {
-				filtered = append(filtered, log)
-			}
-		}
-		logs = filtered
-	}
-
-	// Filtrer par action si fournie
-	if action != "" {
-		filtered := []models.AuditLog{}
-		for _, log := range logs {
-			if log.Action == action {
-				filtered = append(filtered, log)
-			}
-		}
-		logs = filtered
-	}
-
-	// Filtrer par entityType si fourni
-	if entityType != "" {
-		filtered := []models.AuditLog{}
-		for _, log := range logs {
-			if log.EntityType == entityType {
-				filtered = append(filtered, log)
-			}
-		}
-		logs = filtered
-	}
-
-	// Pagination manuelle
-	total := len(logs)
-	start := (page - 1) * limit
-	end := start + limit
-	if start > total {
-		start = total
-	}
-	if end > total {
-		end = total
-	}
-
-	var paginatedLogs []models.AuditLog
-	if start < total {
-		paginatedLogs = logs[start:end]
-	}
-
-	logDTOs := make([]dto.AuditLogDTO, len(paginatedLogs))
-	for i, log := range paginatedLogs {
+	logDTOs := make([]dto.AuditLogDTO, len(logs))
+	for i, log := range logs {
 		logDTOs[i] = s.auditLogToDTO(&log)
 	}
 
@@ -107,7 +58,7 @@ func (s *auditService) GetAll(page, limit int, userID *uint, action, entityType 
 		Pagination: dto.PaginationDTO{
 			Page:  page,
 			Limit: limit,
-			Total: int64(total),
+			Total: total,
 		},
 	}, nil
 }
@@ -124,16 +75,17 @@ func (s *auditService) GetByID(id uint) (*dto.AuditLogDTO, error) {
 }
 
 // GetByUserID récupère les logs d'audit d'un utilisateur
-func (s *auditService) GetByUserID(userID uint, startDate, endDate *time.Time) ([]dto.AuditLogDTO, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *auditService) GetByUserID(scopeParam interface{}, userID uint, startDate, endDate *time.Time) ([]dto.AuditLogDTO, error) {
 	var logs []models.AuditLog
 	var err error
 
 	if startDate != nil && endDate != nil {
-		logs, err = s.auditLogRepo.FindByDateRange(*startDate, *endDate)
+		logs, err = s.auditLogRepo.FindByDateRange(scopeParam, *startDate, *endDate)
 		if err != nil {
 			return nil, errors.New("erreur lors de la récupération des logs d'audit")
 		}
-		// Filtrer par userID
+		// Filtrer par userID (le scope a déjà été appliqué)
 		filtered := []models.AuditLog{}
 		for _, log := range logs {
 			if log.UserID != nil && *log.UserID == userID {
@@ -142,7 +94,7 @@ func (s *auditService) GetByUserID(userID uint, startDate, endDate *time.Time) (
 		}
 		logs = filtered
 	} else {
-		logs, err = s.auditLogRepo.FindByUserID(userID)
+		logs, err = s.auditLogRepo.FindByUserID(scopeParam, userID)
 		if err != nil {
 			return nil, errors.New("erreur lors de la récupération des logs d'audit")
 		}
@@ -157,8 +109,9 @@ func (s *auditService) GetByUserID(userID uint, startDate, endDate *time.Time) (
 }
 
 // GetByAction récupère les logs d'audit d'une action
-func (s *auditService) GetByAction(action string) ([]dto.AuditLogDTO, error) {
-	logs, err := s.auditLogRepo.FindByAction(action)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *auditService) GetByAction(scopeParam interface{}, action string) ([]dto.AuditLogDTO, error) {
+	logs, err := s.auditLogRepo.FindByAction(scopeParam, action)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des logs d'audit")
 	}
@@ -172,8 +125,9 @@ func (s *auditService) GetByAction(action string) ([]dto.AuditLogDTO, error) {
 }
 
 // GetByEntity récupère les logs d'audit d'une entité
-func (s *auditService) GetByEntity(entityType string, entityID uint) ([]dto.AuditLogDTO, error) {
-	logs, err := s.auditLogRepo.FindByEntity(entityType, entityID)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *auditService) GetByEntity(scopeParam interface{}, entityType string, entityID uint) ([]dto.AuditLogDTO, error) {
+	logs, err := s.auditLogRepo.FindByEntity(scopeParam, entityType, entityID)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des logs d'audit")
 	}
@@ -187,8 +141,9 @@ func (s *auditService) GetByEntity(entityType string, entityID uint) ([]dto.Audi
 }
 
 // GetTicketAuditTrail récupère la piste d'audit d'un ticket
-func (s *auditService) GetTicketAuditTrail(ticketID uint) ([]dto.AuditLogDTO, error) {
-	return s.GetByEntity("ticket", ticketID)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *auditService) GetTicketAuditTrail(scopeParam interface{}, ticketID uint) ([]dto.AuditLogDTO, error) {
+	return s.GetByEntity(scopeParam, "ticket", ticketID)
 }
 
 // auditLogToDTO convertit un modèle AuditLog en DTO

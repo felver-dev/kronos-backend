@@ -21,5 +21,6 @@ func SetupSLARoutes(router *gin.RouterGroup, slaHandler *handlers.SLAHandler) {
 		sla.GET("/violations", slaHandler.GetAllViolations)
 		sla.GET("/compliance-report", slaHandler.GetComplianceReport)
 		sla.GET("/tickets/:ticket_id/status", slaHandler.GetTicketSLAStatus)
+		sla.POST("/recalculate", slaHandler.RecalculateSLAStatuses)
 	}
 }

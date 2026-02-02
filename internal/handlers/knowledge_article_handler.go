@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -95,7 +97,10 @@ func (h *KnowledgeArticleHandler) GetByID(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /knowledge-base/articles/published [get]
 func (h *KnowledgeArticleHandler) GetPublished(c *gin.Context) {
-	articles, err := h.knowledgeArticleService.GetPublished()
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	articles, err := h.knowledgeArticleService.GetPublished(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des articles")
 		return
@@ -122,7 +127,10 @@ func (h *KnowledgeArticleHandler) Search(c *gin.Context) {
 		return
 	}
 
-	results, err := h.knowledgeArticleService.Search(query)
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	results, err := h.knowledgeArticleService.Search(queryScope, query)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la recherche")
 		return
@@ -170,7 +178,10 @@ func (h *KnowledgeArticleHandler) Delete(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /knowledge-base/articles [get]
 func (h *KnowledgeArticleHandler) GetAll(c *gin.Context) {
-	articles, err := h.knowledgeArticleService.GetAll()
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	articles, err := h.knowledgeArticleService.GetAll(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des articles")
 		return
@@ -240,11 +251,36 @@ func (h *KnowledgeArticleHandler) Publish(c *gin.Context) {
 		return
 	}
 
-	var req struct {
-		Published bool `json:"published" binding:"required"`
+	// Lire le corps de la requête pour parser manuellement
+	bodyBytes, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Erreur lors de la lecture du corps de la requête", err.Error())
+		return
 	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
+	
+	var req struct {
+		Published bool `json:"published"`
+	}
+	
+	// Parser manuellement le JSON pour s'assurer que "published" (minuscule) est correctement mappé
+	var rawReq map[string]interface{}
+	if err := json.Unmarshal(bodyBytes, &rawReq); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Format JSON invalide", err.Error())
+		return
+	}
+	
+	// Vérifier que le champ "published" existe et est un booléen
+	publishedValue, exists := rawReq["published"]
+	if !exists {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Le champ 'published' est requis", nil)
+		return
+	}
+	
+	// Convertir en booléen
+	if published, ok := publishedValue.(bool); ok {
+		req.Published = published
+	} else {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Le champ 'published' doit être un booléen", nil)
 		return
 	}
 
@@ -281,7 +317,10 @@ func (h *KnowledgeArticleHandler) GetByCategory(c *gin.Context) {
 		return
 	}
 
-	articles, err := h.knowledgeArticleService.GetByCategory(uint(categoryID))
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	articles, err := h.knowledgeArticleService.GetByCategory(queryScope, uint(categoryID))
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return
@@ -308,7 +347,10 @@ func (h *KnowledgeArticleHandler) GetByAuthor(c *gin.Context) {
 		return
 	}
 
-	articles, err := h.knowledgeArticleService.GetByAuthor(uint(authorID))
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	articles, err := h.knowledgeArticleService.GetByAuthor(queryScope, uint(authorID))
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return

@@ -3,17 +3,18 @@ package repositories
 import (
 	"github.com/mcicare/itsm-backend/database"
 	"github.com/mcicare/itsm-backend/internal/models"
+	"github.com/mcicare/itsm-backend/internal/scope"
 )
 
 // KnowledgeArticleRepository interface pour les opérations sur les articles de la base de connaissances
 type KnowledgeArticleRepository interface {
 	Create(article *models.KnowledgeArticle) error
 	FindByID(id uint) (*models.KnowledgeArticle, error)
-	FindAll() ([]models.KnowledgeArticle, error)
-	FindPublished() ([]models.KnowledgeArticle, error)
-	FindByCategory(categoryID uint) ([]models.KnowledgeArticle, error)
-	FindByAuthor(authorID uint) ([]models.KnowledgeArticle, error)
-	Search(query string) ([]models.KnowledgeArticle, error)
+	FindAll(scope interface{}) ([]models.KnowledgeArticle, error) // scope peut être *scope.QueryScope ou nil
+	FindPublished(scope interface{}) ([]models.KnowledgeArticle, error)
+	FindByCategory(scope interface{}, categoryID uint) ([]models.KnowledgeArticle, error)
+	FindByAuthor(scope interface{}, authorID uint) ([]models.KnowledgeArticle, error) // scope peut être *scope.QueryScope ou nil
+	Search(scope interface{}, query string) ([]models.KnowledgeArticle, error)
 	Update(article *models.KnowledgeArticle) error
 	Delete(id uint) error
 	IncrementViewCount(id uint) error
@@ -62,40 +63,106 @@ func (r *knowledgeArticleRepository) FindByID(id uint) (*models.KnowledgeArticle
 }
 
 // FindAll récupère tous les articles
-func (r *knowledgeArticleRepository) FindAll() ([]models.KnowledgeArticle, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *knowledgeArticleRepository) FindAll(scopeParam interface{}) ([]models.KnowledgeArticle, error) {
 	var articles []models.KnowledgeArticle
-	err := database.DB.Preload("Category").Preload("Author").Find(&articles).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.KnowledgeArticle{}).
+		Preload("Category").Preload("Author")
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyKnowledgeScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&articles).Error
 	return articles, err
 }
 
 // FindPublished récupère tous les articles publiés
-func (r *knowledgeArticleRepository) FindPublished() ([]models.KnowledgeArticle, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *knowledgeArticleRepository) FindPublished(scopeParam interface{}) ([]models.KnowledgeArticle, error) {
 	var articles []models.KnowledgeArticle
-	err := database.DB.Preload("Category").Preload("Author").Where("is_published = ?", true).Order("created_at DESC").Find(&articles).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.KnowledgeArticle{}).
+		Preload("Category").Preload("Author").
+		Where("knowledge_articles.is_published = ?", true)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyKnowledgeScope(query, queryScope)
+		}
+	}
+	
+	err := query.Order("knowledge_articles.created_at DESC").Find(&articles).Error
 	return articles, err
 }
 
 // FindByCategory récupère les articles d'une catégorie
-func (r *knowledgeArticleRepository) FindByCategory(categoryID uint) ([]models.KnowledgeArticle, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *knowledgeArticleRepository) FindByCategory(scopeParam interface{}, categoryID uint) ([]models.KnowledgeArticle, error) {
 	var articles []models.KnowledgeArticle
-	err := database.DB.Preload("Category").Preload("Author").Where("category_id = ? AND is_published = ?", categoryID, true).Find(&articles).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.KnowledgeArticle{}).
+		Preload("Category").Preload("Author").
+		Where("knowledge_articles.category_id = ?", categoryID)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyKnowledgeScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&articles).Error
 	return articles, err
 }
 
 // FindByAuthor récupère les articles d'un auteur
-func (r *knowledgeArticleRepository) FindByAuthor(authorID uint) ([]models.KnowledgeArticle, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *knowledgeArticleRepository) FindByAuthor(scopeParam interface{}, authorID uint) ([]models.KnowledgeArticle, error) {
 	var articles []models.KnowledgeArticle
-	err := database.DB.Preload("Category").Preload("Author").Where("author_id = ?", authorID).Find(&articles).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.KnowledgeArticle{}).
+		Preload("Category").Preload("Author").
+		Where("knowledge_articles.author_id = ?", authorID)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyKnowledgeScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&articles).Error
 	return articles, err
 }
 
 // Search recherche des articles par titre ou contenu
-func (r *knowledgeArticleRepository) Search(query string) ([]models.KnowledgeArticle, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *knowledgeArticleRepository) Search(scopeParam interface{}, searchQuery string) ([]models.KnowledgeArticle, error) {
 	var articles []models.KnowledgeArticle
-	err := database.DB.Preload("Category").Preload("Author").
-		Where("is_published = ? AND (title LIKE ? OR content LIKE ?)", true, "%"+query+"%", "%"+query+"%").
-		Order("created_at DESC").
-		Find(&articles).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.KnowledgeArticle{}).
+		Preload("Category").Preload("Author").
+		Where("(knowledge_articles.title LIKE ? OR knowledge_articles.content LIKE ?)", "%"+searchQuery+"%", "%"+searchQuery+"%")
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyKnowledgeScope(query, queryScope)
+		}
+	}
+	
+	err := query.Order("knowledge_articles.created_at DESC").Find(&articles).Error
 	return articles, err
 }
 

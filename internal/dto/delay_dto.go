@@ -24,6 +24,9 @@ type DelayDTO struct {
 type DelayJustificationDTO struct {
 	ID                uint       `json:"id"`
 	DelayID           uint       `json:"delay_id"`
+	TicketID          *uint      `json:"ticket_id,omitempty"`
+	TicketCode        string     `json:"ticket_code,omitempty"`
+	TicketTitle       string     `json:"ticket_title,omitempty"`
 	UserID            uint       `json:"user_id"` // Technicien qui justifie
 	User              *UserDTO   `json:"user,omitempty"`
 	Justification     string     `json:"justification"`          // Texte de justification
@@ -47,7 +50,7 @@ type UpdateDelayJustificationRequest struct {
 
 // ValidateDelayJustificationRequest représente la requête de validation/rejet d'une justification
 type ValidateDelayJustificationRequest struct {
-	Validated bool   `json:"validated" binding:"required"` // true pour valider, false pour rejeter
+	Validated *bool  `json:"validated,omitempty"`          // true pour valider, false pour rejeter
 	Comment   string `json:"comment,omitempty"`            // Commentaire du validateur (optionnel)
 }
 

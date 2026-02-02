@@ -22,23 +22,35 @@ func NewAssetCategoryHandler(assetCategoryService services.AssetCategoryService)
 	}
 }
 
-// GetAll récupère toutes les catégories d'actifs
+// GetAll récupère toutes les catégories d'actifs avec pagination
 // @Summary Récupérer toutes les catégories d'actifs
-// @Description Récupère la liste de toutes les catégories d'actifs IT
+// @Description Récupère la liste de toutes les catégories d'actifs IT avec pagination
 // @Tags assets
 // @Security BearerAuth
 // @Produce json
-// @Success 200 {array} dto.AssetCategoryDTO
+// @Param page query int false "Numéro de page (défaut: 1)"
+// @Param limit query int false "Nombre d'éléments par page (défaut: 25, max: 100)"
+// @Success 200 {object} dto.AssetCategoryListResponse
 // @Failure 500 {object} utils.Response
 // @Router /assets/categories [get]
 func (h *AssetCategoryHandler) GetAll(c *gin.Context) {
-	categories, err := h.assetCategoryService.GetAll()
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "25"))
+
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 100 {
+		limit = 25
+	}
+
+	response, err := h.assetCategoryService.GetAllPaginated(page, limit)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des catégories")
 		return
 	}
 
-	utils.SuccessResponse(c, categories, "Catégories récupérées avec succès")
+	utils.SuccessResponse(c, response, "Catégories récupérées avec succès")
 }
 
 // GetByID récupère une catégorie par son ID
@@ -144,12 +156,15 @@ func (h *AssetCategoryHandler) Update(c *gin.Context) {
 
 // Delete supprime une catégorie d'actif
 // @Summary Supprimer une catégorie d'actif
-// @Description Supprime une catégorie d'actif IT du système
+// @Description Supprime une catégorie d'actif IT du système. Si la catégorie a des sous-catégories, le nom de confirmation doit être fourni pour supprimer en cascade.
 // @Tags assets
 // @Security BearerAuth
+// @Accept json
 // @Produce json
 // @Param id path int true "ID de la catégorie"
+// @Param request body dto.DeleteAssetCategoryRequest false "Requête de suppression (confirm_name requis si la catégorie a des enfants)"
 // @Success 200 {object} utils.Response
+// @Failure 400 {object} utils.Response
 // @Failure 404 {object} utils.Response
 // @Router /assets/categories/{id} [delete]
 func (h *AssetCategoryHandler) Delete(c *gin.Context) {
@@ -160,9 +175,26 @@ func (h *AssetCategoryHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	err = h.assetCategoryService.Delete(uint(id))
+	// Lire le body pour obtenir le nom de confirmation (optionnel)
+	var req dto.DeleteAssetCategoryRequest
+	confirmName := ""
+	if c.Request.ContentLength > 0 {
+		if err := c.ShouldBindJSON(&req); err == nil {
+			confirmName = req.ConfirmName
+		}
+		// Si le body n'est pas du JSON valide, on continue sans erreur (pour compatibilité)
+	}
+
+	err = h.assetCategoryService.Delete(uint(id), confirmName)
 	if err != nil {
-		utils.NotFoundResponse(c, "Catégorie introuvable")
+		// Vérifier le type d'erreur pour retourner le bon code HTTP
+		errMsg := err.Error()
+		if errMsg == "catégorie introuvable" || errMsg == "Catégorie introuvable" {
+			utils.NotFoundResponse(c, errMsg)
+		} else {
+			// Erreur de validation (sous-catégories ou actifs associés)
+			utils.ErrorResponse(c, http.StatusBadRequest, errMsg, nil)
+		}
 		return
 	}
 

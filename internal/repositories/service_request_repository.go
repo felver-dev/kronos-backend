@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/mcicare/itsm-backend/database"
 	"github.com/mcicare/itsm-backend/internal/models"
+	"github.com/mcicare/itsm-backend/internal/scope"
 )
 
 // ServiceRequestRepository interface pour les opérations sur les demandes de service
@@ -10,10 +11,10 @@ type ServiceRequestRepository interface {
 	Create(serviceRequest *models.ServiceRequest) error
 	FindByID(id uint) (*models.ServiceRequest, error)
 	FindByTicketID(ticketID uint) (*models.ServiceRequest, error)
-	FindAll() ([]models.ServiceRequest, error)
-	FindByType(typeID uint) ([]models.ServiceRequest, error)
-	FindValidated() ([]models.ServiceRequest, error)
-	FindPendingValidation() ([]models.ServiceRequest, error)
+	FindAll(scope interface{}) ([]models.ServiceRequest, error) // scope peut être *scope.QueryScope ou nil
+	FindByType(scope interface{}, typeID uint) ([]models.ServiceRequest, error)
+	FindValidated(scope interface{}) ([]models.ServiceRequest, error)
+	FindPendingValidation(scope interface{}) ([]models.ServiceRequest, error)
 	Update(serviceRequest *models.ServiceRequest) error
 	Delete(id uint) error
 }
@@ -70,30 +71,85 @@ func (r *serviceRequestRepository) FindByTicketID(ticketID uint) (*models.Servic
 }
 
 // FindAll récupère toutes les demandes de service
-func (r *serviceRequestRepository) FindAll() ([]models.ServiceRequest, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *serviceRequestRepository) FindAll(scopeParam interface{}) ([]models.ServiceRequest, error) {
 	var serviceRequests []models.ServiceRequest
-	err := database.DB.Preload("Ticket").Preload("Type").Preload("Validator").Find(&serviceRequests).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.ServiceRequest{}).
+		Preload("Ticket").Preload("Type").Preload("ValidatedBy")
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyServiceRequestScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&serviceRequests).Error
 	return serviceRequests, err
 }
 
 // FindByType récupère les demandes de service par type
-func (r *serviceRequestRepository) FindByType(typeID uint) ([]models.ServiceRequest, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *serviceRequestRepository) FindByType(scopeParam interface{}, typeID uint) ([]models.ServiceRequest, error) {
 	var serviceRequests []models.ServiceRequest
-	err := database.DB.Preload("Ticket").Preload("Type").Where("type_id = ?", typeID).Find(&serviceRequests).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.ServiceRequest{}).
+		Preload("Ticket").Preload("Type").
+		Where("service_requests.type_id = ?", typeID)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyServiceRequestScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&serviceRequests).Error
 	return serviceRequests, err
 }
 
 // FindValidated récupère les demandes de service validées
-func (r *serviceRequestRepository) FindValidated() ([]models.ServiceRequest, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *serviceRequestRepository) FindValidated(scopeParam interface{}) ([]models.ServiceRequest, error) {
 	var serviceRequests []models.ServiceRequest
-	err := database.DB.Preload("Ticket").Preload("Type").Preload("Validator").Where("validated = ?", true).Find(&serviceRequests).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.ServiceRequest{}).
+		Preload("Ticket").Preload("Type").Preload("ValidatedBy").
+		Where("service_requests.validated = ?", true)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyServiceRequestScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&serviceRequests).Error
 	return serviceRequests, err
 }
 
 // FindPendingValidation récupère les demandes de service en attente de validation
-func (r *serviceRequestRepository) FindPendingValidation() ([]models.ServiceRequest, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *serviceRequestRepository) FindPendingValidation(scopeParam interface{}) ([]models.ServiceRequest, error) {
 	var serviceRequests []models.ServiceRequest
-	err := database.DB.Preload("Ticket").Preload("Type").Where("validated = ?", false).Find(&serviceRequests).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.ServiceRequest{}).
+		Preload("Ticket").Preload("Type").
+		Where("service_requests.validated = ?", false)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyServiceRequestScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&serviceRequests).Error
 	return serviceRequests, err
 }
 

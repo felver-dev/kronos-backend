@@ -21,11 +21,12 @@ type RefreshTokenRequest struct {
 
 // RegisterRequest représente la requête d'inscription d'un utilisateur
 type RegisterRequest struct {
-	Username  string `json:"username" binding:"required,min=3"`       // Nom d'utilisateur (obligatoire, min 3 caractères)
-	Email     string `json:"email" binding:"required,email"`          // Email (obligatoire, format email)
-	Password  string `json:"password" binding:"required,min=6"`       // Mot de passe (obligatoire, min 6 caractères)
-	FirstName string `json:"first_name,omitempty"`                   // Prénom (optionnel)
-	LastName  string `json:"last_name,omitempty"`                    // Nom (optionnel)
+	Username     string `json:"username" binding:"required,min=3"`       // Nom d'utilisateur (obligatoire, min 3 caractères)
+	Email        string `json:"email" binding:"required,email"`          // Email (obligatoire, format email)
+	Password     string `json:"password" binding:"required,min=6"`       // Mot de passe (obligatoire, min 6 caractères)
+	FirstName    string `json:"first_name,omitempty"`                   // Prénom (optionnel)
+	LastName     string `json:"last_name,omitempty"`                     // Nom (optionnel)
+	FilialeID    *uint  `json:"filiale_id" binding:"required"`            // ID de la filiale (obligatoire)
 }
 
 // RegisterResponse représente la réponse après une inscription réussie

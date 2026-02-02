@@ -33,7 +33,7 @@ func (r *weeklyDeclarationRepository) Create(declaration *models.WeeklyDeclarati
 // FindByID trouve une déclaration par son ID
 func (r *weeklyDeclarationRepository) FindByID(id uint) (*models.WeeklyDeclaration, error) {
 	var declaration models.WeeklyDeclaration
-	err := database.DB.Preload("User").Preload("Validator").Preload("Tasks").Preload("Tasks.Ticket").First(&declaration, id).Error
+	err := database.DB.Preload("User").Preload("ValidatedBy").Preload("Tasks").Preload("Tasks.Ticket").First(&declaration, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (r *weeklyDeclarationRepository) FindByID(id uint) (*models.WeeklyDeclarati
 // FindByUserIDAndWeek trouve une déclaration par utilisateur et semaine
 func (r *weeklyDeclarationRepository) FindByUserIDAndWeek(userID uint, week string) (*models.WeeklyDeclaration, error) {
 	var declaration models.WeeklyDeclaration
-	err := database.DB.Preload("User").Preload("Validator").Preload("Tasks").Preload("Tasks.Ticket").
+	err := database.DB.Preload("User").Preload("ValidatedBy").Preload("Tasks").Preload("Tasks.Ticket").
 		Where("user_id = ? AND week = ?", userID, week).
 		First(&declaration).Error
 	if err != nil {
@@ -55,14 +55,14 @@ func (r *weeklyDeclarationRepository) FindByUserIDAndWeek(userID uint, week stri
 // FindByUserID récupère toutes les déclarations d'un utilisateur
 func (r *weeklyDeclarationRepository) FindByUserID(userID uint) ([]models.WeeklyDeclaration, error) {
 	var declarations []models.WeeklyDeclaration
-	err := database.DB.Preload("User").Preload("Validator").Preload("Tasks").Where("user_id = ?", userID).Order("week DESC").Find(&declarations).Error
+	err := database.DB.Preload("User").Preload("ValidatedBy").Preload("Tasks").Where("user_id = ?", userID).Order("week DESC").Find(&declarations).Error
 	return declarations, err
 }
 
 // FindValidated récupère les déclarations validées
 func (r *weeklyDeclarationRepository) FindValidated() ([]models.WeeklyDeclaration, error) {
 	var declarations []models.WeeklyDeclaration
-	err := database.DB.Preload("User").Preload("Validator").Preload("Tasks").Where("validated = ?", true).Order("week DESC").Find(&declarations).Error
+	err := database.DB.Preload("User").Preload("ValidatedBy").Preload("Tasks").Where("validated = ?", true).Order("week DESC").Find(&declarations).Error
 	return declarations, err
 }
 

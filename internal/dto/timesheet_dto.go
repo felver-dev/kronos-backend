@@ -4,10 +4,11 @@ import "time"
 
 // TimeEntryDTO représente une entrée de temps
 type TimeEntryDTO struct {
-	ID          uint       `json:"id"`
-	TicketID    uint       `json:"ticket_id"`
-	Ticket      *TicketDTO `json:"ticket,omitempty"`
-	UserID      uint       `json:"user_id"`
+	ID             uint       `json:"id"`
+	TicketID       uint       `json:"ticket_id"`
+	ProjectTaskID  *uint      `json:"project_task_id,omitempty"`
+	Ticket         *TicketDTO `json:"ticket,omitempty"`
+	UserID         uint       `json:"user_id"`
 	User        *UserDTO   `json:"user,omitempty"`
 	TimeSpent   int        `json:"time_spent"`
 	Date        time.Time  `json:"date"`
@@ -36,7 +37,7 @@ type UpdateTimeEntryRequest struct {
 
 // ValidateTimeEntryRequest représente la requête de validation d'une entrée de temps
 type ValidateTimeEntryRequest struct {
-	Validated bool `json:"validated" binding:"required"`
+	Validated *bool `json:"validated" binding:"required"`
 }
 
 // DailyDeclarationDTO représente une déclaration journalière
@@ -108,9 +109,9 @@ type DailyCalendarDTO struct {
 
 // WeeklyTaskRequest représente une requête pour créer/mettre à jour une tâche hebdomadaire
 type WeeklyTaskRequest struct {
-	TicketID  uint      `json:"ticket_id" binding:"required"`
-	Date      time.Time `json:"date" binding:"required"`
-	TimeSpent int       `json:"time_spent" binding:"required"`
+	TicketID  uint   `json:"ticket_id" binding:"required"`
+	Date      string `json:"date" binding:"required"` // Format: YYYY-MM-DD
+	TimeSpent int    `json:"time_spent" binding:"required"`
 }
 
 // WeeklyTaskDTO représente une tâche hebdomadaire
@@ -153,6 +154,14 @@ type EstimatedTimeDTO struct {
 	EstimatedTime int  `json:"estimated_time"`
 }
 
+// SetEstimatedTimeRequest représente une requête pour définir/mettre à jour le temps estimé
+// @Description Requête pour définir ou mettre à jour le temps estimé d'un ticket en minutes
+type SetEstimatedTimeRequest struct {
+	// Temps estimé en minutes
+	// @Example 120
+	EstimatedTime int `json:"estimated_time" binding:"required"`
+}
+
 // TimeComparisonDTO représente la comparaison temps estimé vs réel
 type TimeComparisonDTO struct {
 	TicketID      uint    `json:"ticket_id"`
@@ -178,8 +187,8 @@ type SetProjectTimeBudgetRequest struct {
 
 // BudgetAlertDTO représente une alerte de budget
 type BudgetAlertDTO struct {
-	TicketID      uint    `json:"ticket_id,omitempty"`
-	ProjectID     uint    `json:"project_id,omitempty"`
+	TicketID      *uint    `json:"ticket_id,omitempty"`
+	ProjectID     *uint    `json:"project_id,omitempty"`
 	AlertType     string  `json:"alert_type"`
 	Message       string  `json:"message"`
 	Budget        int     `json:"budget"`

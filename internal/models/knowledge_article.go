@@ -12,12 +12,14 @@ type KnowledgeCategory struct {
 	ID          uint      `gorm:"primaryKey" json:"id"`
 	Name        string    `gorm:"type:varchar(255);not null" json:"name"`
 	Description string    `gorm:"type:text" json:"description,omitempty"`
+	FilialeID   *uint     `gorm:"index" json:"filiale_id,omitempty"` // ID de la filiale (optionnel pour catégories globales)
 	ParentID    *uint     `gorm:"index" json:"parent_id,omitempty"` // Catégorie parente (optionnel)
 	IsActive    bool      `gorm:"default:true;index" json:"is_active"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 
 	// Relations
+	Filiale  *Filiale            `gorm:"foreignKey:FilialeID" json:"filiale,omitempty"`   // Filiale (optionnel pour catégories globales)
 	Parent   *KnowledgeCategory  `gorm:"foreignKey:ParentID" json:"parent,omitempty"`   // Catégorie parente (optionnel)
 	Children []KnowledgeCategory `gorm:"foreignKey:ParentID" json:"children,omitempty"` // Catégories enfants
 	Articles []KnowledgeArticle  `gorm:"foreignKey:CategoryID" json:"-"`                // Articles de cette catégorie
@@ -35,6 +37,7 @@ type KnowledgeArticle struct {
 	Title       string         `gorm:"type:varchar(255);not null" json:"title"`
 	Content     string         `gorm:"type:text;not null" json:"content"`
 	CategoryID  uint           `gorm:"not null;index" json:"category_id"`
+	FilialeID   *uint          `gorm:"index" json:"filiale_id,omitempty"`              // ID de la filiale (optionnel pour articles globaux)
 	AuthorID    uint           `gorm:"not null;index" json:"author_id"`
 	IsPublished bool           `gorm:"default:false;index" json:"is_published"` // Si l'article est publié
 	ViewCount   int            `gorm:"default:0" json:"view_count"`             // Nombre de vues
@@ -44,6 +47,7 @@ type KnowledgeArticle struct {
 
 	// Relations
 	Category    KnowledgeCategory            `gorm:"foreignKey:CategoryID" json:"category,omitempty"`                               // Catégorie
+	Filiale     *Filiale                    `gorm:"foreignKey:FilialeID" json:"filiale,omitempty"`                                 // Filiale (optionnel pour articles globaux)
 	Author      User                         `gorm:"foreignKey:AuthorID" json:"author,omitempty"`                                   // Auteur
 	Attachments []KnowledgeArticleAttachment `gorm:"foreignKey:ArticleID;constraint:OnDelete:CASCADE" json:"attachments,omitempty"` // Pièces jointes
 }

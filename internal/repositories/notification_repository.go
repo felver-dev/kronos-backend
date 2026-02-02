@@ -14,6 +14,8 @@ type NotificationRepository interface {
 	FindByUserID(userID uint) ([]models.Notification, error)
 	FindUnreadByUserID(userID uint) ([]models.Notification, error)
 	FindByType(userID uint, notificationType string) ([]models.Notification, error)
+	FindByUserIDWithFilters(userID uint, isRead *bool, dateFrom, dateTo *time.Time, search string, filterFilialeID *uint, page, limit int) ([]models.Notification, int64, error)
+	FindAllWithFilters(filterUserID, filterFilialeID *uint, isRead *bool, dateFrom, dateTo *time.Time, search string, page, limit int) ([]models.Notification, int64, error)
 	Update(notification *models.Notification) error
 	MarkAsRead(id uint) error
 	MarkAllAsRead(userID uint) error
@@ -63,6 +65,73 @@ func (r *notificationRepository) FindByType(userID uint, notificationType string
 	var notifications []models.Notification
 	err := database.DB.Where("user_id = ? AND type = ?", userID, notificationType).Order("created_at DESC").Find(&notifications).Error
 	return notifications, err
+}
+
+// FindByUserIDWithFilters récupère les notifications d'un utilisateur avec filtres et pagination
+func (r *notificationRepository) FindByUserIDWithFilters(userID uint, isRead *bool, dateFrom, dateTo *time.Time, search string, filterFilialeID *uint, page, limit int) ([]models.Notification, int64, error) {
+	var notifications []models.Notification
+	query := database.DB.Model(&models.Notification{}).Where("notifications.user_id = ?", userID)
+	if filterFilialeID != nil {
+		query = query.Joins("INNER JOIN users ON users.id = notifications.user_id AND users.filiale_id = ?", *filterFilialeID)
+	}
+	if isRead != nil {
+		query = query.Where("notifications.is_read = ?", *isRead)
+	}
+	if dateFrom != nil {
+		query = query.Where("notifications.created_at >= ?", *dateFrom)
+	}
+	if dateTo != nil {
+		query = query.Where("notifications.created_at <= ?", *dateTo)
+	}
+	if search != "" {
+		like := "%" + search + "%"
+		query = query.Where("(notifications.title LIKE ? OR notifications.message LIKE ?)", like, like)
+	}
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	offset := (page - 1) * limit
+	if limit > 0 {
+		query = query.Limit(limit).Offset(offset)
+	}
+	err := query.Order("notifications.created_at DESC").Find(&notifications).Error
+	return notifications, total, err
+}
+
+// FindAllWithFilters récupère les notifications avec filtres (admin: par user, filiale) et pagination
+func (r *notificationRepository) FindAllWithFilters(filterUserID, filterFilialeID *uint, isRead *bool, dateFrom, dateTo *time.Time, search string, page, limit int) ([]models.Notification, int64, error) {
+	query := database.DB.Model(&models.Notification{})
+	if filterUserID != nil {
+		query = query.Where("notifications.user_id = ?", *filterUserID)
+	}
+	if filterFilialeID != nil {
+		query = query.Joins("INNER JOIN users ON users.id = notifications.user_id AND users.filiale_id = ?", *filterFilialeID)
+	}
+	if isRead != nil {
+		query = query.Where("notifications.is_read = ?", *isRead)
+	}
+	if dateFrom != nil {
+		query = query.Where("notifications.created_at >= ?", *dateFrom)
+	}
+	if dateTo != nil {
+		query = query.Where("notifications.created_at <= ?", *dateTo)
+	}
+	if search != "" {
+		like := "%" + search + "%"
+		query = query.Where("(notifications.title LIKE ? OR notifications.message LIKE ?)", like, like)
+	}
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	offset := (page - 1) * limit
+	if limit > 0 {
+		query = query.Limit(limit).Offset(offset)
+	}
+	var notifications []models.Notification
+	err := query.Order("notifications.created_at DESC").Find(&notifications).Error
+	return notifications, total, err
 }
 
 // Update met à jour une notification

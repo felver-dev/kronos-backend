@@ -12,11 +12,13 @@ func SetupUserRoutes(router *gin.RouterGroup, userHandler *handlers.UserHandler)
 	users.Use(middleware.AuthMiddleware())
 	{
 		users.GET("", userHandler.GetAll)
+		users.GET("/for-ticket-creation", userHandler.GetForTicketCreation) // Route spécifique avant /:id
 		users.GET("/:id", userHandler.GetByID)
 		users.POST("", userHandler.Create)
 		users.PUT("/:id", userHandler.Update)
 		users.DELETE("/:id", userHandler.Delete)
 		users.PUT("/:id/password", userHandler.ChangePassword)
+		users.PUT("/:id/reset-password", userHandler.ResetPassword)
 		users.GET("/:id/permissions", userHandler.GetPermissions)
 		users.PUT("/:id/permissions", userHandler.UpdatePermissions)
 		users.POST("/:id/avatar", userHandler.UploadAvatar)
@@ -32,6 +34,7 @@ func SetupUserDelayJustificationRoutes(router *gin.RouterGroup, delayHandler *ha
 	users.Use(middleware.AuthMiddleware())
 	{
 		// Route spécifique avec plus de segments - doit être avant les routes génériques
+		users.GET("/:id/delays", delayHandler.GetByUserID)
 		users.GET("/:id/delay-justifications", delayHandler.GetJustificationsByUserID)
 	}
 }

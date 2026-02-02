@@ -35,6 +35,7 @@ type Asset struct {
 	Model          string         `gorm:"type:varchar(255)" json:"model,omitempty"`
 	Manufacturer   string         `gorm:"type:varchar(255)" json:"manufacturer,omitempty"`
 	CategoryID     uint           `gorm:"not null;index" json:"category_id"`
+	FilialeID      *uint          `gorm:"index" json:"filiale_id,omitempty"`                    // ID de la filiale (optionnel)
 	AssignedToID   *uint          `gorm:"index" json:"assigned_to_id,omitempty"` // ID utilisateur assigné (optionnel)
 	Status         string         `gorm:"type:varchar(50);default:'available';index" json:"status"` // available, in_use, maintenance, retired
 	PurchaseDate   *time.Time     `gorm:"type:date" json:"purchase_date,omitempty"`
@@ -48,8 +49,10 @@ type Asset struct {
 	CreatedBy      *User          `gorm:"foreignKey:CreatedByID" json:"-"`
 
 	// Relations
-	Category    AssetCategory `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // Catégorie
-	AssignedTo  *User         `gorm:"foreignKey:AssignedToID" json:"assigned_to,omitempty"` // Utilisateur assigné (optionnel)
+	Category    AssetCategory    `gorm:"foreignKey:CategoryID" json:"category,omitempty"` // Catégorie
+	Filiale     *Filiale         `gorm:"foreignKey:FilialeID" json:"filiale,omitempty"`      // Filiale (optionnel)
+	AssignedTo  *User            `gorm:"foreignKey:AssignedToID" json:"assigned_to,omitempty"` // Utilisateur assigné (optionnel)
+	Software    []AssetSoftware  `gorm:"foreignKey:AssetID" json:"software,omitempty"` // Logiciels installés
 }
 
 // TableName spécifie le nom de la table

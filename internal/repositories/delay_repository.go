@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/mcicare/itsm-backend/database"
 	"github.com/mcicare/itsm-backend/internal/models"
+	"github.com/mcicare/itsm-backend/internal/scope"
 )
 
 // DelayRepository interface pour les opérations sur les retards
@@ -10,10 +11,10 @@ type DelayRepository interface {
 	Create(delay *models.Delay) error
 	FindByID(id uint) (*models.Delay, error)
 	FindByTicketID(ticketID uint) (*models.Delay, error)
-	FindAll() ([]models.Delay, error)
-	FindByUserID(userID uint) ([]models.Delay, error)
-	FindByStatus(status string) ([]models.Delay, error)
-	FindUnjustified() ([]models.Delay, error)
+	FindAll(scope interface{}) ([]models.Delay, error) // scope peut être *scope.QueryScope ou nil
+	FindByUserID(scope interface{}, userID uint) ([]models.Delay, error)
+	FindByStatus(scope interface{}, status string) ([]models.Delay, error)
+	FindUnjustified(scope interface{}) ([]models.Delay, error)
 	Update(delay *models.Delay) error
 	Delete(id uint) error
 }
@@ -75,30 +76,85 @@ func (r *delayRepository) FindByTicketID(ticketID uint) (*models.Delay, error) {
 }
 
 // FindAll récupère tous les retards
-func (r *delayRepository) FindAll() ([]models.Delay, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *delayRepository) FindAll(scopeParam interface{}) ([]models.Delay, error) {
 	var delays []models.Delay
-	err := database.DB.Preload("Ticket").Preload("User").Preload("Justification").Find(&delays).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.Delay{}).
+		Preload("Ticket").Preload("User").Preload("Justification")
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyDelayScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&delays).Error
 	return delays, err
 }
 
 // FindByUserID récupère les retards d'un utilisateur
-func (r *delayRepository) FindByUserID(userID uint) ([]models.Delay, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *delayRepository) FindByUserID(scopeParam interface{}, userID uint) ([]models.Delay, error) {
 	var delays []models.Delay
-	err := database.DB.Preload("Ticket").Preload("User").Preload("Justification").Where("user_id = ?", userID).Find(&delays).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.Delay{}).
+		Preload("Ticket").Preload("User").Preload("Justification").
+		Where("delays.user_id = ?", userID)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyDelayScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&delays).Error
 	return delays, err
 }
 
 // FindByStatus récupère les retards par statut
-func (r *delayRepository) FindByStatus(status string) ([]models.Delay, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *delayRepository) FindByStatus(scopeParam interface{}, status string) ([]models.Delay, error) {
 	var delays []models.Delay
-	err := database.DB.Preload("Ticket").Preload("User").Preload("Justification").Where("status = ?", status).Find(&delays).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.Delay{}).
+		Preload("Ticket").Preload("User").Preload("Justification").
+		Where("delays.status = ?", status)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyDelayScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&delays).Error
 	return delays, err
 }
 
 // FindUnjustified récupère les retards non justifiés
-func (r *delayRepository) FindUnjustified() ([]models.Delay, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *delayRepository) FindUnjustified(scopeParam interface{}) ([]models.Delay, error) {
 	var delays []models.Delay
-	err := database.DB.Preload("Ticket").Preload("User").Where("status = ?", "unjustified").Find(&delays).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.Delay{}).
+		Preload("Ticket").Preload("User").Preload("Justification").
+		Where("delays.status = ?", "unjustified")
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyDelayScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&delays).Error
 	return delays, err
 }
 

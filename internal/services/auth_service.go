@@ -2,6 +2,8 @@ package services
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/mcicare/itsm-backend/config"
@@ -49,18 +51,37 @@ func (s *authService) Register(req dto.RegisterRequest) (*dto.RegisterResponse, 
 		return nil, errors.New("cet email est déjà utilisé")
 	}
 
-	// Trouver le rôle par défaut (chercher "USER" ou "CLIENT", sinon prendre le premier rôle disponible)
-	defaultRole, err := s.roleRepo.FindByName("USER")
+	// Trouver le rôle par défaut pour les nouveaux utilisateurs
+	// Priorité: USER > CLIENT > premier rôle non-système > premier rôle disponible
+	var defaultRole *models.Role
+	var err error
+
+	// 1. Essayer de trouver le rôle USER (rôle par défaut pour les nouveaux utilisateurs)
+	defaultRole, err = s.roleRepo.FindByName("USER")
 	if err != nil {
-		// Si "USER" n'existe pas, essayer "CLIENT"
+		// 2. Si "USER" n'existe pas, essayer "CLIENT"
 		defaultRole, err = s.roleRepo.FindByName("CLIENT")
 		if err != nil {
-			// Si aucun rôle par défaut n'existe, récupérer tous les rôles et prendre le premier
+			// 3. Récupérer tous les rôles et chercher un rôle non-système
 			roles, err := s.roleRepo.FindAll()
 			if err != nil || len(roles) == 0 {
-				return nil, errors.New("aucun rôle disponible dans le système")
+				return nil, errors.New("aucun rôle disponible dans le système. Veuillez contacter l'administrateur")
 			}
-			defaultRole = &roles[0]
+			
+			// Chercher un rôle non-système (pour éviter d'assigner ADMIN par erreur)
+			for i := range roles {
+				if !roles[i].IsSystem {
+					defaultRole = &roles[i]
+					break
+				}
+			}
+			
+			// Si aucun rôle non-système n'existe, prendre le premier disponible
+			// (mais loguer un avertissement)
+			if defaultRole == nil {
+				defaultRole = &roles[0]
+				// Note: Ce cas ne devrait normalement pas arriver car USER est créé par défaut
+			}
 		}
 	}
 
@@ -70,6 +91,11 @@ func (s *authService) Register(req dto.RegisterRequest) (*dto.RegisterResponse, 
 		return nil, errors.New("erreur lors du hashage du mot de passe")
 	}
 
+	// Vérifier que la filiale existe si fournie
+	if req.FilialeID == nil {
+		return nil, errors.New("la filiale est obligatoire")
+	}
+
 	// Créer l'utilisateur (sans createdByID pour l'inscription publique)
 	user := &models.User{
 		Username:     req.Username,
@@ -77,13 +103,21 @@ func (s *authService) Register(req dto.RegisterRequest) (*dto.RegisterResponse, 
 		PasswordHash: passwordHash,
 		FirstName:    req.FirstName,
 		LastName:     req.LastName,
+		FilialeID:    req.FilialeID,
 		RoleID:       defaultRole.ID,
 		IsActive:     true, // Par défaut actif
 		CreatedByID:  nil, // Pas de créateur pour l'inscription publique
 	}
 
 	if err := s.userRepo.Create(user); err != nil {
-		return nil, errors.New("erreur lors de la création du compte")
+		// Vérifier si c'est une erreur de contrainte de clé étrangère (filiale invalide)
+		if strings.Contains(err.Error(), "foreign key constraint") {
+			if strings.Contains(err.Error(), "filiale") {
+				return nil, errors.New("filiale invalide ou introuvable")
+			}
+			return nil, errors.New("données invalides")
+		}
+		return nil, fmt.Errorf("erreur lors de la création du compte: %v", err)
 	}
 
 	// Récupérer l'utilisateur créé avec ses relations
@@ -138,7 +172,7 @@ func (s *authService) Login(req dto.LoginRequest) (*dto.LoginResponse, error) {
 
 	// Vérifier si l'utilisateur est actif
 	if !user.IsActive {
-		return nil, errors.New("compte utilisateur désactivé")
+		return nil, errors.New("Ce compte est inactif. Vous n'avez plus accès au système. Contactez le service IT si vous pensez qu'il s'agit d'une erreur.")
 	}
 
 	// Vérifier le mot de passe
@@ -267,17 +301,96 @@ func (s *authService) Logout(userID uint, tokenHash string) error {
 
 // userToDTO convertit un modèle User en DTO UserDTO
 func (s *authService) userToDTO(user *models.User) dto.UserDTO {
-	return dto.UserDTO{
-		ID:        user.ID,
-		Username:  user.Username,
-		Email:     user.Email,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Avatar:    user.Avatar,
-		Role:      user.Role.Name, // Le DTO utilise Role (string) au lieu de RoleID et RoleName
-		IsActive:  user.IsActive,
-		LastLogin: user.LastLogin,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+	userDTO := dto.UserDTO{
+		ID:           user.ID,
+		Username:     user.Username,
+		Email:        user.Email,
+		FirstName:    user.FirstName,
+		LastName:     user.LastName,
+		DepartmentID: user.DepartmentID,
+		FilialeID:    user.FilialeID,
+		Avatar:       user.Avatar,
+		Role:         user.Role.Name,                           // Nom du rôle brut (ex: "DSI")
+		Permissions:  s.getPermissionsForRole(user.Role.Name),   // Permissions dérivées du rôle
+		IsActive:     user.IsActive,
+		LastLogin:    user.LastLogin,
+		CreatedAt:    user.CreatedAt,
+		UpdatedAt:    user.UpdatedAt,
 	}
+
+	// Inclure la filiale si présente
+	if user.Filiale != nil {
+		userDTO.Filiale = &dto.FilialeDTO{
+			ID:          user.Filiale.ID,
+			Code:        user.Filiale.Code,
+			Name:        user.Filiale.Name,
+			Country:     user.Filiale.Country,
+			City:        user.Filiale.City,
+			Address:     user.Filiale.Address,
+			Phone:       user.Filiale.Phone,
+			Email:       user.Filiale.Email,
+			IsActive:    user.Filiale.IsActive,
+			IsSoftwareProvider: user.Filiale.IsSoftwareProvider,
+			CreatedAt:   user.Filiale.CreatedAt,
+			UpdatedAt:   user.Filiale.UpdatedAt,
+		}
+	}
+
+	// Inclure le département si présent
+	if user.Department != nil {
+		userDTO.Department = &dto.DepartmentDTO{
+			ID:          user.Department.ID,
+			Name:        user.Department.Name,
+			Code:        user.Department.Code,
+			Description: user.Department.Description,
+			OfficeID:    user.Department.OfficeID,
+			IsActive:    user.Department.IsActive,
+			CreatedAt:   user.Department.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:   user.Department.UpdatedAt.Format(time.RFC3339),
+		}
+		// Inclure le siège si présent
+		if user.Department.Office != nil {
+			userDTO.Department.Office = &dto.OfficeDTO{
+				ID:        user.Department.Office.ID,
+				Name:      user.Department.Office.Name,
+				Country:   user.Department.Office.Country,
+				City:      user.Department.Office.City,
+				Commune:   user.Department.Office.Commune,
+				Address:   user.Department.Office.Address,
+				Longitude: user.Department.Office.Longitude,
+				Latitude:  user.Department.Office.Latitude,
+				IsActive:  user.Department.Office.IsActive,
+				CreatedAt: user.Department.Office.CreatedAt.Format(time.RFC3339),
+				UpdatedAt: user.Department.Office.UpdatedAt.Format(time.RFC3339),
+			}
+		}
+	}
+
+	return userDTO
+}
+
+// getPermissionsForRole retourne la liste des permissions associées à un rôle donné.
+// Les permissions sont récupérées depuis la base de données via la table role_permissions
+// Cette fonction doit être identique à celle dans scope.go pour la cohérence
+func (s *authService) getPermissionsForRole(roleName string) []string {
+	// Récupérer le rôle par son nom
+	role, err := s.roleRepo.FindByName(roleName)
+	if err != nil {
+		// Retourner des permissions minimales par défaut si le rôle n'existe pas
+		return []string{"tickets.view_own"}
+	}
+	
+	// Récupérer les permissions du rôle depuis la base de données
+	permissions, err := s.roleRepo.GetPermissionsByRoleID(role.ID)
+	if err != nil {
+		// Retourner des permissions minimales par défaut en cas d'erreur
+		return []string{"tickets.view_own"}
+	}
+	
+	// Si aucune permission n'est assignée, retourner des permissions minimales
+	if len(permissions) == 0 {
+		return []string{"tickets.view_own"}
+	}
+	
+	return permissions
 }

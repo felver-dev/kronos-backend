@@ -53,16 +53,60 @@ func (h *DelayHandler) GetByID(c *gin.Context) {
 
 // GetAll récupère tous les retards
 // @Summary Récupérer tous les retards
-// @Description Récupère la liste de tous les retards
+// @Description Récupère la liste de tous les retards (filtrée selon les permissions : view_own, view_department, view_all). Query ?user_id= pour view_department (membre) ou view_all (utilisateur quelconque).
 // @Tags delays
 // @Security BearerAuth
 // @Accept json
 // @Produce json
+// @Param user_id query int false "Filtrer par utilisateur (view_department: membre du département ; view_all: tout utilisateur)"
 // @Success 200 {array} dto.DelayDTO
 // @Failure 500 {object} utils.Response
 // @Router /delays [get]
 func (h *DelayHandler) GetAll(c *gin.Context) {
-	delays, err := h.delayService.GetAll()
+	queryScope := utils.GetScopeFromContext(c)
+	if u := c.Query("user_id"); u != "" {
+		if id, err := strconv.ParseUint(u, 10, 32); err == nil {
+			uid := uint(id)
+			queryScope.FilterUserID = &uid
+		}
+	}
+	delays, err := h.delayService.GetAll(queryScope)
+	if err != nil {
+		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des retards")
+		return
+	}
+
+	utils.SuccessResponse(c, delays, "Retards récupérés avec succès")
+}
+
+// GetByUserID récupère les retards d'un utilisateur
+// @Summary Récupérer les retards d'un utilisateur
+// @Description Récupère tous les retards associés à un utilisateur (view_own : seulement soi ; view_department : membres du département ; view_all : tout utilisateur)
+// @Tags delays
+// @Security BearerAuth
+// @Produce json
+// @Param id path int true "ID de l'utilisateur"
+// @Success 200 {array} dto.DelayDTO
+// @Failure 403 {object} utils.Response "Avec view_own uniquement, seul son propre ID est autorisé"
+// @Failure 500 {object} utils.Response
+// @Router /users/{id}/delays [get]
+func (h *DelayHandler) GetByUserID(c *gin.Context) {
+	userIDParam := c.Param("id")
+	userID, err := strconv.ParseUint(userIDParam, 10, 32)
+	if err != nil {
+		utils.BadRequestResponse(c, "ID utilisateur invalide")
+		return
+	}
+
+	queryScope := utils.GetScopeFromContext(c)
+	// view_own seul : interdire l'accès aux retards d'un autre utilisateur
+	if queryScope.HasPermission("delays.view_own") && !queryScope.HasPermission("delays.view_department") && !queryScope.HasPermission("delays.view_all") {
+		if uint(userID) != queryScope.UserID {
+			utils.ForbiddenResponse(c, "Vous ne pouvez consulter que vos propres retards")
+			return
+		}
+	}
+	delays, err := h.delayService.GetByUserID(queryScope, uint(userID))
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des retards")
 		return
@@ -127,6 +171,16 @@ func (h *DelayHandler) CreateJustification(c *gin.Context) {
 // @Failure 401 {object} utils.Response
 // @Router /delays/justifications/{id}/validate [post]
 func (h *DelayHandler) ValidateJustification(c *gin.Context) {
+	scope := utils.GetScopeFromContext(c)
+	if scope == nil {
+		utils.InternalServerErrorResponse(c, "Contexte utilisateur introuvable")
+		return
+	}
+	if !scope.HasPermission("delays.validate") && !scope.HasPermission("timesheet.validate_justification") {
+		utils.ErrorResponse(c, http.StatusForbidden, "Vous n'avez pas la permission de valider les justifications de retards", nil)
+		return
+	}
+
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
@@ -137,6 +191,10 @@ func (h *DelayHandler) ValidateJustification(c *gin.Context) {
 	var req dto.ValidateDelayJustificationRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", err.Error())
+		return
+	}
+	if req.Validated == nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Données invalides", "validated est requis")
 		return
 	}
 
@@ -330,6 +388,16 @@ func (h *DelayHandler) GetJustificationsByUserID(c *gin.Context) {
 // @Failure 400 {object} utils.Response
 // @Router /delays/{delayId}/justification/reject [post]
 func (h *DelayHandler) RejectJustification(c *gin.Context) {
+	scope := utils.GetScopeFromContext(c)
+	if scope == nil {
+		utils.InternalServerErrorResponse(c, "Contexte utilisateur introuvable")
+		return
+	}
+	if !scope.HasPermission("delays.validate") && !scope.HasPermission("timesheet.validate_justification") {
+		utils.ErrorResponse(c, http.StatusForbidden, "Vous n'avez pas la permission de rejeter les justifications de retards", nil)
+		return
+	}
+
 	delayIDParam := c.Param("id")
 	delayID, err := strconv.ParseUint(delayIDParam, 10, 32)
 	if err != nil {

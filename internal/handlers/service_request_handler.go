@@ -97,7 +97,10 @@ func (h *ServiceRequestHandler) GetByID(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /service-requests [get]
 func (h *ServiceRequestHandler) GetAll(c *gin.Context) {
-	serviceRequests, err := h.serviceRequestService.GetAll()
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	serviceRequests, err := h.serviceRequestService.GetAll(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des demandes de service")
 		return

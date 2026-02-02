@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/mcicare/itsm-backend/internal/dto"
@@ -13,14 +14,14 @@ import (
 type AssetService interface {
 	Create(req dto.CreateAssetRequest, createdByID uint) (*dto.AssetDTO, error)
 	GetByID(id uint) (*dto.AssetDTO, error)
-	GetAll() ([]dto.AssetDTO, error)
-	GetByCategory(categoryID uint) ([]dto.AssetDTO, error)
-	GetByStatus(status string) ([]dto.AssetDTO, error)
+	GetAll(scope interface{}) ([]dto.AssetDTO, error) // scope peut être *scope.QueryScope ou nil
+	GetByCategory(scope interface{}, categoryID uint) ([]dto.AssetDTO, error)
+	GetByStatus(scope interface{}, status string) ([]dto.AssetDTO, error)
 	GetByAssignedTo(userID uint) ([]dto.AssetDTO, error)
 	Update(id uint, req dto.UpdateAssetRequest, updatedByID uint) (*dto.AssetDTO, error)
 	Assign(id uint, req dto.AssignAssetRequest, assignedByID uint) (*dto.AssetDTO, error)
 	Unassign(id uint, req dto.AssignAssetRequest, unassignedByID uint) (*dto.AssetDTO, error)
-	GetInventory() (*dto.AssetInventoryDTO, error)
+	GetInventory(scope interface{}) (*dto.AssetInventoryDTO, error)
 	GetLinkedTickets(assetID uint) ([]dto.TicketDTO, error)
 	LinkTicket(assetID uint, ticketID uint, linkedByID uint) error
 	UnlinkTicket(assetID uint, ticketID uint) error
@@ -132,8 +133,9 @@ func (s *assetService) GetByID(id uint) (*dto.AssetDTO, error) {
 }
 
 // GetAll récupère tous les actifs
-func (s *assetService) GetAll() ([]dto.AssetDTO, error) {
-	assets, err := s.assetRepo.FindAll()
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *assetService) GetAll(scopeParam interface{}) ([]dto.AssetDTO, error) {
+	assets, err := s.assetRepo.FindAll(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des actifs")
 	}
@@ -147,8 +149,9 @@ func (s *assetService) GetAll() ([]dto.AssetDTO, error) {
 }
 
 // GetByCategory récupère les actifs d'une catégorie
-func (s *assetService) GetByCategory(categoryID uint) ([]dto.AssetDTO, error) {
-	assets, err := s.assetRepo.FindByCategory(categoryID)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *assetService) GetByCategory(scopeParam interface{}, categoryID uint) ([]dto.AssetDTO, error) {
+	assets, err := s.assetRepo.FindByCategory(scopeParam, categoryID)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des actifs")
 	}
@@ -162,8 +165,9 @@ func (s *assetService) GetByCategory(categoryID uint) ([]dto.AssetDTO, error) {
 }
 
 // GetByStatus récupère les actifs par statut
-func (s *assetService) GetByStatus(status string) ([]dto.AssetDTO, error) {
-	assets, err := s.assetRepo.FindByStatus(status)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *assetService) GetByStatus(scopeParam interface{}, status string) ([]dto.AssetDTO, error) {
+	assets, err := s.assetRepo.FindByStatus(scopeParam, status)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des actifs")
 	}
@@ -321,8 +325,9 @@ func (s *assetService) Unassign(id uint, req dto.AssignAssetRequest, unassignedB
 }
 
 // GetInventory récupère l'inventaire des actifs
-func (s *assetService) GetInventory() (*dto.AssetInventoryDTO, error) {
-	allAssets, err := s.assetRepo.FindAll()
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *assetService) GetInventory(scopeParam interface{}) (*dto.AssetInventoryDTO, error) {
+	allAssets, err := s.assetRepo.FindAll(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des actifs")
 	}
@@ -569,24 +574,28 @@ type AssetCategoryService interface {
 	Create(req dto.CreateAssetCategoryRequest, createdByID uint) (*dto.AssetCategoryDTO, error)
 	GetByID(id uint) (*dto.AssetCategoryDTO, error)
 	GetAll() ([]dto.AssetCategoryDTO, error)
+	GetAllPaginated(page, limit int) (*dto.AssetCategoryListResponse, error)
 	GetByParentID(parentID uint) ([]dto.AssetCategoryDTO, error)
 	Update(id uint, req dto.UpdateAssetCategoryRequest, updatedByID uint) (*dto.AssetCategoryDTO, error)
-	Delete(id uint) error
+	Delete(id uint, confirmName string) error
 }
 
 // assetCategoryService implémente AssetCategoryService
 type assetCategoryService struct {
 	categoryRepo repositories.AssetCategoryRepository
+	assetRepo    repositories.AssetRepository
 	userRepo     repositories.UserRepository
 }
 
 // NewAssetCategoryService crée une nouvelle instance de AssetCategoryService
 func NewAssetCategoryService(
 	categoryRepo repositories.AssetCategoryRepository,
+	assetRepo repositories.AssetRepository,
 	userRepo repositories.UserRepository,
 ) AssetCategoryService {
 	return &assetCategoryService{
 		categoryRepo: categoryRepo,
+		assetRepo:    assetRepo,
 		userRepo:     userRepo,
 	}
 }
@@ -638,6 +647,46 @@ func (s *assetCategoryService) GetAll() ([]dto.AssetCategoryDTO, error) {
 	return categoryDTOs, nil
 }
 
+// GetAllPaginated récupère les catégories avec pagination
+func (s *assetCategoryService) GetAllPaginated(page, limit int) (*dto.AssetCategoryListResponse, error) {
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 100 {
+		limit = 25
+	}
+
+	categories, total, err := s.categoryRepo.FindPaginated(page, limit)
+	if err != nil {
+		return nil, errors.New("erreur lors de la récupération des catégories")
+	}
+
+	var categoryDTOs []dto.AssetCategoryDTO
+	for _, category := range categories {
+		categoryDTOs = append(categoryDTOs, s.categoryToDTO(&category))
+	}
+
+	var totalPages int
+	if total == 0 {
+		totalPages = 1 // Au moins 1 page même si vide
+	} else {
+		totalPages = int((total + int64(limit) - 1) / int64(limit))
+		if totalPages < 1 {
+			totalPages = 1
+		}
+	}
+
+	return &dto.AssetCategoryListResponse{
+		Categories: categoryDTOs,
+		Pagination: dto.PaginationDTO{
+			Page:       page,
+			Limit:      limit,
+			Total:      total,
+			TotalPages: totalPages,
+		},
+	}, nil
+}
+
 // GetByParentID récupère les catégories enfants d'une catégorie parente
 func (s *assetCategoryService) GetByParentID(parentID uint) ([]dto.AssetCategoryDTO, error) {
 	categories, err := s.categoryRepo.FindByParentID(parentID)
@@ -683,17 +732,69 @@ func (s *assetCategoryService) Update(id uint, req dto.UpdateAssetCategoryReques
 	return &categoryDTO, nil
 }
 
-// Delete supprime une catégorie
-func (s *assetCategoryService) Delete(id uint) error {
-	_, err := s.categoryRepo.FindByID(id)
+// Delete supprime une catégorie (avec suppression en cascade si confirmName est fourni)
+func (s *assetCategoryService) Delete(id uint, confirmName string) error {
+	// Vérifier que la catégorie existe
+	category, err := s.categoryRepo.FindByID(id)
 	if err != nil {
 		return errors.New("catégorie introuvable")
 	}
 
-	if err := s.categoryRepo.Delete(id); err != nil {
-		return errors.New("erreur lors de la suppression de la catégorie")
+	// Log pour débogage
+	fmt.Printf("DEBUG Delete: Tentative de suppression de la catégorie ID=%d, Nom=%s\n", id, category.Name)
+
+	// Vérifier si la catégorie a des sous-catégories
+	subCategoryCount, err := s.categoryRepo.CountByParentID(id)
+	if err != nil {
+		fmt.Printf("DEBUG Delete: Erreur lors du comptage des sous-catégories: %v\n", err)
+		return fmt.Errorf("erreur lors de la vérification des sous-catégories: %v", err)
+	}
+	fmt.Printf("DEBUG Delete: Nombre de sous-catégories trouvées: %d\n", subCategoryCount)
+
+	// Si la catégorie a des sous-catégories, vérifier la confirmation
+	if subCategoryCount > 0 {
+		if confirmName == "" {
+			return fmt.Errorf("impossible de supprimer cette catégorie car elle contient %d sous-catégorie(s). Veuillez d'abord supprimer ou déplacer les sous-catégories", subCategoryCount)
+		}
+		// Vérifier que le nom de confirmation correspond exactement
+		if confirmName != category.Name {
+			return errors.New("le nom de confirmation ne correspond pas au nom de la catégorie")
+		}
+		// Supprimer toutes les sous-catégories en cascade
+		fmt.Printf("DEBUG Delete: Suppression en cascade de %d sous-catégories\n", subCategoryCount)
+		subCategories, err := s.categoryRepo.FindByParentID(id)
+		if err != nil {
+			return fmt.Errorf("erreur lors de la récupération des sous-catégories: %v", err)
+		}
+		// Supprimer récursivement toutes les sous-catégories
+		for _, subCat := range subCategories {
+			// Supprimer récursivement (les sous-catégories peuvent avoir leurs propres enfants)
+			// On passe le nom de la sous-catégorie pour permettre la suppression en cascade
+			if err := s.Delete(subCat.ID, subCat.Name); err != nil {
+				return fmt.Errorf("erreur lors de la suppression de la sous-catégorie %s: %v", subCat.Name, err)
+			}
+		}
 	}
 
+	// Vérifier si la catégorie a des actifs associés
+	assetCount, err := s.assetRepo.CountByCategory(id)
+	if err != nil {
+		fmt.Printf("DEBUG Delete: Erreur lors du comptage des actifs: %v\n", err)
+		return fmt.Errorf("erreur lors de la vérification des actifs associés: %v", err)
+	}
+	fmt.Printf("DEBUG Delete: Nombre d'actifs trouvés: %d\n", assetCount)
+	if assetCount > 0 {
+		return fmt.Errorf("impossible de supprimer cette catégorie car elle est utilisée par %d actif(s). Veuillez d'abord modifier ou supprimer les actifs associés", assetCount)
+	}
+
+	// Supprimer la catégorie
+	fmt.Printf("DEBUG Delete: Suppression de la catégorie ID=%d\n", id)
+	if err := s.categoryRepo.Delete(id); err != nil {
+		fmt.Printf("DEBUG Delete: Erreur lors de la suppression: %v\n", err)
+		return fmt.Errorf("erreur lors de la suppression de la catégorie: %v", err)
+	}
+
+	fmt.Printf("DEBUG Delete: Catégorie ID=%d supprimée avec succès\n", id)
 	return nil
 }
 

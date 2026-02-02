@@ -19,6 +19,8 @@ type TicketAttachmentService interface {
 	GetImagesByTicketID(ticketID uint) ([]dto.TicketAttachmentDTO, error)
 	GetFilePath(id uint) (string, error)
 	GetThumbnailPath(id uint) (string, error)
+	GetFilePathForTicket(ticketID uint, attachmentID uint) (string, error)
+	GetThumbnailPathForTicket(ticketID uint, attachmentID uint) (string, error)
 	Update(id uint, req dto.UpdateTicketAttachmentRequest, updatedByID uint) (*dto.TicketAttachmentDTO, error)
 	SetPrimary(ticketID, attachmentID uint, updatedByID uint) (*dto.TicketAttachmentDTO, error)
 	Delete(id uint) error
@@ -48,8 +50,11 @@ func NewTicketAttachmentService(
 // UploadAttachment upload une pièce jointe pour un ticket
 func (s *ticketAttachmentService) UploadAttachment(ticketID uint, fileName, filePath, thumbnailPath string, fileSize int, mimeType string, isImage bool, description string, displayOrder int, userID uint) (*dto.TicketAttachmentDTO, error) {
 	// Vérifier que le ticket existe
-	_, err := s.ticketRepo.FindByID(ticketID)
+	exists, err := s.ticketRepo.ExistsByID(ticketID)
 	if err != nil {
+		return nil, errors.New("erreur lors de la vérification du ticket")
+	}
+	if !exists {
 		return nil, errors.New("ticket introuvable")
 	}
 
@@ -90,8 +95,11 @@ func (s *ticketAttachmentService) UploadAttachment(ticketID uint, fileName, file
 // GetByTicketID récupère toutes les pièces jointes d'un ticket
 func (s *ticketAttachmentService) GetByTicketID(ticketID uint, imagesOnly bool) ([]dto.TicketAttachmentDTO, error) {
 	// Vérifier que le ticket existe
-	_, err := s.ticketRepo.FindByID(ticketID)
+	exists, err := s.ticketRepo.ExistsByID(ticketID)
 	if err != nil {
+		return nil, errors.New("erreur lors de la vérification du ticket")
+	}
+	if !exists {
 		return nil, errors.New("ticket introuvable")
 	}
 
@@ -132,7 +140,7 @@ func (s *ticketAttachmentService) GetImagesByTicketID(ticketID uint) ([]dto.Tick
 
 // GetFilePath récupère le chemin complet d'une pièce jointe
 func (s *ticketAttachmentService) GetFilePath(id uint) (string, error) {
-	attachment, err := s.attachmentRepo.FindByID(id)
+	attachment, err := s.attachmentRepo.FindByIDBasic(id)
 	if err != nil {
 		return "", errors.New("pièce jointe introuvable")
 	}
@@ -147,7 +155,7 @@ func (s *ticketAttachmentService) GetFilePath(id uint) (string, error) {
 
 // GetThumbnailPath récupère le chemin de la miniature
 func (s *ticketAttachmentService) GetThumbnailPath(id uint) (string, error) {
-	attachment, err := s.attachmentRepo.FindByID(id)
+	attachment, err := s.attachmentRepo.FindByIDBasic(id)
 	if err != nil {
 		return "", errors.New("pièce jointe introuvable")
 	}
@@ -168,6 +176,30 @@ func (s *ticketAttachmentService) GetThumbnailPath(id uint) (string, error) {
 	}
 
 	return fullPath, nil
+}
+
+// GetFilePathForTicket retourne le chemin du fichier uniquement si la pièce jointe appartient au ticket
+func (s *ticketAttachmentService) GetFilePathForTicket(ticketID uint, attachmentID uint) (string, error) {
+	attachment, err := s.attachmentRepo.FindByIDBasic(attachmentID)
+	if err != nil {
+		return "", errors.New("pièce jointe introuvable")
+	}
+	if attachment.TicketID != ticketID {
+		return "", errors.New("pièce jointe introuvable")
+	}
+	return s.GetFilePath(attachmentID)
+}
+
+// GetThumbnailPathForTicket retourne le chemin de la miniature uniquement si la pièce jointe appartient au ticket
+func (s *ticketAttachmentService) GetThumbnailPathForTicket(ticketID uint, attachmentID uint) (string, error) {
+	attachment, err := s.attachmentRepo.FindByIDBasic(attachmentID)
+	if err != nil {
+		return "", errors.New("pièce jointe introuvable")
+	}
+	if attachment.TicketID != ticketID {
+		return "", errors.New("pièce jointe introuvable")
+	}
+	return s.GetThumbnailPath(attachmentID)
 }
 
 // Update met à jour une pièce jointe
@@ -201,8 +233,11 @@ func (s *ticketAttachmentService) Update(id uint, req dto.UpdateTicketAttachment
 // SetPrimary définit une image comme principale (déprécié, on utilise display_order)
 func (s *ticketAttachmentService) SetPrimary(ticketID, attachmentID uint, updatedByID uint) (*dto.TicketAttachmentDTO, error) {
 	// Vérifier que le ticket existe
-	_, err := s.ticketRepo.FindByID(ticketID)
+	exists, err := s.ticketRepo.ExistsByID(ticketID)
 	if err != nil {
+		return nil, errors.New("erreur lors de la vérification du ticket")
+	}
+	if !exists {
 		return nil, errors.New("ticket introuvable")
 	}
 
@@ -277,8 +312,11 @@ func (s *ticketAttachmentService) Delete(id uint) error {
 // Reorder réorganise les pièces jointes d'un ticket
 func (s *ticketAttachmentService) Reorder(ticketID uint, attachmentIDs []uint, updatedByID uint) error {
 	// Vérifier que le ticket existe
-	_, err := s.ticketRepo.FindByID(ticketID)
+	exists, err := s.ticketRepo.ExistsByID(ticketID)
 	if err != nil {
+		return errors.New("erreur lors de la vérification du ticket")
+	}
+	if !exists {
 		return errors.New("ticket introuvable")
 	}
 
@@ -302,17 +340,20 @@ func (s *ticketAttachmentService) Reorder(ticketID uint, attachmentIDs []uint, u
 
 // attachmentToDTO convertit un modèle TicketAttachment en DTO
 func (s *ticketAttachmentService) attachmentToDTO(attachment *models.TicketAttachment) dto.TicketAttachmentDTO {
-	userDTO := dto.UserDTO{
-		ID:        attachment.User.ID,
-		Username:  attachment.User.Username,
-		Email:     attachment.User.Email,
-		FirstName: attachment.User.FirstName,
-		LastName:  attachment.User.LastName,
-		Avatar:    attachment.User.Avatar,
-		Role:      attachment.User.Role.Name,
-		IsActive:  attachment.User.IsActive,
-		CreatedAt: attachment.User.CreatedAt,
-		UpdatedAt: attachment.User.UpdatedAt,
+	userDTO := dto.UserDTO{}
+	if attachment.User.ID != 0 {
+		userDTO = dto.UserDTO{
+			ID:        attachment.User.ID,
+			Username:  attachment.User.Username,
+			Email:     attachment.User.Email,
+			FirstName: attachment.User.FirstName,
+			LastName:  attachment.User.LastName,
+			Avatar:    attachment.User.Avatar,
+			Role:      attachment.User.Role.Name,
+			IsActive:  attachment.User.IsActive,
+			CreatedAt: attachment.User.CreatedAt,
+			UpdatedAt: attachment.User.UpdatedAt,
+		}
 	}
 
 	return dto.TicketAttachmentDTO{

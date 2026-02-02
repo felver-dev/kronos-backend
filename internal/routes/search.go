@@ -15,6 +15,8 @@ func SetupSearchRoutes(router *gin.RouterGroup, searchHandler *handlers.SearchHa
 		search.GET("/tickets", searchHandler.SearchTickets)
 		search.GET("/assets", searchHandler.SearchAssets)
 		search.GET("/knowledge-base", searchHandler.SearchKnowledgeBase)
+		search.GET("/users", searchHandler.SearchUsers)
+		search.GET("/time-entries", searchHandler.SearchTimeEntries)
 	}
 }
 

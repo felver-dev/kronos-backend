@@ -7,6 +7,7 @@ import "time"
 type DailyDeclaration struct {
 	ID                uint           `gorm:"primaryKey" json:"id"`
 	UserID            uint           `gorm:"not null;index" json:"user_id"`
+	FilialeID         *uint          `gorm:"index" json:"filiale_id,omitempty"`              // ID de la filiale (optionnel)
 	Date              time.Time      `gorm:"type:date;not null;index" json:"date"` // Date de la déclaration
 	TaskCount         int            `gorm:"default:0" json:"task_count"`            // Nombre de tâches
 	TotalTime         int            `gorm:"default:0" json:"total_time"`            // Temps total en minutes
@@ -19,6 +20,7 @@ type DailyDeclaration struct {
 
 	// Relations
 	User        User                  `gorm:"foreignKey:UserID" json:"user,omitempty"` // Utilisateur
+	Filiale     *Filiale              `gorm:"foreignKey:FilialeID" json:"filiale,omitempty"` // Filiale (optionnel)
 	ValidatedBy *User                 `gorm:"foreignKey:ValidatedByID" json:"validated_by,omitempty"` // Validateur (optionnel)
 	Tasks       []DailyDeclarationTask `gorm:"foreignKey:DeclarationID;constraint:OnDelete:CASCADE" json:"tasks,omitempty"` // Tâches déclarées
 }

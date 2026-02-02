@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/mcicare/itsm-backend/database"
 	"github.com/mcicare/itsm-backend/internal/models"
+	"github.com/mcicare/itsm-backend/internal/scope"
 )
 
 // SLARepository interface pour les opérations sur les SLA
@@ -22,10 +23,10 @@ type TicketSLARepository interface {
 	Create(ticketSLA *models.TicketSLA) error
 	FindByID(id uint) (*models.TicketSLA, error)
 	FindByTicketID(ticketID uint) (*models.TicketSLA, error)
-	FindBySLAID(slaID uint) ([]models.TicketSLA, error)
-	FindAll() ([]models.TicketSLA, error)
-	FindByStatus(status string) ([]models.TicketSLA, error)
-	FindViolated() ([]models.TicketSLA, error)
+	FindBySLAID(scope interface{}, slaID uint) ([]models.TicketSLA, error) // scope peut être *scope.QueryScope ou nil
+	FindAll(scope interface{}) ([]models.TicketSLA, error) // scope peut être *scope.QueryScope ou nil
+	FindByStatus(scope interface{}, status string) ([]models.TicketSLA, error)
+	FindViolated(scope interface{}) ([]models.TicketSLA, error) // scope peut être *scope.QueryScope ou nil
 	Update(ticketSLA *models.TicketSLA) error
 	Delete(id uint) error
 }
@@ -134,30 +135,85 @@ func (r *ticketSLARepository) FindByTicketID(ticketID uint) (*models.TicketSLA, 
 }
 
 // FindBySLAID trouve toutes les associations ticket-SLA par l'ID du SLA
-func (r *ticketSLARepository) FindBySLAID(slaID uint) ([]models.TicketSLA, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *ticketSLARepository) FindBySLAID(scopeParam interface{}, slaID uint) ([]models.TicketSLA, error) {
 	var ticketSLAs []models.TicketSLA
-	err := database.DB.Preload("Ticket").Preload("SLA").Where("sla_id = ?", slaID).Find(&ticketSLAs).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.TicketSLA{}).
+		Preload("Ticket").Preload("SLA").
+		Where("ticket_sla.sla_id = ?", slaID)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplySLAScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&ticketSLAs).Error
 	return ticketSLAs, err
 }
 
 // FindAll récupère toutes les associations ticket-SLA
-func (r *ticketSLARepository) FindAll() ([]models.TicketSLA, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *ticketSLARepository) FindAll(scopeParam interface{}) ([]models.TicketSLA, error) {
 	var ticketSLAs []models.TicketSLA
-	err := database.DB.Preload("Ticket").Preload("SLA").Find(&ticketSLAs).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.TicketSLA{}).
+		Preload("Ticket").Preload("SLA")
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplySLAScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&ticketSLAs).Error
 	return ticketSLAs, err
 }
 
 // FindByStatus récupère les associations ticket-SLA par statut
-func (r *ticketSLARepository) FindByStatus(status string) ([]models.TicketSLA, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *ticketSLARepository) FindByStatus(scopeParam interface{}, status string) ([]models.TicketSLA, error) {
 	var ticketSLAs []models.TicketSLA
-	err := database.DB.Preload("Ticket").Preload("SLA").Where("status = ?", status).Find(&ticketSLAs).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.TicketSLA{}).
+		Preload("Ticket").Preload("SLA").
+		Where("ticket_sla.status = ?", status)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplySLAScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&ticketSLAs).Error
 	return ticketSLAs, err
 }
 
 // FindViolated récupère les associations ticket-SLA violées
-func (r *ticketSLARepository) FindViolated() ([]models.TicketSLA, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *ticketSLARepository) FindViolated(scopeParam interface{}) ([]models.TicketSLA, error) {
 	var ticketSLAs []models.TicketSLA
-	err := database.DB.Preload("Ticket").Preload("SLA").Where("status = ?", "violated").Find(&ticketSLAs).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.TicketSLA{}).
+		Preload("Ticket").Preload("SLA").
+		Where("ticket_sla.status = ?", "violated")
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplySLAScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&ticketSLAs).Error
 	return ticketSLAs, err
 }
 

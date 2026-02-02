@@ -12,6 +12,7 @@ type SLA struct {
 	Description    string    `gorm:"type:text" json:"description,omitempty"`
 	TicketCategory string    `gorm:"type:varchar(50);not null;index" json:"ticket_category"` // incident, demande, changement, developpement
 	Priority       *string   `gorm:"type:varchar(50);index" json:"priority,omitempty"`       // low, medium, high, critical (nil = tous)
+	FilialeID      *uint     `gorm:"index" json:"filiale_id,omitempty"`                       // ID de la filiale (optionnel)
 	TargetTime     int       `gorm:"not null" json:"target_time"`                            // Temps cible en minutes
 	Unit           string    `gorm:"type:varchar(20);default:'minutes'" json:"unit"`         // minutes, hours, days
 	IsActive       bool      `gorm:"default:true;index" json:"is_active"`                    // Si le SLA est actif
@@ -21,6 +22,7 @@ type SLA struct {
 	CreatedBy      *User     `gorm:"foreignKey:CreatedByID" json:"-"`
 
 	// Relations HasMany
+	Filiale    *Filiale    `gorm:"foreignKey:FilialeID" json:"filiale,omitempty"` // Filiale (optionnel)
 	TicketSLAs []TicketSLA `gorm:"foreignKey:SLAID" json:"-"`
 }
 

@@ -17,10 +17,10 @@ type NotificationDTO struct {
 	CreatedAt time.Time      `json:"created_at"`
 }
 
-// NotificationListResponse représente la réponse de liste de notifications
+// NotificationListResponse représente la réponse de liste de notifications (historique avec filtres)
 type NotificationListResponse struct {
 	Notifications []NotificationDTO `json:"notifications"`
-	UnreadCount   int               `json:"unread_count"` // Nombre de notifications non lues
+	UnreadCount   int               `json:"unread_count"` // Nombre de notifications non lues (pour l'utilisateur concerné)
 	Total         int64             `json:"total"`
 	Page          int               `json:"page"`
 	Limit         int               `json:"limit"`

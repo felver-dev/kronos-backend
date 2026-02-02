@@ -2,11 +2,13 @@ package models
 
 import "time"
 
-// Delay représente un retard détecté sur un ticket
-// Table: delays
+// Delay représente un retard détecté sur un ticket ou un ticket interne
+// Table: delays. Soit ticket_id soit ticket_internal_id (l'un des deux).
 type Delay struct {
-	ID              uint      `gorm:"primaryKey" json:"id"`
-	TicketID        uint      `gorm:"uniqueIndex:idx_delays_ticket_id;not null" json:"ticket_id"` // Relation 1:1 avec Ticket
+	ID               uint      `gorm:"primaryKey" json:"id"`
+	TicketID         *uint     `gorm:"index" json:"ticket_id,omitempty"`         // Ticket normal (optionnel si ticket_internal_id) — index unique créé en migration
+	TicketInternalID *uint     `gorm:"index" json:"ticket_internal_id,omitempty"` // Ticket interne (optionnel si ticket_id) — index unique créé en migration
+	FilialeID        *uint     `gorm:"index" json:"filiale_id,omitempty"`                                            // ID de la filiale (via ticket, pour faciliter les filtres)
 	UserID          uint      `gorm:"not null;index" json:"user_id"`                              // Technicien en retard
 	EstimatedTime   int       `gorm:"not null" json:"estimated_time"`                             // Temps estimé en minutes
 	ActualTime      int       `gorm:"not null" json:"actual_time"`                                // Temps réel en minutes
@@ -17,10 +19,12 @@ type Delay struct {
 	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at"`
 
-	// Relations - GORM utilisera automatiquement les champs existants
-	Ticket        Ticket              `gorm:"foreignKey:TicketID;constraint:OnDelete:CASCADE" json:"ticket,omitempty"`       // Ticket associé (1:1)
-	User          User                `gorm:"foreignKey:UserID" json:"user,omitempty"`                                       // Technicien
-	Justification *DelayJustification `gorm:"foreignKey:DelayID;constraint:OnDelete:CASCADE" json:"justification,omitempty"` // Justification (1:1, optionnel)
+	// Relations
+	Ticket         *Ticket         `gorm:"foreignKey:TicketID;constraint:OnDelete:CASCADE" json:"ticket,omitempty"`
+	TicketInternal *TicketInternal `gorm:"foreignKey:TicketInternalID;constraint:OnDelete:CASCADE" json:"ticket_internal,omitempty"`
+	Filiale        *Filiale        `gorm:"foreignKey:FilialeID" json:"filiale,omitempty"`
+	User           User            `gorm:"foreignKey:UserID" json:"user,omitempty"`
+	Justification  *DelayJustification `gorm:"foreignKey:DelayID;constraint:OnDelete:CASCADE" json:"justification,omitempty"`
 }
 
 // TableName spécifie le nom de la table

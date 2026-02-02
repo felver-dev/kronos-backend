@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -35,7 +36,10 @@ func NewReportHandler(reportService services.ReportService) *ReportHandler {
 func (h *ReportHandler) GetDashboard(c *gin.Context) {
 	period := c.DefaultQuery("period", "month")
 
-	dashboard, err := h.reportService.GetDashboard(period)
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	dashboard, err := h.reportService.GetDashboard(queryScope, period)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération du tableau de bord")
 		return
@@ -58,7 +62,10 @@ func (h *ReportHandler) GetDashboard(c *gin.Context) {
 func (h *ReportHandler) GetTicketCountReport(c *gin.Context) {
 	period := c.DefaultQuery("period", "month")
 
-	report, err := h.reportService.GetTicketCountReport(period)
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	report, err := h.reportService.GetTicketCountReport(queryScope, period)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la génération du rapport")
 		return
@@ -78,7 +85,10 @@ func (h *ReportHandler) GetTicketCountReport(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /reports/tickets/distribution [get]
 func (h *ReportHandler) GetTicketTypeDistribution(c *gin.Context) {
-	distribution, err := h.reportService.GetTicketTypeDistribution()
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	distribution, err := h.reportService.GetTicketTypeDistribution(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération de la distribution")
 		return
@@ -98,7 +108,10 @@ func (h *ReportHandler) GetTicketTypeDistribution(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /reports/tickets/average-resolution-time [get]
 func (h *ReportHandler) GetAverageResolutionTime(c *gin.Context) {
-	avgTime, err := h.reportService.GetAverageResolutionTime()
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	avgTime, err := h.reportService.GetAverageResolutionTime(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors du calcul du temps moyen")
 		return
@@ -145,7 +158,12 @@ func (h *ReportHandler) GenerateCustomReport(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /reports/workload/by-agent [get]
 func (h *ReportHandler) GetWorkloadByAgent(c *gin.Context) {
-	workload, err := h.reportService.GetWorkloadByAgent()
+	period := c.DefaultQuery("period", "month")
+
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	workload, err := h.reportService.GetWorkloadByAgent(queryScope, period)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération de la charge de travail")
 		return
@@ -168,7 +186,10 @@ func (h *ReportHandler) GetWorkloadByAgent(c *gin.Context) {
 func (h *ReportHandler) GetSLAComplianceReport(c *gin.Context) {
 	period := c.DefaultQuery("period", "month")
 
-	report, err := h.reportService.GetSLAComplianceReport(period)
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	report, err := h.reportService.GetSLAComplianceReport(queryScope, period)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la génération du rapport")
 		return
@@ -191,7 +212,10 @@ func (h *ReportHandler) GetSLAComplianceReport(c *gin.Context) {
 func (h *ReportHandler) GetDelayedTicketsReport(c *gin.Context) {
 	period := c.DefaultQuery("period", "month")
 
-	report, err := h.reportService.GetDelayedTicketsReport(period)
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	report, err := h.reportService.GetDelayedTicketsReport(queryScope, period)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la génération du rapport")
 		return
@@ -229,6 +253,59 @@ func (h *ReportHandler) GetIndividualPerformanceReport(c *gin.Context) {
 	}
 
 	utils.SuccessResponse(c, report, "Rapport de performance récupéré avec succès")
+}
+
+// GetAssetSummary récupère un résumé des actifs
+// @Summary Récupérer le résumé des actifs
+// @Description Récupère les statistiques des actifs IT
+// @Tags reports
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param period query string false "Période (défaut: month)"
+// @Success 200 {object} dto.AssetReportDTO
+// @Failure 500 {object} utils.Response
+// @Router /reports/assets/summary [get]
+func (h *ReportHandler) GetAssetSummary(c *gin.Context) {
+	period := c.DefaultQuery("period", "month")
+
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	report, err := h.reportService.GetAssetSummary(queryScope, period)
+	if err != nil {
+		log.Printf("[reports] GetAssetSummary error: %v", err)
+		utils.InternalServerErrorResponse(c, "Erreur lors de la génération du rapport des actifs")
+		return
+	}
+
+	utils.SuccessResponse(c, report, "Rapport des actifs récupéré avec succès")
+}
+
+// GetKnowledgeSummary récupère un résumé de la base de connaissances
+// @Summary Récupérer le résumé de la base de connaissances
+// @Description Récupère les statistiques des articles (publiés/brouillons)
+// @Tags reports
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param period query string false "Période (défaut: month)"
+// @Success 200 {object} dto.KnowledgeReportDTO
+// @Failure 500 {object} utils.Response
+// @Router /reports/knowledge/summary [get]
+func (h *ReportHandler) GetKnowledgeSummary(c *gin.Context) {
+	period := c.DefaultQuery("period", "month")
+
+	queryScope := utils.GetScopeFromContext(c)
+	utils.ApplyDashboardScopeHint(c, queryScope)
+
+	report, err := h.reportService.GetKnowledgeSummary(queryScope, period)
+	if err != nil {
+		utils.InternalServerErrorResponse(c, "Erreur lors de la génération du rapport de la base de connaissances")
+		return
+	}
+
+	utils.SuccessResponse(c, report, "Rapport de la base de connaissances récupéré avec succès")
 }
 
 // ExportReport exporte un rapport dans un format spécifique

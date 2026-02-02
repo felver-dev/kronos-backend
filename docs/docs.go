@@ -47,14 +47,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.AssetDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -83,7 +83,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateAssetRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateAssetRequest"
                         }
                     }
                 ],
@@ -91,19 +91,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.AssetDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -139,14 +139,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.AssetDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -182,14 +182,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.AssetDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -202,7 +202,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Récupère la liste de toutes les catégories d'actifs IT",
+                "description": "Récupère la liste de toutes les catégories d'actifs IT avec pagination",
                 "produces": [
                     "application/json"
                 ],
@@ -210,20 +210,31 @@ const docTemplate = `{
                     "assets"
                 ],
                 "summary": "Récupérer toutes les catégories d'actifs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Numéro de page (défaut: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Nombre d'éléments par page (défaut: 25, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/dto.AssetCategoryDTO"
-                            }
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetCategoryListResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -252,7 +263,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateAssetCategoryRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateAssetCategoryRequest"
                         }
                     }
                 ],
@@ -260,13 +271,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.AssetCategoryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetCategoryDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -300,13 +311,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AssetCategoryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetCategoryDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -342,7 +353,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateAssetCategoryRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateAssetCategoryRequest"
                         }
                     }
                 ],
@@ -350,13 +361,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AssetCategoryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetCategoryDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -367,7 +378,10 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Supprime une catégorie d'actif IT du système",
+                "description": "Supprime une catégorie d'actif IT du système. Si la catégorie a des sous-catégories, le nom de confirmation doit être fourni pour supprimer en cascade.",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -382,19 +396,33 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Requête de suppression (confirm_name requis si la catégorie a des enfants)",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DeleteAssetCategoryRequest"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -419,13 +447,354 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AssetInventoryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetInventoryDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/software": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de tous les logiciels installés",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer tous les logiciels installés",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetSoftwareDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée un nouveau logiciel installé sur un actif",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Créer un logiciel installé",
+                "parameters": [
+                    {
+                        "description": "Données du logiciel installé",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateAssetSoftwareRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetSoftwareDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/software/by-name/{softwareName}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les actifs ayant un logiciel spécifique installé",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer les actifs par logiciel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Nom du logiciel",
+                        "name": "softwareName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetSoftwareDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/software/by-name/{softwareName}/version/{version}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les actifs ayant un logiciel avec une version spécifique installé",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer les actifs par logiciel et version",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Nom du logiciel",
+                        "name": "softwareName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Version du logiciel",
+                        "name": "version",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetSoftwareDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/software/statistics": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère des statistiques sur les logiciels installés (nombre d'actifs par logiciel, version, catégorie)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Statistiques des logiciels installés",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetSoftwareStatisticsDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/software/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère un logiciel installé par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer un logiciel installé par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du logiciel installé",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetSoftwareDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour un logiciel installé sur un actif",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Mettre à jour un logiciel installé",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du logiciel installé",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de mise à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateAssetSoftwareRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetSoftwareDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime un logiciel installé d'un actif",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Supprimer un logiciel installé",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du logiciel installé",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -462,19 +831,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AssetDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -510,7 +879,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateAssetRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateAssetRequest"
                         }
                     }
                 ],
@@ -518,13 +887,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AssetDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -559,19 +928,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -609,7 +978,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AssignAssetRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssignAssetRequest"
                         }
                     }
                 ],
@@ -617,19 +986,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AssetDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -663,13 +1032,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -710,13 +1079,56 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/{id}/software": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les logiciels installés sur un actif spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Récupérer les logiciels d'un actif",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'actif",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetSoftwareDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -752,14 +1164,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TicketDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                             }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -793,13 +1205,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AssetDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -840,13 +1252,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -903,13 +1315,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AuditLogListResponse"
+                            "$ref": "#/definitions/internal_handlers.auditLogListResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -945,14 +1357,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.AuditLogDTO"
+                                "$ref": "#/definitions/internal_handlers.auditLogDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -995,14 +1407,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.AuditLogDTO"
+                                "$ref": "#/definitions/internal_handlers.auditLogDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1050,14 +1462,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.AuditLogDTO"
+                                "$ref": "#/definitions/internal_handlers.auditLogDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1091,13 +1503,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AuditLogDTO"
+                            "$ref": "#/definitions/internal_handlers.auditLogDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1123,7 +1535,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.LoginRequest"
                         }
                     }
                 ],
@@ -1131,19 +1543,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginResponse"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1168,13 +1580,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1199,13 +1611,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1231,7 +1643,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RefreshTokenRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RefreshTokenRequest"
                         }
                     }
                 ],
@@ -1248,13 +1660,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1280,7 +1692,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RegisterRequest"
                         }
                     }
                 ],
@@ -1288,13 +1700,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterResponse"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RegisterResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1324,14 +1736,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.ChangeDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ChangeDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1360,7 +1772,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateChangeRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateChangeRequest"
                         }
                     }
                 ],
@@ -1368,19 +1780,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.ChangeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ChangeDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1416,14 +1828,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.ChangeDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ChangeDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1459,14 +1871,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.ChangeDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ChangeDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1503,19 +1915,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ChangeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ChangeDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1551,7 +1963,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateChangeRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateChangeRequest"
                         }
                     }
                 ],
@@ -1559,19 +1971,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ChangeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ChangeDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1606,19 +2018,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1656,7 +2068,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AssignResponsibleRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssignResponsibleRequest"
                         }
                     }
                 ],
@@ -1664,13 +2076,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ChangeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ChangeDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1711,7 +2123,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1747,7 +2159,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RecordChangeResultRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RecordChangeResultRequest"
                         }
                     }
                 ],
@@ -1755,19 +2167,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ChangeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ChangeDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1805,7 +2217,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateRiskRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateRiskRequest"
                         }
                     }
                 ],
@@ -1813,13 +2225,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ChangeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ChangeDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1858,14 +2270,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DailyDeclarationDTO"
+                                "$ref": "#/definitions/internal_handlers.dailyDeclarationDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1909,19 +2321,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DailyDeclarationDTO"
+                            "$ref": "#/definitions/internal_handlers.dailyDeclarationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -1958,19 +2370,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DailyDeclarationDTO"
+                            "$ref": "#/definitions/internal_handlers.dailyDeclarationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2007,19 +2419,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DailyDeclarationDTO"
+                            "$ref": "#/definitions/internal_handlers.dailyDeclarationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2032,7 +2444,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Récupère la liste de tous les retards",
+                "description": "Récupère la liste de tous les retards (filtrée selon les permissions : view_own, view_department, view_all). Query ?user_id= pour view_department (membre) ou view_all (utilisateur quelconque).",
                 "consumes": [
                     "application/json"
                 ],
@@ -2043,20 +2455,28 @@ const docTemplate = `{
                     "delays"
                 ],
                 "summary": "Récupérer tous les retards",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Filtrer par utilisateur (view_department: membre du département ; view_all: tout utilisateur)",
+                        "name": "user_id",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DelayDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2083,14 +2503,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DelayJustificationDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2117,14 +2537,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DelayJustificationDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2151,14 +2571,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DelayJustificationDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2196,7 +2616,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ValidateDelayJustificationRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ValidateDelayJustificationRequest"
                         }
                     }
                 ],
@@ -2204,19 +2624,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2250,13 +2670,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2292,7 +2712,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateDelayJustificationRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateDelayJustificationRequest"
                         }
                     }
                 ],
@@ -2300,13 +2720,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2338,13 +2758,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2382,7 +2802,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ValidateDelayJustificationRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ValidateDelayJustificationRequest"
                         }
                     }
                 ],
@@ -2390,13 +2810,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2434,7 +2854,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateDelayJustificationRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateDelayJustificationRequest"
                         }
                     }
                 ],
@@ -2442,19 +2862,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2491,19 +2911,981 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DelayDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/departments": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de tous les départements. Les filiales non fournisseur voient uniquement leurs départements.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Récupérer tous les départements",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "Récupérer uniquement les départements actifs",
+                        "name": "active",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée un nouveau département",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Créer un département",
+                "parameters": [
+                    {
+                        "description": "Données du département",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateDepartmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/active": {
+            "get": {
+                "description": "Récupère la liste des départements actifs (route publique pour l'inscription)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Récupérer les départements actifs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/filiale/{filiale_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les départements actifs d'une filiale spécifique. Les filiales non fournisseur ne peuvent voir que leurs propres départements.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Récupérer les départements d'une filiale",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la filiale",
+                        "name": "filiale_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/office/{office_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les départements d'un siège spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Récupérer les départements d'un siège",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du siège",
+                        "name": "office_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère un département par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Récupérer un département par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du département",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour un département",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Mettre à jour un département",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du département",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de mise à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateDepartmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime un département",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Supprimer un département",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du département",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/diagnostic/it-users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retourne la liste des utilisateurs IT de MCI CARE CI pour diagnostic",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "diagnostic"
+                ],
+                "summary": "Informations sur les utilisateurs IT",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/filiales": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Avec filiales.view_all ou filiales.manage : toutes les filiales. Avec filiales.view ou notifications.filter_by_filiale : uniquement sa filiale.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiales"
+                ],
+                "summary": "Récupérer les filiales",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée une nouvelle filiale (nécessite filiales.create)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiales"
+                ],
+                "summary": "Créer une filiale",
+                "parameters": [
+                    {
+                        "description": "Données de la filiale",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateFilialeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/filiales-software": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les déploiements (nécessite software.view)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiale-software"
+                ],
+                "summary": "Récupérer tous les déploiements",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeSoftwareDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/filiales-software/active": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les déploiements actifs (nécessite software.view)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiale-software"
+                ],
+                "summary": "Récupérer les déploiements actifs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeSoftwareDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/filiales-software/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère un déploiement par son identifiant (nécessite software.view)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiale-software"
+                ],
+                "summary": "Récupérer un déploiement par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du déploiement",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeSoftwareDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour un déploiement (nécessite software.manage_deployments)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiale-software"
+                ],
+                "summary": "Mettre à jour un déploiement",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du déploiement",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de mise à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateFilialeSoftwareRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeSoftwareDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime un déploiement (nécessite software.manage_deployments)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiale-software"
+                ],
+                "summary": "Supprimer un déploiement",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du déploiement",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/filiales/active": {
+            "get": {
+                "description": "Récupère la liste des filiales actives (route publique pour l'inscription)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiales"
+                ],
+                "summary": "Récupérer les filiales actives",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/filiales/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une filiale par son code (nécessite filiales.view)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiales"
+                ],
+                "summary": "Récupérer une filiale par code",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code de la filiale",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/filiales/software-provider": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la filiale marquée comme fournisseur de logiciels / IT (nécessite filiales.view)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiales"
+                ],
+                "summary": "Récupérer la filiale fournisseur de logiciels",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/filiales/{filiale_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une filiale par son identifiant (nécessite filiales.view)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiales"
+                ],
+                "summary": "Récupérer une filiale par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la filiale",
+                        "name": "filiale_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour une filiale (nécessite filiales.update)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiales"
+                ],
+                "summary": "Mettre à jour une filiale",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la filiale",
+                        "name": "filiale_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de mise à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateFilialeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime une filiale (nécessite filiales.manage)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiales"
+                ],
+                "summary": "Supprimer une filiale",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la filiale",
+                        "name": "filiale_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/filiales/{filiale_id}/software": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les déploiements actifs d'une filiale (accessible pour créer des tickets)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiale-software"
+                ],
+                "summary": "Récupérer les déploiements d'une filiale",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la filiale",
+                        "name": "filiale_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeSoftwareDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée un nouveau déploiement de logiciel chez une filiale (nécessite software.deploy)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiale-software"
+                ],
+                "summary": "Créer un déploiement",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la filiale",
+                        "name": "filiale_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données du déploiement",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateFilialeSoftwareRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeSoftwareDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2533,14 +3915,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.IncidentDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.IncidentDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2569,7 +3951,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateIncidentRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateIncidentRequest"
                         }
                     }
                 ],
@@ -2577,19 +3959,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.IncidentDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.IncidentDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2625,14 +4007,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.IncidentDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.IncidentDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2668,14 +4050,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.IncidentDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.IncidentDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2712,19 +4094,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.IncidentDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.IncidentDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2760,7 +4142,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateIncidentRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateIncidentRequest"
                         }
                     }
                 ],
@@ -2768,19 +4150,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.IncidentDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.IncidentDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2815,19 +4197,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2876,13 +4258,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2918,14 +4300,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.AssetDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
                             }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -2963,7 +4345,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.QualifyIncidentRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.QualifyIncidentRequest"
                         }
                     }
                 ],
@@ -2971,19 +4353,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.IncidentDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.IncidentDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3024,7 +4406,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3061,19 +4443,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.IncidentDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.IncidentDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3114,13 +4496,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3147,14 +4529,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3183,7 +4565,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateKnowledgeArticleRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateKnowledgeArticleRequest"
                         }
                     }
                 ],
@@ -3191,19 +4573,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3239,14 +4621,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3282,14 +4664,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3314,14 +4696,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3355,20 +4737,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.KnowledgeArticleSearchResultDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleSearchResultDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3405,19 +4787,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3453,7 +4835,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateKnowledgeArticleRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateKnowledgeArticleRequest"
                         }
                     }
                 ],
@@ -3461,13 +4843,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3502,19 +4884,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3563,13 +4945,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.KnowledgeArticleDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3603,13 +4985,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3636,14 +5018,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.KnowledgeCategoryDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeCategoryDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3672,7 +5054,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateKnowledgeCategoryRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateKnowledgeCategoryRequest"
                         }
                     }
                 ],
@@ -3680,13 +5062,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.KnowledgeCategoryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeCategoryDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3720,13 +5102,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.KnowledgeCategoryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeCategoryDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3762,7 +5144,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateKnowledgeCategoryRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateKnowledgeCategoryRequest"
                         }
                     }
                 ],
@@ -3770,13 +5152,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.KnowledgeCategoryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeCategoryDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3808,13 +5190,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3844,20 +5226,89 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.NotificationDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.NotificationDTO"
                             }
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/history": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Liste des notifications avec filtres (utilisateur, filiale, date, lu/non lu) et pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Historique des notifications",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limite par page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Filtrer par lu (true) / non lu (false)",
+                        "name": "is_read",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date début (ISO)",
+                        "name": "date_from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date fin (ISO)",
+                        "name": "date_to",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filtrer par utilisateur (admin)",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filtrer par filiale (admin)",
+                        "name": "filiale_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.NotificationListResponse"
                         }
                     }
                 }
@@ -3885,19 +5336,47 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/unread": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les notifications non lues de l'utilisateur connecté (affichage cloche)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Récupérer les notifications non lues",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.NotificationDTO"
+                            }
                         }
                     }
                 }
@@ -3925,19 +5404,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UnreadCountDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UnreadCountDTO"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -3974,19 +5453,318 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/offices": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de tous les sièges. Les filiales non fournisseur voient uniquement leurs sièges.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Récupérer tous les sièges",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "Récupérer uniquement les sièges actifs",
+                        "name": "active",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.OfficeDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée un nouveau siège/bureau",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Créer un siège",
+                "parameters": [
+                    {
+                        "description": "Données du siège",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateOfficeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.OfficeDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/offices/city/{city}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les sièges d'une ville spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Récupérer les sièges d'une ville",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Nom de la ville",
+                        "name": "city",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.OfficeDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/offices/country/{country}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les sièges d'un pays spécifique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Récupérer les sièges d'un pays",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Nom du pays",
+                        "name": "country",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.OfficeDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/offices/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère un siège par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Récupérer un siège par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du siège",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.OfficeDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour un siège",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Mettre à jour un siège",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du siège",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de mise à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateOfficeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.OfficeDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime un siège",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Supprimer un siège",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du siège",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4024,14 +5802,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.PerformanceRankingDTO"
+                                "$ref": "#/definitions/internal_handlers.performanceRankingDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4068,19 +5846,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.PerformanceDTO"
+                            "$ref": "#/definitions/internal_handlers.performanceDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4117,19 +5895,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.EfficiencyDTO"
+                            "$ref": "#/definitions/internal_handlers.efficiencyDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4166,19 +5944,101 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductivityDTO"
+                            "$ref": "#/definitions/internal_handlers.productivityDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/permissions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de toutes les permissions disponibles dans le système",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "permissions"
+                ],
+                "summary": "Récupérer toutes les permissions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filtrer par module",
+                        "name": "module",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PermissionDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/permissions/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une permission par son code unique",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "permissions"
+                ],
+                "summary": "Récupérer une permission par code",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code de la permission",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PermissionDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4191,7 +6051,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Récupère la liste de tous les projets",
+                "description": "Récupère la liste de tous les projets. Query ?scope=own pour « Mon tableau de bord » (uniquement les projets où l'utilisateur est impliqué).",
                 "consumes": [
                     "application/json"
                 ],
@@ -4202,20 +6062,28 @@ const docTemplate = `{
                     "projects"
                 ],
                 "summary": "Récupérer tous les projets",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "scope=own pour limiter aux projets de l'utilisateur connecté (Mon tableau de bord)",
+                        "name": "scope",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Project"
+                                "$ref": "#/definitions/internal_handlers.project"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4252,19 +6120,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Project"
+                            "$ref": "#/definitions/internal_handlers.project"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4301,19 +6169,143 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Project"
+                            "$ref": "#/definitions/internal_handlers.project"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'un projet",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "Mettre à jour un projet",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du projet",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.project"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime un projet. Le corps doit contenir le nom d'utilisateur pour confirmer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "Supprimer un projet",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du projet",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Confirmation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4347,13 +6339,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProjectTimeBudgetDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ProjectTimeBudgetDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4389,7 +6381,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.SetProjectTimeBudgetRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SetProjectTimeBudgetRequest"
                         }
                     }
                 ],
@@ -4397,13 +6389,55 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/assets/summary": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les statistiques des actifs IT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reports"
+                ],
+                "summary": "Récupérer le résumé des actifs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Période (défaut: month)",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetReportDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4434,7 +6468,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CustomReportRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CustomReportRequest"
                         }
                     }
                 ],
@@ -4446,7 +6480,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4482,13 +6516,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DashboardDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DashboardDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4546,13 +6580,55 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/reports/knowledge/summary": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère les statistiques des articles (publiés/brouillons)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reports"
+                ],
+                "summary": "Récupérer le résumé de la base de connaissances",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Période (défaut: month)",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeReportDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4595,13 +6671,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.IndividualPerformanceReportDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.IndividualPerformanceReportDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4637,13 +6713,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SLAComplianceReportDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLAComplianceReportDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4671,13 +6747,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.AverageResolutionTimeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AverageResolutionTimeDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4713,13 +6789,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketCountReportDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketCountReportDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4757,14 +6833,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DelayedTicketDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayedTicketDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4792,13 +6868,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketTypeDistributionDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketTypeDistributionDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4828,14 +6904,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.WorkloadByAgentDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.WorkloadByAgentDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4848,28 +6924,28 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Récupère la liste de tous les rôles du système",
+                "description": "roles.manage : tous les rôles. roles.view_department : rôles de son département. roles.view_filiale ou roles.view : rôles globaux + rôles de sa filiale.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "roles"
                 ],
-                "summary": "Récupérer tous les rôles",
+                "summary": "Récupérer les rôles",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.RoleDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RoleDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4898,7 +6974,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateRoleRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateRoleRequest"
                         }
                     }
                 ],
@@ -4906,13 +6982,151 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.RoleDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RoleDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/roles/assignable-permissions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste des permissions que l'utilisateur actuel peut assigner à d'autres rôles",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Récupérer les permissions assignables",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/roles/for-delegation": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Rôles créés par l'utilisateur + rôles utilisés par au moins un utilisateur de sa filiale (sans actions pour ces derniers)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Rôles pour la page Délégation",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RoleDTO"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/roles/my-delegations": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste des rôles créés par l'utilisateur courant (délégation)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Récupérer les rôles délégués",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RoleDTO"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4946,13 +7160,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RoleDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RoleDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -4988,7 +7202,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateRoleRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateRoleRequest"
                         }
                     }
                 ],
@@ -4996,13 +7210,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RoleDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RoleDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5013,7 +7227,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Supprime un rôle du système",
+                "description": "Supprime un rôle du système (seul le créateur ou un utilisateur avec roles.manage peut supprimer)",
                 "produces": [
                     "application/json"
                 ],
@@ -5034,13 +7248,124 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/roles/{id}/permissions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste des permissions associées à un rôle",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Récupérer les permissions d'un rôle",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du rôle",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour la liste des permissions associées à un rôle",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Mettre à jour les permissions d'un rôle",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du rôle",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Liste des codes de permissions",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5053,7 +7378,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Effectue une recherche dans tous les types (tickets, actifs, articles)",
+                "description": "Effectue une recherche dans tous les types (tickets, actifs, articles, utilisateurs, entrées de temps)",
                 "produces": [
                     "application/json"
                 ],
@@ -5071,7 +7396,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Types à rechercher (tickets,assets,articles) - séparés par des virgules",
+                        "description": "Types à rechercher (tickets,assets,articles,users,time_entries) - séparés par des virgules",
                         "name": "types",
                         "in": "query"
                     },
@@ -5086,13 +7411,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.GlobalSearchResultDTO"
+                            "$ref": "#/definitions/internal_handlers.globalSearchResultDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5140,14 +7465,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.AssetSearchResultDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetSearchResultDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5195,14 +7520,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.KnowledgeArticleSearchResultDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleSearchResultDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5250,14 +7575,112 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TicketSearchResultDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketSearchResultDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/search/time-entries": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Effectue une recherche dans les entrées de temps",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "Rechercher dans les entrées de temps",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Terme de recherche",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limite de résultats (défaut: 20, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntrySearchResultDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/search/users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Effectue une recherche dans les utilisateurs",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "Rechercher dans les utilisateurs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Terme de recherche",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limite de résultats (défaut: 20, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserSearchResultDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5287,14 +7710,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.ServiceRequestDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ServiceRequestDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5323,7 +7746,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateServiceRequestRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateServiceRequestRequest"
                         }
                     }
                 ],
@@ -5331,19 +7754,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.ServiceRequestDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ServiceRequestDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5370,14 +7793,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.ServiceRequestTypeDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ServiceRequestTypeDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5406,7 +7829,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateServiceRequestTypeRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateServiceRequestTypeRequest"
                         }
                     }
                 ],
@@ -5414,13 +7837,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.ServiceRequestTypeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ServiceRequestTypeDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5454,13 +7877,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ServiceRequestTypeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ServiceRequestTypeDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5496,7 +7919,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateServiceRequestTypeRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateServiceRequestTypeRequest"
                         }
                     }
                 ],
@@ -5504,13 +7927,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ServiceRequestTypeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ServiceRequestTypeDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5542,13 +7965,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5585,19 +8008,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ServiceRequestDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ServiceRequestDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5633,7 +8056,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateServiceRequestRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateServiceRequestRequest"
                         }
                     }
                 ],
@@ -5641,19 +8064,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ServiceRequestDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ServiceRequestDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5688,19 +8111,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5741,7 +8164,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5779,7 +8202,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ValidateServiceRequestRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ValidateServiceRequestRequest"
                         }
                     }
                 ],
@@ -5787,19 +8210,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ServiceRequestDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ServiceRequestDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5840,7 +8263,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5872,7 +8295,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5901,7 +8324,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateSettingsRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateSettingsRequest"
                         }
                     }
                 ],
@@ -5916,7 +8339,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5941,13 +8364,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.BackupConfigurationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.BackupConfigurationDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -5976,7 +8399,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.BackupConfigurationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.BackupConfigurationDTO"
                         }
                     }
                 ],
@@ -5984,13 +8407,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.BackupConfigurationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.BackupConfigurationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6020,7 +8443,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/dto.ExecuteBackupRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ExecuteBackupRequest"
                         }
                     }
                 ],
@@ -6028,13 +8451,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.BackupExecutionResponse"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.BackupExecutionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6061,14 +8484,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.RequestSourceDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RequestSourceDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6097,7 +8520,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateRequestSourceRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateRequestSourceRequest"
                         }
                     }
                 ],
@@ -6105,13 +8528,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.RequestSourceDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RequestSourceDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6145,13 +8568,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RequestSourceDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RequestSourceDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6187,7 +8610,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateRequestSourceRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateRequestSourceRequest"
                         }
                     }
                 ],
@@ -6195,13 +8618,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.RequestSourceDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.RequestSourceDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6233,13 +8656,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6269,14 +8692,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.SLADTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLADTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6305,7 +8728,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateSLARequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateSLARequest"
                         }
                     }
                 ],
@@ -6313,19 +8736,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.SLADTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLADTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6370,7 +8793,39 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/sla/recalculate": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Recalcule les statuts SLA pour tous les tickets ouverts qui ont un SLA associé",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sla"
+                ],
+                "summary": "Recalculer les statuts SLA",
+                "responses": {
+                    "200": {
+                        "description": "Nombre de statuts mis à jour",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6407,19 +8862,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketSLAStatusDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketSLAStatusDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6460,14 +8915,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.SLAViolationDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLAViolationDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6504,19 +8959,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SLADTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLADTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6552,7 +9007,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateSLARequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateSLARequest"
                         }
                     }
                 ],
@@ -6560,13 +9015,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SLADTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLADTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6598,13 +9053,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6645,7 +9100,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6681,14 +9136,331 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.SLAViolationDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLAViolationDTO"
                             }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/software": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de tous les logiciels (nécessite software.view)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "software"
+                ],
+                "summary": "Récupérer tous les logiciels",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SoftwareDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée un nouveau logiciel (nécessite software.create)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "software"
+                ],
+                "summary": "Créer un logiciel",
+                "parameters": [
+                    {
+                        "description": "Données du logiciel",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateSoftwareRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SoftwareDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/software/active": {
+            "get": {
+                "description": "Récupère la liste des logiciels actifs (route publique pour la création de tickets)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "software"
+                ],
+                "summary": "Récupérer les logiciels actifs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SoftwareDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/software/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère un logiciel par son code (nécessite software.view)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "software"
+                ],
+                "summary": "Récupérer un logiciel par code",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code du logiciel",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SoftwareDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/software/{software_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère un logiciel par son identifiant (nécessite software.view)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "software"
+                ],
+                "summary": "Récupérer un logiciel par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du logiciel",
+                        "name": "software_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SoftwareDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour un logiciel (nécessite software.update)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "software"
+                ],
+                "summary": "Mettre à jour un logiciel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du logiciel",
+                        "name": "software_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de mise à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateSoftwareRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SoftwareDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime un logiciel (nécessite software.delete)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "software"
+                ],
+                "summary": "Supprimer un logiciel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du logiciel",
+                        "name": "software_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/software/{software_id}/deployments": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les déploiements d'un logiciel (nécessite software.view)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "filiale-software"
+                ],
+                "summary": "Récupérer les déploiements d'un logiciel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du logiciel",
+                        "name": "software_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeSoftwareDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6721,13 +9493,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.KPIStatisticsDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KPIStatisticsDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6760,13 +9532,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.StatisticsOverviewDTO"
+                            "$ref": "#/definitions/internal_handlers.statisticsOverviewDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6799,13 +9571,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.PerformanceStatisticsDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PerformanceStatisticsDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6845,19 +9617,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TrendsStatisticsDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TrendsStatisticsDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6896,13 +9668,395 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WorkloadStatisticsDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.WorkloadStatisticsDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ticket-internes": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Liste les tickets internes avec pagination et filtres (scope selon permissions)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-internes"
+                ],
+                "summary": "Lister les tickets internes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Numéro de page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Nombre par page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filtrer par statut",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filtrer par département",
+                        "name": "department_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filtrer par filiale",
+                        "name": "filiale_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketInternalListResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée un nouveau ticket interne (départements non-IT uniquement)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-internes"
+                ],
+                "summary": "Créer un ticket interne",
+                "parameters": [
+                    {
+                        "description": "Données du ticket interne",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateTicketInternalRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketInternalDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ticket-internes/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère un ticket interne par son ID (accès selon scope)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-internes"
+                ],
+                "summary": "Récupérer un ticket interne",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket interne",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketInternalDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les champs d'un ticket interne",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-internes"
+                ],
+                "summary": "Modifier un ticket interne",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket interne",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateTicketInternalRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketInternalDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime définitivement un ticket interne",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-internes"
+                ],
+                "summary": "Supprimer un ticket interne",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket interne",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ticket-internes/{id}/assign": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Assigne un ticket interne à un utilisateur",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-internes"
+                ],
+                "summary": "Assigner un ticket interne",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket interne",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ID de l'utilisateur à assigner",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssignTicketInternalRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketInternalDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ticket-internes/{id}/validate": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Passe le ticket interne en statut résolu (validation)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-internes"
+                ],
+                "summary": "Valider un ticket interne",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket interne",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketInternalDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6915,7 +10069,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Récupère la liste des tickets avec pagination",
+                "description": "Récupère la liste des tickets avec pagination. Filtres optionnels: status, filiale_id, user_id (assigné)",
                 "produces": [
                     "application/json"
                 ],
@@ -6937,19 +10091,37 @@ const docTemplate = `{
                         "description": "Nombre d'éléments par page",
                         "name": "limit",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filtrer par statut (ouvert, en_cours, en_attente, resolu, cloture)",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filtrer par ID filiale",
+                        "name": "filiale_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filtrer par ID utilisateur assigné",
+                        "name": "user_id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketListResponse"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketListResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -6978,7 +10150,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateTicketRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateTicketRequest"
                         }
                     }
                 ],
@@ -6986,13 +10158,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7040,13 +10212,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketListResponse"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7059,7 +10231,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Récupère les tickets filtrés par catégorie (incident, demande, changement, developpement)",
+                "description": "Récupère les tickets filtrés par catégorie (incident, demande, changement, developpement, assistance, support)",
                 "produces": [
                     "application/json"
                 ],
@@ -7070,8 +10242,76 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Catégorie (incident, demande, changement, developpement)",
+                        "description": "Catégorie (incident, demande, changement, developpement, assistance, support)",
                         "name": "category",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Numéro de page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Nombre d'éléments par page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "all",
+                        "description": "Filtrer par statut (ouvert, en_cours, en_attente, cloture)",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "all",
+                        "description": "Filtrer par priorité (low, medium, high, critical)",
+                        "name": "priority",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/by-department/{departmentId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste des tickets dont le demandeur appartient au département donné",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Liste des tickets par département",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du département",
+                        "name": "departmentId",
                         "in": "path",
                         "required": true
                     },
@@ -7094,13 +10334,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketListResponse"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7148,13 +10394,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketListResponse"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7202,13 +10448,266 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketListResponse"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/categories": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste de toutes les catégories de tickets",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-categories"
+                ],
+                "summary": "Récupérer toutes les catégories de tickets",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "Récupérer uniquement les catégories actives",
+                        "name": "active",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketCategoryDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée une nouvelle catégorie de ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-categories"
+                ],
+                "summary": "Créer une catégorie",
+                "parameters": [
+                    {
+                        "description": "Données de la catégorie",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateTicketCategoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketCategoryDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/categories/slug/{slug}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une catégorie de ticket par son slug",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-categories"
+                ],
+                "summary": "Récupérer une catégorie par slug",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Slug de la catégorie",
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketCategoryDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/categories/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une catégorie de ticket par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-categories"
+                ],
+                "summary": "Récupérer une catégorie par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketCategoryDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour les informations d'une catégorie de ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-categories"
+                ],
+                "summary": "Mettre à jour une catégorie",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateTicketCategoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketCategoryDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime une catégorie de ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket-categories"
+                ],
+                "summary": "Supprimer une catégorie",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la catégorie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7221,7 +10720,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Récupère les tickets assignés à l'utilisateur connecté",
+                "description": "Récupère les tickets créés par l'utilisateur connecté ou qui lui sont assignés",
                 "produces": [
                     "application/json"
                 ],
@@ -7249,13 +10748,240 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketListResponse"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/panier": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Tickets assignés à l'utilisateur, non clôturés. À la clôture, un ticket disparaît du panier.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer mon panier",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Numéro de page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Nombre d'éléments par page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/solutions/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère une solution de ticket par son identifiant",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer une solution par ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la solution",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketSolutionDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour une solution documentée",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Mettre à jour une solution",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la solution",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données à mettre à jour",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateTicketSolutionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketSolutionDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime une solution documentée",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Supprimer une solution",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la solution",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/solutions/{id}/publish-to-kb": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Publie une solution documentée dans la base de connaissances",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Publier une solution dans la base de connaissances",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de la solution",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de publication",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PublishSolutionToKBRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7289,13 +11015,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7331,7 +11057,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateTicketRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateTicketRequest"
                         }
                     }
                 ],
@@ -7339,13 +11065,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7377,13 +11103,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7421,7 +11147,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AssignTicketRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssignTicketRequest"
                         }
                     }
                 ],
@@ -7429,13 +11155,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7477,14 +11203,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketAttachmentDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7538,13 +11264,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketAttachmentDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7580,14 +11306,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketAttachmentDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7625,7 +11351,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ReorderTicketAttachmentsRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ReorderTicketAttachmentsRequest"
                         }
                     }
                 ],
@@ -7633,13 +11359,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7680,13 +11406,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketAttachmentDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7729,7 +11455,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateTicketAttachmentRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateTicketAttachmentRequest"
                         }
                     }
                 ],
@@ -7737,13 +11463,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketAttachmentDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7782,13 +11508,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7835,7 +11561,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7876,13 +11602,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketAttachmentDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketAttachmentDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7929,7 +11655,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -7965,14 +11691,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.AuditLogDTO"
+                                "$ref": "#/definitions/internal_handlers.auditLogDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8006,13 +11732,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8048,14 +11774,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TicketCommentDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketCommentDTO"
                             }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8091,7 +11817,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateTicketCommentRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateTicketCommentRequest"
                         }
                     }
                 ],
@@ -8099,13 +11825,114 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketCommentDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketCommentDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/comments/{commentId}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Met à jour le texte d'un commentaire. Seul l'auteur du commentaire peut le modifier.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Modifier un commentaire",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID du commentaire",
+                        "name": "commentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Nouveau texte du commentaire",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateTicketCommentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketCommentDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Supprime un commentaire. Seul l'auteur du commentaire peut le supprimer.",
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Supprimer un commentaire",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID du commentaire",
+                        "name": "commentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8139,13 +11966,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.EstimatedTimeDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.EstimatedTimeDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8177,11 +12004,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "Nouveau temps estimé en minutes",
-                        "name": "estimatedTime",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SetEstimatedTimeRequest"
                         }
                     }
                 ],
@@ -8189,13 +12016,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8227,11 +12054,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "Temps estimé en minutes",
-                        "name": "estimatedTime",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SetEstimatedTimeRequest"
                         }
                     }
                 ],
@@ -8239,13 +12066,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8281,14 +12108,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TicketHistoryDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketHistoryDTO"
                             }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8326,7 +12153,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AssignTicketRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssignTicketRequest"
                         }
                     }
                 ],
@@ -8334,13 +12161,112 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/solutions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère toutes les solutions documentées pour un ticket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Récupérer les solutions d'un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketSolutionDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crée une nouvelle solution documentée pour un ticket cloturé",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Créer une solution pour un ticket",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Données de la solution",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateTicketSolutionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketSolutionDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8389,13 +12315,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TicketDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8429,13 +12355,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TimeComparisonDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeComparisonDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8471,14 +12397,54 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/validate": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Valide un ticket en attente de validation (le passe à « résolu »). Seuls les utilisateurs avec tickets.validate ou tickets.validate_own peuvent valider, ou le créateur du ticket.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Valider un ticket en attente",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID du ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8512,13 +12478,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8548,14 +12514,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8584,7 +12550,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateTimeEntryRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateTimeEntryRequest"
                         }
                     }
                 ],
@@ -8592,19 +12558,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8641,19 +12607,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8688,19 +12654,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8738,7 +12704,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ValidateTimeEntryRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ValidateTimeEntryRequest"
                         }
                     }
                 ],
@@ -8746,19 +12712,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8785,14 +12751,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.BudgetAlertDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.BudgetAlertDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8819,14 +12785,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DelayAlertDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayAlertDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8853,14 +12819,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.PendingJustificationAlertDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PendingJustificationAlertDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8887,14 +12853,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.OverloadAlertDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.OverloadAlertDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8936,13 +12902,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -8969,14 +12935,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.UnderloadAlertDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UnderloadAlertDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9017,14 +12983,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.AuditTrailDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AuditTrailDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9051,14 +13017,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.BudgetAlertDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.BudgetAlertDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9092,13 +13058,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.BudgetStatusDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.BudgetStatusDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9139,14 +13105,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DailyCalendarDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyCalendarDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9187,14 +13153,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DailyDeclarationDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyDeclarationDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9228,13 +13194,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DailyDeclarationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyDeclarationDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9272,7 +13238,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DailyTaskRequest"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyTaskRequest"
                             }
                         }
                     }
@@ -9281,13 +13247,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DailyDeclarationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyDeclarationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9321,13 +13287,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DailySummaryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailySummaryDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9363,14 +13329,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DailyTaskDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyTaskDTO"
                             }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9406,7 +13372,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.DailyTaskRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyTaskRequest"
                         }
                     }
                 ],
@@ -9414,13 +13380,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.DailyTaskDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyTaskDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9461,13 +13427,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9494,14 +13460,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9530,7 +13496,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateTimeEntryRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateTimeEntryRequest"
                         }
                     }
                 ],
@@ -9538,13 +13504,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9580,14 +13546,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9614,14 +13580,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9655,13 +13621,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9697,7 +13663,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateTimeEntryRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateTimeEntryRequest"
                         }
                     }
                 ],
@@ -9705,13 +13671,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9749,7 +13715,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ValidateTimeEntryRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ValidateTimeEntryRequest"
                         }
                     }
                 ],
@@ -9757,13 +13723,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TimeEntryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9804,14 +13770,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TimesheetHistoryDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimesheetHistoryDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9845,13 +13811,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.TimesheetHistoryEntryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimesheetHistoryEntryDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9892,14 +13858,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.ModificationDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ModificationDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9926,14 +13892,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.ValidationHistoryDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ValidationHistoryDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -9967,13 +13933,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WeeklyDeclarationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.WeeklyDeclarationDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10011,7 +13977,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.WeeklyTaskRequest"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.WeeklyTaskRequest"
                             }
                         }
                     }
@@ -10020,13 +13986,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WeeklyDeclarationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.WeeklyDeclarationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10062,14 +14028,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DailyBreakdownDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyBreakdownDTO"
                             }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10103,13 +14069,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WeeklySummaryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.WeeklySummaryDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10145,14 +14111,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.WeeklyTaskDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.WeeklyTaskDTO"
                             }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10186,13 +14152,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WeeklyDeclarationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.WeeklyDeclarationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10226,13 +14192,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ValidationStatusDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ValidationStatusDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10245,7 +14211,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Récupère la liste de tous les utilisateurs",
+                "description": "Récupère la liste de tous les utilisateurs (filtrés selon les permissions)",
                 "produces": [
                     "application/json"
                 ],
@@ -10259,14 +14225,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.UserDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10295,7 +14261,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateUserRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.CreateUserRequest"
                         }
                     }
                 ],
@@ -10303,19 +14269,53 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/for-ticket-creation": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère la liste des utilisateurs disponibles pour la création de tickets (filtrés selon les permissions)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Liste des utilisateurs pour création de ticket",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10349,19 +14349,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10397,7 +14397,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateUserRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateUserRequest"
                         }
                     }
                 ],
@@ -10405,19 +14405,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10449,19 +14449,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10501,7 +14501,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10543,13 +14543,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10581,13 +14581,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10627,7 +14627,56 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/delays": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Récupère tous les retards associés à un utilisateur (view_own : seulement soi ; view_department : membres du département ; view_all : tout utilisateur)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delays"
+                ],
+                "summary": "Récupérer les retards d'un utilisateur",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayDTO"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Avec view_own uniquement, seul son propre ID est autorisé",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10676,13 +14725,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10716,13 +14765,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserPermissionsDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserPermissionsDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10758,7 +14807,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateUserPermissionsRequest"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UpdateUserPermissionsRequest"
                         }
                     }
                 ],
@@ -10766,13 +14815,71 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.UserPermissionsDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserPermissionsDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/reset-password": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Permet à un admin de réinitialiser le mot de passe d'un utilisateur sans fournir l'ancien mot de passe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Réinitialiser le mot de passe d'un utilisateur (admin)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID de l'utilisateur",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Nouveau mot de passe",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10785,7 +14892,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Récupère toutes les entrées de temps d'un utilisateur",
+                "description": "Récupère toutes les entrées de temps d'un utilisateur. Pour « Mon tableau de bord », seul son propre ID est autorisé sauf si timesheet.view_all ou timesheet.view_team.",
                 "produces": [
                     "application/json"
                 ],
@@ -10808,14 +14915,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.TimeEntryDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                             }
+                        }
+                    },
+                    "403": {
+                        "description": "Seul son propre ID est autorisé sans view_all/view_team",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10851,14 +14964,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.DelayJustificationDTO"
+                                "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10897,14 +15010,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.WeeklyDeclarationDTO"
+                                "$ref": "#/definitions/internal_handlers.weeklyDeclarationDTO"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10948,19 +15061,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WeeklyDeclarationDTO"
+                            "$ref": "#/definitions/internal_handlers.weeklyDeclarationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -10997,19 +15110,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WeeklyDeclarationDTO"
+                            "$ref": "#/definitions/internal_handlers.weeklyDeclarationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -11046,19 +15159,53 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.WeeklyDeclarationDTO"
+                            "$ref": "#/definitions/internal_handlers.weeklyDeclarationDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ws": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Établit une connexion WebSocket pour recevoir les notifications en temps réel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Connexion WebSocket pour les notifications",
+                "responses": {
+                    "101": {
+                        "description": "Switching Protocols",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_utils.Response"
                         }
                     }
                 }
@@ -11066,7 +15213,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.AlertDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.AlertDTO": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -11090,7 +15237,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AssetCategoryDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.AssetCategoryDTO": {
             "type": "object",
             "properties": {
                 "description": {
@@ -11108,7 +15255,21 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AssetDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.AssetCategoryListResponse": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetCategoryDTO"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PaginationDTO"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.AssetDTO": {
             "type": "object",
             "properties": {
                 "assigned_to": {
@@ -11119,7 +15280,7 @@ const docTemplate = `{
                     "description": "Utilisateur assigné (optionnel)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     ]
                 },
@@ -11127,7 +15288,7 @@ const docTemplate = `{
                     "description": "Catégorie (optionnel)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.AssetCategoryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetCategoryDTO"
                         }
                     ]
                 },
@@ -11173,7 +15334,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AssetInventoryDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.AssetInventoryDTO": {
             "type": "object",
             "properties": {
                 "assigned": {
@@ -11204,11 +15365,34 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AssetSearchResultDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.AssetReportDTO": {
+            "type": "object",
+            "properties": {
+                "by_category": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "by_status": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "period": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.AssetSearchResultDTO": {
             "type": "object",
             "properties": {
                 "category": {
-                    "$ref": "#/definitions/dto.AssetCategoryDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetCategoryDTO"
                 },
                 "category_id": {
                     "type": "integer"
@@ -11234,7 +15418,83 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AssignAssetRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.AssetSoftwareDTO": {
+            "type": "object",
+            "properties": {
+                "asset": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
+                },
+                "asset_id": {
+                    "description": "ID de l'actif (optionnel)",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "installation_date": {
+                    "type": "string"
+                },
+                "license_key": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "software_name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.AssetSoftwareStatisticsDTO": {
+            "type": "object",
+            "properties": {
+                "by_software": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SoftwareCountDTO"
+                    }
+                },
+                "by_software_name": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SoftwareNameCountDTO"
+                    }
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.AssetStatsDTO": {
+            "type": "object",
+            "properties": {
+                "by_category": {
+                    "description": "Par catégorie",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "by_status": {
+                    "description": "Par statut",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "total": {
+                    "description": "Nombre total d'actifs",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.AssignAssetRequest": {
             "type": "object",
             "required": [
                 "user_id"
@@ -11246,7 +15506,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AssignResponsibleRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.AssignResponsibleRequest": {
             "type": "object",
             "required": [
                 "user_id"
@@ -11258,23 +15518,42 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AssignTicketRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.AssignTicketInternalRequest": {
             "type": "object",
-            "required": [
-                "user_id"
-            ],
+            "properties": {
+                "assigned_to_id": {
+                    "type": "integer"
+                },
+                "estimated_time": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.AssignTicketRequest": {
+            "type": "object",
             "properties": {
                 "estimated_time": {
                     "description": "Temps estimé en minutes (optionnel)",
                     "type": "integer"
                 },
-                "user_id": {
-                    "description": "ID de l'utilisateur à assigner (obligatoire)",
+                "lead_id": {
+                    "description": "Responsable (optionnel)",
                     "type": "integer"
+                },
+                "user_id": {
+                    "description": "ID utilisateur (ancien mode)",
+                    "type": "integer"
+                },
+                "user_ids": {
+                    "description": "Liste d'utilisateurs assignés",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
-        "dto.AuditLogDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.AuditLogDTO": {
             "type": "object",
             "properties": {
                 "action": {
@@ -11305,7 +15584,7 @@ const docTemplate = `{
                     "type": "object"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                 },
                 "user_agent": {
                     "type": "string"
@@ -11315,21 +15594,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AuditLogListResponse": {
-            "type": "object",
-            "properties": {
-                "logs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.AuditLogDTO"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/dto.PaginationDTO"
-                }
-            }
-        },
-        "dto.AuditTrailDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.AuditTrailDTO": {
             "type": "object",
             "properties": {
                 "action": {
@@ -11355,7 +15620,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AverageResolutionTimeDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.AverageResolutionTimeDTO": {
             "type": "object",
             "properties": {
                 "average_time": {
@@ -11376,7 +15641,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.BackupConfigurationDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.BackupConfigurationDTO": {
             "type": "object",
             "properties": {
                 "auto_backup": {
@@ -11403,7 +15668,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.BackupExecutionResponse": {
+        "github_com_mcicare_itsm-backend_internal_dto.BackupExecutionResponse": {
             "type": "object",
             "properties": {
                 "backup_id": {
@@ -11422,7 +15687,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.BudgetAlertDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.BudgetAlertDTO": {
             "type": "object",
             "properties": {
                 "alert_type": {
@@ -11451,11 +15716,11 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.BudgetStatusDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.BudgetStatusDTO": {
             "type": "object",
             "properties": {
                 "comparison": {
-                    "$ref": "#/definitions/dto.TimeComparisonDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeComparisonDTO"
                 },
                 "status": {
                     "description": "on_budget, over_budget, under_budget",
@@ -11466,7 +15731,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ChangeDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.ChangeDTO": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -11479,7 +15744,7 @@ const docTemplate = `{
                     "description": "Responsable (optionnel)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     ]
                 },
@@ -11511,7 +15776,7 @@ const docTemplate = `{
                     "description": "Ticket associé (optionnel)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.TicketDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                         }
                     ]
                 },
@@ -11523,7 +15788,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateAssetCategoryRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateAssetCategoryRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -11543,7 +15808,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateAssetRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateAssetRequest": {
             "type": "object",
             "required": [
                 "category_id",
@@ -11602,7 +15867,35 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateChangeRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateAssetSoftwareRequest": {
+            "type": "object",
+            "required": [
+                "software_name"
+            ],
+            "properties": {
+                "asset_id": {
+                    "description": "ID de l'actif (optionnel - permet de créer des logiciels indépendamment)",
+                    "type": "integer"
+                },
+                "installation_date": {
+                    "description": "Format \"2006-01-02\"",
+                    "type": "string"
+                },
+                "license_key": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "software_name": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.CreateChangeRequest": {
             "type": "object",
             "required": [
                 "risk",
@@ -11629,7 +15922,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateDelayJustificationRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateDelayJustificationRequest": {
             "type": "object",
             "required": [
                 "justification"
@@ -11641,7 +15934,114 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateIncidentRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateDepartmentRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "filiale_id",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "description": "Code unique du département (obligatoire)",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (obligatoire)",
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le département est actif (optionnel, défaut: true)",
+                    "type": "boolean"
+                },
+                "is_it_department": {
+                    "description": "Si c'est un département IT (optionnel, défaut: false, uniquement pour MCI CARE CI)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom du département (obligatoire)",
+                    "type": "string"
+                },
+                "office_id": {
+                    "description": "ID du siège (optionnel)",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.CreateFilialeRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "address": {
+                    "description": "Adresse (optionnel)",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "Ville (optionnel)",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "Code unique (obligatoire)",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "Pays (optionnel)",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "Email (optionnel)",
+                    "type": "string"
+                },
+                "is_software_provider": {
+                    "description": "Filiale fournisseur de logiciels (optionnel)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom (obligatoire)",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "Téléphone (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.CreateFilialeSoftwareRequest": {
+            "type": "object",
+            "required": [
+                "software_id"
+            ],
+            "properties": {
+                "deployed_at": {
+                    "description": "Date de déploiement (optionnel)",
+                    "type": "string"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (peut venir de l'URL)",
+                    "type": "integer"
+                },
+                "notes": {
+                    "description": "Notes (optionnel)",
+                    "type": "string"
+                },
+                "software_id": {
+                    "description": "ID du logiciel (obligatoire)",
+                    "type": "integer"
+                },
+                "version": {
+                    "description": "Version déployée (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.CreateIncidentRequest": {
             "type": "object",
             "required": [
                 "impact",
@@ -11675,7 +16075,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateKnowledgeArticleRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateKnowledgeArticleRequest": {
             "type": "object",
             "required": [
                 "category_id",
@@ -11701,7 +16101,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateKnowledgeCategoryRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateKnowledgeCategoryRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -11721,7 +16121,57 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateRequestSourceRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateOfficeRequest": {
+            "type": "object",
+            "required": [
+                "city",
+                "country",
+                "name"
+            ],
+            "properties": {
+                "address": {
+                    "description": "Adresse complète (optionnel)",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "Ville (obligatoire)",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "Code du siège (optionnel) - généré automatiquement si vide, sinon préfixé par le code filiale côté backend",
+                    "type": "string"
+                },
+                "commune": {
+                    "description": "Commune (optionnel)",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "Pays (obligatoire)",
+                    "type": "string"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le siège est actif (optionnel, défaut: true)",
+                    "type": "boolean"
+                },
+                "latitude": {
+                    "description": "Latitude (optionnel)",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "Longitude (optionnel)",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "Nom du siège (obligatoire)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.CreateRequestSourceRequest": {
             "type": "object",
             "required": [
                 "code",
@@ -11742,7 +16192,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateRoleRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateRoleRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -11752,13 +16202,24 @@ const docTemplate = `{
                     "description": "Description (optionnel)",
                     "type": "string"
                 },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel, sera défini automatiquement si non fourni)",
+                    "type": "integer"
+                },
                 "name": {
                     "description": "Nom du rôle (obligatoire)",
                     "type": "string"
+                },
+                "permissions": {
+                    "description": "Liste des codes de permissions à assigner (optionnel)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
-        "dto.CreateSLARequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateSLARequest": {
             "type": "object",
             "required": [
                 "name",
@@ -11794,14 +16255,8 @@ const docTemplate = `{
                     "minimum": 1
                 },
                 "ticket_category": {
-                    "description": "Catégorie (obligatoire)",
-                    "type": "string",
-                    "enum": [
-                        "incident",
-                        "demande",
-                        "changement",
-                        "developpement"
-                    ]
+                    "description": "Catégorie (obligatoire) - slug de la catégorie de ticket",
+                    "type": "string"
                 },
                 "unit": {
                     "description": "Unité (optionnel, défaut: minutes)",
@@ -11814,7 +16269,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateServiceRequestRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateServiceRequestRequest": {
             "type": "object",
             "required": [
                 "ticket_id",
@@ -11835,7 +16290,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateServiceRequestTypeRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateServiceRequestTypeRequest": {
             "type": "object",
             "required": [
                 "default_deadline",
@@ -11857,7 +16312,69 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateTicketCommentRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateSoftwareRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "description": "Code unique (obligatoire)",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Nom (obligatoire)",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.CreateTicketCategoryRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "slug"
+            ],
+            "properties": {
+                "color": {
+                    "description": "Couleur (optionnel)",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "display_order": {
+                    "description": "Ordre d'affichage (optionnel, défaut: 0)",
+                    "type": "integer"
+                },
+                "icon": {
+                    "description": "Nom de l'icône (optionnel)",
+                    "type": "string"
+                },
+                "is_active": {
+                    "description": "Actif (optionnel, défaut: true)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom (obligatoire)",
+                    "type": "string"
+                },
+                "slug": {
+                    "description": "Slug unique (obligatoire)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.CreateTicketCommentRequest": {
             "type": "object",
             "required": [
                 "comment"
@@ -11873,24 +16390,70 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateTicketRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateTicketInternalRequest": {
+            "type": "object",
+            "required": [
+                "category",
+                "department_id",
+                "description",
+                "title"
+            ],
+            "properties": {
+                "assigned_to_id": {
+                    "type": "integer"
+                },
+                "category": {
+                    "description": "slug: tache_interne, demande_interne, etc.",
+                    "type": "string"
+                },
+                "department_id": {
+                    "description": "Département propriétaire (non-IT)",
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "estimated_time": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ]
+                },
+                "ticket_id": {
+                    "description": "Lien optionnel vers un ticket normal",
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.CreateTicketRequest": {
             "type": "object",
             "required": [
                 "category",
                 "description",
+                "requester_department",
                 "source",
                 "title"
             ],
             "properties": {
+                "assignee_ids": {
+                    "description": "Assignés (optionnel)",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "category": {
-                    "description": "Catégorie (obligatoire)",
-                    "type": "string",
-                    "enum": [
-                        "incident",
-                        "demande",
-                        "changement",
-                        "developpement"
-                    ]
+                    "description": "Slug de la catégorie (doit exister dans ticket_categories et être active)",
+                    "type": "string"
                 },
                 "description": {
                     "description": "Description (obligatoire)",
@@ -11898,6 +16461,18 @@ const docTemplate = `{
                 },
                 "estimated_time": {
                     "description": "Temps estimé en minutes (optionnel)",
+                    "type": "integer"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel, défini automatiquement depuis l'utilisateur créateur)",
+                    "type": "integer"
+                },
+                "lead_id": {
+                    "description": "Responsable (optionnel)",
+                    "type": "integer"
+                },
+                "parent_id": {
+                    "description": "Ticket parent (optionnel)",
                     "type": "integer"
                 },
                 "priority": {
@@ -11910,13 +16485,31 @@ const docTemplate = `{
                         "critical"
                     ]
                 },
+                "requester_department": {
+                    "description": "Département du demandeur (obligatoire)",
+                    "type": "string"
+                },
+                "requester_id": {
+                    "description": "ID du demandeur (optionnel, prioritaire sur requester_name)",
+                    "type": "integer"
+                },
+                "requester_name": {
+                    "description": "Nom de la personne qui a fait la demande (obligatoire si requester_id non fourni)",
+                    "type": "string"
+                },
+                "software_id": {
+                    "description": "ID du logiciel concerné (optionnel)",
+                    "type": "integer"
+                },
                 "source": {
                     "description": "Source (obligatoire)",
                     "type": "string",
                     "enum": [
                         "mail",
                         "appel",
-                        "direct"
+                        "direct",
+                        "whatsapp",
+                        "kronos"
                     ]
                 },
                 "title": {
@@ -11925,7 +16518,19 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateTimeEntryRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateTicketSolutionRequest": {
+            "type": "object",
+            "required": [
+                "solution"
+            ],
+            "properties": {
+                "solution": {
+                    "description": "Solution documentée (obligatoire)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.CreateTimeEntryRequest": {
             "type": "object",
             "required": [
                 "date",
@@ -11948,18 +16553,25 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateUserRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CreateUserRequest": {
             "type": "object",
             "required": [
                 "email",
                 "password",
-                "role_id",
                 "username"
             ],
             "properties": {
+                "department_id": {
+                    "description": "ID du département (optionnel)",
+                    "type": "integer"
+                },
                 "email": {
                     "description": "Email (obligatoire, format email)",
                     "type": "string"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
                 },
                 "first_name": {
                     "description": "Prénom (optionnel)",
@@ -11974,8 +16586,12 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 6
                 },
+                "phone": {
+                    "description": "Téléphone (optionnel)",
+                    "type": "string"
+                },
                 "role_id": {
-                    "description": "ID du rôle (obligatoire)",
+                    "description": "ID du rôle (optionnel, USER par défaut)",
                     "type": "integer"
                 },
                 "username": {
@@ -11984,7 +16600,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CustomReportRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.CustomReportRequest": {
             "type": "object",
             "required": [
                 "metrics",
@@ -12021,7 +16637,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DailyBreakdownDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DailyBreakdownDTO": {
             "type": "object",
             "properties": {
                 "date": {
@@ -12035,7 +16651,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DailyCalendarDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DailyCalendarDTO": {
             "type": "object",
             "properties": {
                 "date": {
@@ -12052,7 +16668,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DailyDeclarationDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DailyDeclarationDTO": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -12070,7 +16686,7 @@ const docTemplate = `{
                 "tasks": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.TimeEntryDTO"
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
                     }
                 },
                 "total_time": {
@@ -12080,7 +16696,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                 },
                 "user_id": {
                     "type": "integer"
@@ -12099,7 +16715,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DailySummaryDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DailySummaryDTO": {
             "type": "object",
             "properties": {
                 "date": {
@@ -12116,7 +16732,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DailyTaskDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DailyTaskDTO": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -12126,7 +16742,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "ticket": {
-                    "$ref": "#/definitions/dto.TicketDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                 },
                 "ticket_id": {
                     "type": "integer"
@@ -12136,7 +16752,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DailyTaskRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.DailyTaskRequest": {
             "type": "object",
             "required": [
                 "ticket_id",
@@ -12151,21 +16767,33 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DashboardDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DashboardDTO": {
             "type": "object",
             "properties": {
                 "alerts": {
                     "description": "Alertes en cours",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.AlertDTO"
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AlertDTO"
                     }
+                },
+                "assets": {
+                    "description": "Statistiques des actifs",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetStatsDTO"
+                        }
+                    ]
+                },
+                "message": {
+                    "description": "Ex: \"Aucun département associé à votre compte\"",
+                    "type": "string"
                 },
                 "performance": {
                     "description": "Statistiques de performance",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.PerformanceStatsDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PerformanceStatsDTO"
                         }
                     ]
                 },
@@ -12177,7 +16805,7 @@ const docTemplate = `{
                     "description": "Statistiques SLA",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.SLAStatsDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLAStatsDTO"
                         }
                     ]
                 },
@@ -12185,13 +16813,29 @@ const docTemplate = `{
                     "description": "Statistiques des tickets",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.TicketStatsDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketStatsDTO"
+                        }
+                    ]
+                },
+                "users": {
+                    "description": "Statistiques des utilisateurs",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserStatsDTO"
+                        }
+                    ]
+                },
+                "worked_hours": {
+                    "description": "Heures travaillées (API, non affichées au board)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.WorkedHoursStatsDTO"
                         }
                     ]
                 }
             }
         },
-        "dto.DelayAlertDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DelayAlertDTO": {
             "type": "object",
             "properties": {
                 "delay_id": {
@@ -12211,7 +16855,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DelayDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DelayDTO": {
             "type": "object",
             "properties": {
                 "actual_time": {
@@ -12244,7 +16888,7 @@ const docTemplate = `{
                     "description": "Justification (optionnel)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.DelayJustificationDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO"
                         }
                     ]
                 },
@@ -12256,7 +16900,7 @@ const docTemplate = `{
                     "description": "Ticket concerné (optionnel)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.TicketDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                         }
                     ]
                 },
@@ -12267,7 +16911,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                 },
                 "user_id": {
                     "description": "Technicien en retard",
@@ -12275,7 +16919,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DelayJustificationDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DelayJustificationDTO": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -12295,11 +16939,20 @@ const docTemplate = `{
                     "description": "pending, validated, rejected",
                     "type": "string"
                 },
+                "ticket_code": {
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "ticket_title": {
+                    "type": "string"
+                },
                 "updated_at": {
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                 },
                 "user_id": {
                     "description": "Technicien qui justifie",
@@ -12318,7 +16971,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DelayedTicketDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DelayedTicketDTO": {
             "type": "object",
             "properties": {
                 "category": {
@@ -12338,45 +16991,81 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "ticket": {
-                    "$ref": "#/definitions/dto.TicketDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                 },
                 "ticket_id": {
                     "type": "integer"
                 }
             }
         },
-        "dto.EfficiencyDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DeleteAssetCategoryRequest": {
             "type": "object",
             "properties": {
-                "actual_total": {
-                    "description": "Temps réel total en minutes",
-                    "type": "integer"
-                },
-                "efficiency": {
-                    "description": "Efficacité en % (100 = parfait)",
-                    "type": "number"
-                },
-                "estimated_total": {
-                    "description": "Temps estimé total en minutes",
-                    "type": "integer"
-                },
-                "overrun": {
-                    "description": "Temps de dépassement en minutes (si \u003e 0)",
-                    "type": "integer"
-                },
-                "savings": {
-                    "description": "Temps économisé en minutes (peut être négatif si retard)",
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
-                },
-                "user_id": {
-                    "type": "integer"
+                "confirm_name": {
+                    "description": "Nom de confirmation pour suppression en cascade",
+                    "type": "string"
                 }
             }
         },
-        "dto.EstimatedTimeDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code unique du département (obligatoire)",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "filiale": {
+                    "description": "Filiale associée (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le département est actif",
+                    "type": "boolean"
+                },
+                "is_it_department": {
+                    "description": "Si c'est un département IT (uniquement pour la filiale fournisseur de logiciels)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom du département (obligatoire)",
+                    "type": "string"
+                },
+                "office": {
+                    "description": "Siège associé (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.OfficeDTO"
+                        }
+                    ]
+                },
+                "office_id": {
+                    "description": "ID du siège (optionnel)",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.EstimatedTimeDTO": {
             "type": "object",
             "properties": {
                 "estimated_time": {
@@ -12387,7 +17076,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ExecuteBackupRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.ExecuteBackupRequest": {
             "type": "object",
             "properties": {
                 "type": {
@@ -12396,42 +17085,99 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.GlobalSearchResultDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.FilialeDTO": {
             "type": "object",
             "properties": {
-                "articles": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.KnowledgeArticleSearchResultDTO"
-                    }
-                },
-                "assets": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.AssetSearchResultDTO"
-                    }
-                },
-                "query": {
+                "address": {
+                    "description": "Adresse complète",
                     "type": "string"
                 },
-                "tickets": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.TicketSearchResultDTO"
-                    }
+                "city": {
+                    "description": "Ville",
+                    "type": "string"
                 },
-                "total": {
+                "code": {
+                    "description": "Code unique de la filiale",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "Pays",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "description": "Email de contact",
+                    "type": "string"
+                },
+                "id": {
                     "type": "integer"
                 },
-                "types": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "is_active": {
+                    "description": "Si la filiale est active",
+                    "type": "boolean"
+                },
+                "is_software_provider": {
+                    "description": "Filiale fournisseur de logiciels / IT",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom de la filiale",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "Téléphone",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
-        "dto.IncidentDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.FilialeSoftwareDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deployed_at": {
+                    "description": "Date de déploiement",
+                    "type": "string"
+                },
+                "filiale": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                },
+                "filiale_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le déploiement est actif",
+                    "type": "boolean"
+                },
+                "notes": {
+                    "description": "Notes",
+                    "type": "string"
+                },
+                "software": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SoftwareDTO"
+                },
+                "software_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version déployée",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.IncidentDTO": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -12448,7 +17194,7 @@ const docTemplate = `{
                     "description": "Actifs liés (optionnel)",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.AssetDTO"
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetDTO"
                     }
                 },
                 "resolution_time": {
@@ -12463,7 +17209,7 @@ const docTemplate = `{
                     "description": "Ticket associé (optionnel)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.TicketDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
                         }
                     ]
                 },
@@ -12479,7 +17225,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.IndividualPerformanceReportDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.IndividualPerformanceReportDTO": {
             "type": "object",
             "properties": {
                 "average_resolution_time": {
@@ -12511,14 +17257,14 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                 },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "dto.KPIStatisticsDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.KPIStatisticsDTO": {
             "type": "object",
             "properties": {
                 "average_satisfaction": {
@@ -12549,14 +17295,14 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.KnowledgeArticleDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleDTO": {
             "type": "object",
             "properties": {
                 "author": {
                     "description": "Auteur (optionnel)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     ]
                 },
@@ -12567,7 +17313,7 @@ const docTemplate = `{
                     "description": "Catégorie (optionnel)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.KnowledgeCategoryDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeCategoryDTO"
                         }
                     ]
                 },
@@ -12599,14 +17345,14 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.KnowledgeArticleSearchResultDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleSearchResultDTO": {
             "type": "object",
             "properties": {
                 "author_id": {
                     "type": "integer"
                 },
                 "category": {
-                    "$ref": "#/definitions/dto.KnowledgeCategoryDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeCategoryDTO"
                 },
                 "category_id": {
                     "type": "integer"
@@ -12629,7 +17375,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.KnowledgeCategoryDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.KnowledgeCategoryDTO": {
             "type": "object",
             "properties": {
                 "description": {
@@ -12647,7 +17393,30 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LoginRequest": {
+        "github_com_mcicare_itsm-backend_internal_dto.KnowledgeReportDTO": {
+            "type": "object",
+            "properties": {
+                "by_category": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "draft": {
+                    "type": "integer"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "published": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.LoginRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -12664,7 +17433,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LoginResponse": {
+        "github_com_mcicare_itsm-backend_internal_dto.LoginResponse": {
             "type": "object",
             "properties": {
                 "refresh_token": {
@@ -12679,13 +17448,13 @@ const docTemplate = `{
                     "description": "Informations de l'utilisateur connecté",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     ]
                 }
             }
         },
-        "dto.ModificationDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.ModificationDTO": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -12707,7 +17476,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.NotificationDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.NotificationDTO": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -12749,7 +17518,7 @@ const docTemplate = `{
                     "description": "Utilisateur (optionnel)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.UserDTO"
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                         }
                     ]
                 },
@@ -12758,7 +17527,96 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.OverloadAlertDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.NotificationListResponse": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "notifications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.NotificationDTO"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                },
+                "unread_count": {
+                    "description": "Nombre de notifications non lues (pour l'utilisateur concerné)",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.OfficeDTO": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "Adresse complète (optionnel)",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "Ville (obligatoire)",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "Code du siège (optionnel pour compatibilité)",
+                    "type": "string"
+                },
+                "commune": {
+                    "description": "Commune (optionnel)",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "Pays (obligatoire)",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "filiale": {
+                    "description": "Filiale associée (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le siège est actif",
+                    "type": "boolean"
+                },
+                "latitude": {
+                    "description": "Latitude (optionnel)",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "Longitude (optionnel)",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "Nom du siège (obligatoire)",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.OverloadAlertDTO": {
             "type": "object",
             "properties": {
                 "actual_time": {
@@ -12778,7 +17636,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.PaginationDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.PaginationDTO": {
             "type": "object",
             "properties": {
                 "limit": {
@@ -12799,7 +17657,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.PendingJustificationAlertDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.PendingJustificationAlertDTO": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -12816,7 +17674,3913 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.PerformanceDTO": {
+        "github_com_mcicare_itsm-backend_internal_dto.PerformanceStatisticsDTO": {
+            "type": "object",
+            "properties": {
+                "average_resolution_time": {
+                    "description": "en minutes",
+                    "type": "number"
+                },
+                "efficiency": {
+                    "description": "en pourcentage",
+                    "type": "number"
+                },
+                "first_response_time": {
+                    "description": "en minutes",
+                    "type": "number"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "productivity": {
+                    "description": "en pourcentage",
+                    "type": "number"
+                },
+                "sla_compliance": {
+                    "description": "en pourcentage",
+                    "type": "number"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.PerformanceStatsDTO": {
+            "type": "object",
+            "properties": {
+                "average_efficiency": {
+                    "description": "Efficacité moyenne en %",
+                    "type": "number"
+                },
+                "average_productivity": {
+                    "description": "Productivité moyenne (tickets/heure)",
+                    "type": "number"
+                },
+                "total_tickets_treated": {
+                    "description": "Nombre total de tickets traités",
+                    "type": "integer"
+                },
+                "total_time_spent": {
+                    "description": "Temps total passé en minutes",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.PeriodBreakdownDTO": {
+            "type": "object",
+            "properties": {
+                "closed": {
+                    "description": "cloture (fermé)",
+                    "type": "integer"
+                },
+                "count": {
+                    "description": "Nombre total de tickets pour cette période",
+                    "type": "integer"
+                },
+                "date": {
+                    "description": "Date de la période",
+                    "type": "string"
+                },
+                "in_progress": {
+                    "description": "en_cours",
+                    "type": "integer"
+                },
+                "open": {
+                    "description": "ouvert",
+                    "type": "integer"
+                },
+                "pending": {
+                    "description": "en_attente",
+                    "type": "integer"
+                },
+                "resolved": {
+                    "description": "resolu (validé)",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.PermissionDTO": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "module": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.ProjectTimeBudgetDTO": {
+            "type": "object",
+            "properties": {
+                "budget": {
+                    "type": "integer"
+                },
+                "percentage": {
+                    "type": "number"
+                },
+                "project_id": {
+                    "type": "integer"
+                },
+                "remaining": {
+                    "type": "integer"
+                },
+                "spent": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.PublishSolutionToKBRequest": {
+            "type": "object",
+            "required": [
+                "category_id",
+                "title"
+            ],
+            "properties": {
+                "category_id": {
+                    "description": "ID de la catégorie KB (obligatoire)",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "Titre de l'article (obligatoire)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.QualifyIncidentRequest": {
+            "type": "object",
+            "required": [
+                "impact",
+                "urgency"
+            ],
+            "properties": {
+                "impact": {
+                    "description": "Impact (obligatoire)",
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ]
+                },
+                "urgency": {
+                    "description": "Urgence (obligatoire)",
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ]
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.RecordChangeResultRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "result"
+            ],
+            "properties": {
+                "description": {
+                    "description": "Description (obligatoire)",
+                    "type": "string"
+                },
+                "issues": {
+                    "description": "Problèmes rencontrés (optionnel)",
+                    "type": "string"
+                },
+                "result": {
+                    "description": "Résultat (obligatoire)",
+                    "type": "string",
+                    "enum": [
+                        "success",
+                        "partial",
+                        "failed",
+                        "rolled_back"
+                    ]
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.RefreshTokenRequest": {
+            "type": "object",
+            "required": [
+                "refresh_token"
+            ],
+            "properties": {
+                "refresh_token": {
+                    "description": "Token de rafraîchissement (obligatoire)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "filiale_id",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "description": "Email (obligatoire, format email)",
+                    "type": "string"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (obligatoire)",
+                    "type": "integer"
+                },
+                "first_name": {
+                    "description": "Prénom (optionnel)",
+                    "type": "string"
+                },
+                "last_name": {
+                    "description": "Nom (optionnel)",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Mot de passe (obligatoire, min 6 caractères)",
+                    "type": "string",
+                    "minLength": 6
+                },
+                "username": {
+                    "description": "Nom d'utilisateur (obligatoire, min 3 caractères)",
+                    "type": "string",
+                    "minLength": 3
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.RegisterResponse": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "description": "Token de rafraîchissement (optionnel)",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Token JWT d'accès",
+                    "type": "string"
+                },
+                "user": {
+                    "description": "Informations de l'utilisateur créé",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.ReorderTicketAttachmentsRequest": {
+            "type": "object",
+            "required": [
+                "attachment_ids"
+            ],
+            "properties": {
+                "attachment_ids": {
+                    "description": "Liste des IDs dans le nouvel ordre",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.RequestSourceDTO": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.RoleDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by_id": {
+                    "description": "ID de l'utilisateur créateur (nil pour les rôles système)",
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (nil pour les rôles globaux)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_system": {
+                    "description": "Si c'est un rôle système (ne peut pas être modifié/supprimé)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom du rôle (ex: \"DSI\", \"TECHNICIEN_IT\")",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.SLAComplianceReportDTO": {
+            "type": "object",
+            "properties": {
+                "by_category": {
+                    "description": "Conformité par catégorie",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                },
+                "by_priority": {
+                    "description": "Conformité par priorité",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                },
+                "generated_at": {
+                    "description": "Date de génération",
+                    "type": "string"
+                },
+                "overall_compliance": {
+                    "description": "Conformité globale en %",
+                    "type": "number"
+                },
+                "period": {
+                    "description": "Période analysée",
+                    "type": "string"
+                },
+                "total_tickets": {
+                    "type": "integer"
+                },
+                "total_violations": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.SLADTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le SLA est actif",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "description": "low, medium, high, critical (nil = tous)",
+                    "type": "string"
+                },
+                "target_time": {
+                    "description": "Temps cible en minutes",
+                    "type": "integer"
+                },
+                "ticket_category": {
+                    "description": "incident, demande, changement, developpement",
+                    "type": "string"
+                },
+                "unit": {
+                    "description": "minutes, hours, days",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.SLAStatsDTO": {
+            "type": "object",
+            "properties": {
+                "at_risk": {
+                    "description": "Tickets à risque",
+                    "type": "integer"
+                },
+                "by_category": {
+                    "description": "Conformité par catégorie",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                },
+                "by_priority": {
+                    "description": "Conformité par priorité",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "format": "float64"
+                    }
+                },
+                "overall_compliance": {
+                    "description": "Conformité globale en %",
+                    "type": "number"
+                },
+                "total_violations": {
+                    "description": "Nombre total de violations",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.SLAViolationDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "sla": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLADTO"
+                },
+                "sla_id": {
+                    "type": "integer"
+                },
+                "ticket": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "unit": {
+                    "description": "minutes",
+                    "type": "string"
+                },
+                "violated_at": {
+                    "description": "Date de violation",
+                    "type": "string"
+                },
+                "violation_time": {
+                    "description": "Temps de violation en minutes",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.ServiceRequestDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deadline": {
+                    "description": "Date limite (optionnel)",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ticket": {
+                    "description": "Ticket associé (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
+                        }
+                    ]
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "Type de demande (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.ServiceRequestTypeDTO"
+                        }
+                    ]
+                },
+                "type_id": {
+                    "description": "ID du type de demande",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "validated": {
+                    "description": "Si la demande a été validée",
+                    "type": "boolean"
+                },
+                "validated_at": {
+                    "description": "Date de validation (optionnel)",
+                    "type": "string"
+                },
+                "validated_by": {
+                    "description": "ID du validateur (optionnel)",
+                    "type": "integer"
+                },
+                "validation_comment": {
+                    "description": "Commentaire de validation (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.ServiceRequestTypeDTO": {
+            "type": "object",
+            "properties": {
+                "default_deadline": {
+                    "description": "Délai par défaut en heures",
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le type est actif",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom du type (ex: \"Installation\", \"Configuration\")",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.SetEstimatedTimeRequest": {
+            "description": "Requête pour définir ou mettre à jour le temps estimé d'un ticket en minutes",
+            "type": "object",
+            "required": [
+                "estimated_time"
+            ],
+            "properties": {
+                "estimated_time": {
+                    "description": "Temps estimé en minutes\n@Example 120",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.SetProjectTimeBudgetRequest": {
+            "type": "object",
+            "required": [
+                "budget"
+            ],
+            "properties": {
+                "budget": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.SoftwareCountDTO": {
+            "type": "object",
+            "properties": {
+                "category_name": {
+                    "type": "string"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "software_name": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.SoftwareDTO": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code unique du logiciel",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le logiciel est actif",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom du logiciel",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version actuelle",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.SoftwareNameCountDTO": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "software_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketAssigneeDTO": {
+            "type": "object",
+            "properties": {
+                "is_lead": {
+                    "type": "boolean"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketAttachmentDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "display_order": {
+                    "type": "integer"
+                },
+                "file_name": {
+                    "type": "string"
+                },
+                "file_path": {
+                    "type": "string"
+                },
+                "file_size": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_image": {
+                    "type": "boolean"
+                },
+                "mime_type": {
+                    "type": "string"
+                },
+                "thumbnail_path": {
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketCategoryDTO": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "display_order": {
+                    "type": "integer"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketCommentDTO": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_internal": {
+                    "description": "Commentaire interne (visible uniquement par l'IT)",
+                    "type": "boolean"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketCountReportDTO": {
+            "type": "object",
+            "properties": {
+                "breakdown": {
+                    "description": "Répartition par sous-période",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PeriodBreakdownDTO"
+                    }
+                },
+                "count": {
+                    "description": "Nombre total",
+                    "type": "integer"
+                },
+                "period": {
+                    "description": "week, month, etc.",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketDTO": {
+            "type": "object",
+            "properties": {
+                "actual_time": {
+                    "description": "Temps réel en minutes (optionnel)",
+                    "type": "integer"
+                },
+                "assigned_to": {
+                    "description": "Utilisateur assigné (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                        }
+                    ]
+                },
+                "assignees": {
+                    "description": "Utilisateurs assignés",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketAssigneeDTO"
+                    }
+                },
+                "category": {
+                    "description": "incident, demande, changement, developpement",
+                    "type": "string"
+                },
+                "closed_at": {
+                    "type": "string"
+                },
+                "code": {
+                    "description": "Code unique: TKT-YYYY-NNNN",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "description": "Créateur du ticket (informaticien)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                        }
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                },
+                "estimated_time": {
+                    "description": "Temps estimé en minutes (optionnel)",
+                    "type": "integer"
+                },
+                "filiale": {
+                    "description": "Filiale (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lead": {
+                    "description": "Responsable (lead)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                        }
+                    ]
+                },
+                "parent_id": {
+                    "description": "Ticket parent (optionnel)",
+                    "type": "integer"
+                },
+                "primary_image": {
+                    "description": "Image principale (optionnel)",
+                    "type": "string"
+                },
+                "priority": {
+                    "description": "low, medium, high, critical",
+                    "type": "string"
+                },
+                "requester": {
+                    "description": "Demandeur (relation vers users)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                        }
+                    ]
+                },
+                "requester_department": {
+                    "description": "Département du demandeur",
+                    "type": "string"
+                },
+                "requester_id": {
+                    "description": "ID du demandeur (relation vers users)",
+                    "type": "integer"
+                },
+                "requester_name": {
+                    "description": "Nom de la personne qui a fait la demande (fallback pour demandeurs externes)",
+                    "type": "string"
+                },
+                "software": {
+                    "description": "Logiciel (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SoftwareDTO"
+                        }
+                    ]
+                },
+                "software_id": {
+                    "description": "ID du logiciel concerné",
+                    "type": "integer"
+                },
+                "source": {
+                    "description": "mail, appel, direct",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "ouvert, en_cours, en_attente, cloture",
+                    "type": "string"
+                },
+                "sub_tickets": {
+                    "description": "Sous-tickets (optionnel)",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "validated_at": {
+                    "description": "Date de validation",
+                    "type": "string"
+                },
+                "validated_by": {
+                    "description": "Utilisateur qui a validé (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                        }
+                    ]
+                },
+                "validated_by_user_id": {
+                    "description": "ID de l'utilisateur qui a validé",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketHistoryDTO": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "description": "created, updated, status_changed, assigned, etc.",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description de l'action (optionnel)",
+                    "type": "string"
+                },
+                "field_name": {
+                    "description": "Nom du champ modifié (optionnel)",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "new_value": {
+                    "description": "Nouvelle valeur (optionnel)",
+                    "type": "string"
+                },
+                "old_value": {
+                    "description": "Ancienne valeur (optionnel)",
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketInternalDTO": {
+            "type": "object",
+            "properties": {
+                "actual_time": {
+                    "type": "integer"
+                },
+                "assigned_to": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "assigned_to_id": {
+                    "type": "integer"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "closed_at": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "created_by_id": {
+                    "type": "integer"
+                },
+                "department": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO"
+                },
+                "department_id": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "estimated_time": {
+                    "type": "integer"
+                },
+                "filiale": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                },
+                "filiale_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "validated_at": {
+                    "type": "string"
+                },
+                "validated_by": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "validated_by_user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketInternalListResponse": {
+            "type": "object",
+            "properties": {
+                "pagination": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PaginationDTO"
+                },
+                "tickets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketInternalDTO"
+                    }
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketListResponse": {
+            "type": "object",
+            "properties": {
+                "pagination": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PaginationDTO"
+                },
+                "tickets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
+                    }
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketSLAStatusDTO": {
+            "type": "object",
+            "properties": {
+                "elapsed_time": {
+                    "description": "Temps écoulé en minutes",
+                    "type": "integer"
+                },
+                "remaining": {
+                    "description": "Temps restant en minutes (peut être négatif)",
+                    "type": "integer"
+                },
+                "sla": {
+                    "description": "SLA (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLADTO"
+                        }
+                    ]
+                },
+                "sla_id": {
+                    "description": "ID du SLA appliqué",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "on_time, at_risk, violated",
+                    "type": "string"
+                },
+                "target_time": {
+                    "description": "Date/heure cible",
+                    "type": "string"
+                },
+                "violated_at": {
+                    "description": "Date de violation (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketSearchResultDTO": {
+            "type": "object",
+            "properties": {
+                "assigned_to": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "string"
+                },
+                "snippet": {
+                    "description": "Extrait de la description correspondant",
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketSolutionDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "solution": {
+                    "description": "Solution documentée (Markdown)",
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketStatsDTO": {
+            "type": "object",
+            "properties": {
+                "average_resolution_time": {
+                    "description": "Temps moyen de résolution en minutes",
+                    "type": "number"
+                },
+                "by_category": {
+                    "description": "Par catégorie",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "by_priority": {
+                    "description": "Par priorité",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "by_status": {
+                    "description": "Par statut",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "closed": {
+                    "description": "Tickets fermés",
+                    "type": "integer"
+                },
+                "delayed": {
+                    "description": "Tickets en retard",
+                    "type": "integer"
+                },
+                "open": {
+                    "description": "Tickets ouverts",
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "Nombre total de tickets",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TicketTypeDistributionDTO": {
+            "type": "object",
+            "properties": {
+                "assistance": {
+                    "description": "Nombre d'assistances",
+                    "type": "integer"
+                },
+                "changements": {
+                    "description": "Nombre de changements",
+                    "type": "integer"
+                },
+                "demandes": {
+                    "description": "Nombre de demandes",
+                    "type": "integer"
+                },
+                "developpements": {
+                    "description": "Nombre de développements",
+                    "type": "integer"
+                },
+                "incidents": {
+                    "description": "Nombre d'incidents",
+                    "type": "integer"
+                },
+                "support": {
+                    "description": "Nombre de supports",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TimeComparisonDTO": {
+            "type": "object",
+            "properties": {
+                "actual_time": {
+                    "type": "integer"
+                },
+                "difference": {
+                    "type": "integer"
+                },
+                "estimated_time": {
+                    "type": "integer"
+                },
+                "percentage": {
+                    "type": "number"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "project_task_id": {
+                    "type": "integer"
+                },
+                "ticket": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "time_spent": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "validated": {
+                    "type": "boolean"
+                },
+                "validated_at": {
+                    "type": "string"
+                },
+                "validated_by": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TimeEntrySearchResultDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "snippet": {
+                    "type": "string"
+                },
+                "ticket": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "time_spent": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "validated": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TimesheetHistoryDTO": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TimesheetHistoryEntryDTO": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "changes": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TrendDataDTO": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.TrendsStatisticsDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TrendDataDTO"
+                    }
+                },
+                "forecast": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TrendDataDTO"
+                    }
+                },
+                "metric": {
+                    "type": "string"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "trend": {
+                    "description": "increasing, decreasing, stable",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UnderloadAlertDTO": {
+            "type": "object",
+            "properties": {
+                "actual_time": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "min_time": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UnreadCountDTO": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "description": "Nombre de notifications non lues",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateAssetCategoryRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "nil pour retirer la catégorie parente",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateAssetRequest": {
+            "type": "object",
+            "properties": {
+                "assigned_to": {
+                    "description": "nil pour retirer l'assignation",
+                    "type": "integer"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "purchase_date": {
+                    "type": "string"
+                },
+                "serial_number": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "available",
+                        "in_use",
+                        "maintenance",
+                        "retired"
+                    ]
+                },
+                "warranty_expiry": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateAssetSoftwareRequest": {
+            "type": "object",
+            "properties": {
+                "installation_date": {
+                    "description": "Format \"2006-01-02\"",
+                    "type": "string"
+                },
+                "license_key": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "software_name": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateChangeRequest": {
+            "type": "object",
+            "properties": {
+                "risk": {
+                    "description": "Risque (optionnel)",
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ]
+                },
+                "risk_description": {
+                    "description": "Description du risque (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateDelayJustificationRequest": {
+            "type": "object",
+            "required": [
+                "justification"
+            ],
+            "properties": {
+                "justification": {
+                    "description": "Nouveau texte de justification",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateDepartmentRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code unique du département (optionnel)",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le département est actif (optionnel)",
+                    "type": "boolean"
+                },
+                "is_it_department": {
+                    "description": "Si c'est un département IT (optionnel, uniquement pour la filiale fournisseur de logiciels)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom du département (optionnel)",
+                    "type": "string"
+                },
+                "office_id": {
+                    "description": "ID du siège (optionnel)",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateFilialeRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "Adresse (optionnel)",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "Ville (optionnel)",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "Pays (optionnel)",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "Email (optionnel)",
+                    "type": "string"
+                },
+                "is_active": {
+                    "description": "Si la filiale est active (optionnel)",
+                    "type": "boolean"
+                },
+                "is_software_provider": {
+                    "description": "Filiale fournisseur de logiciels (optionnel)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom (optionnel)",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "Téléphone (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateFilialeSoftwareRequest": {
+            "type": "object",
+            "properties": {
+                "deployed_at": {
+                    "description": "Date de déploiement (optionnel)",
+                    "type": "string"
+                },
+                "is_active": {
+                    "description": "Si le déploiement est actif (optionnel)",
+                    "type": "boolean"
+                },
+                "notes": {
+                    "description": "Notes (optionnel)",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version déployée (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateIncidentRequest": {
+            "type": "object",
+            "properties": {
+                "impact": {
+                    "description": "Impact (optionnel)",
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ]
+                },
+                "urgency": {
+                    "description": "Urgence (optionnel)",
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ]
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateKnowledgeArticleRequest": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "is_published": {
+                    "description": "Statut de publication (optionnel)",
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateKnowledgeCategoryRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "nil pour retirer la catégorie parente",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateOfficeRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "Adresse complète (optionnel)",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "Ville (optionnel)",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "Code du siège (optionnel)",
+                    "type": "string"
+                },
+                "commune": {
+                    "description": "Commune (optionnel)",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "Pays (optionnel)",
+                    "type": "string"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le siège est actif (optionnel)",
+                    "type": "boolean"
+                },
+                "latitude": {
+                    "description": "Latitude (optionnel)",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "Longitude (optionnel)",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "Nom du siège (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateRequestSourceRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateRiskRequest": {
+            "type": "object",
+            "required": [
+                "risk"
+            ],
+            "properties": {
+                "risk": {
+                    "description": "Risque (obligatoire)",
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ]
+                },
+                "risk_description": {
+                    "description": "Description du risque (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateRoleRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Nom (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateSLARequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "target_time": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "unit": {
+                    "type": "string",
+                    "enum": [
+                        "minutes",
+                        "hours",
+                        "days"
+                    ]
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateServiceRequestRequest": {
+            "type": "object",
+            "properties": {
+                "deadline": {
+                    "description": "Date limite format \"2006-01-02\" (optionnel)",
+                    "type": "string"
+                },
+                "type_id": {
+                    "description": "ID du type (optionnel)",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateServiceRequestTypeRequest": {
+            "type": "object",
+            "properties": {
+                "default_deadline": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "description": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "description": "Statut actif (optionnel)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateSettingsRequest": {
+            "type": "object",
+            "properties": {
+                "settings": {
+                    "description": "Map de clé-valeur des paramètres à mettre à jour",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateSoftwareRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "is_active": {
+                    "description": "Si le logiciel est actif (optionnel)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom (optionnel)",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateTicketAttachmentRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "display_order": {
+                    "description": "Ordre d'affichage (optionnel)",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateTicketCategoryRequest": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "description": "Couleur (optionnel)",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "display_order": {
+                    "description": "Ordre d'affichage (optionnel)",
+                    "type": "integer"
+                },
+                "icon": {
+                    "description": "Nom de l'icône (optionnel)",
+                    "type": "string"
+                },
+                "is_active": {
+                    "description": "Actif (optionnel)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom (optionnel)",
+                    "type": "string"
+                },
+                "slug": {
+                    "description": "Slug (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateTicketCommentRequest": {
+            "type": "object",
+            "required": [
+                "comment"
+            ],
+            "properties": {
+                "comment": {
+                    "description": "Nouveau texte du commentaire",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateTicketInternalRequest": {
+            "type": "object",
+            "properties": {
+                "assigned_to_id": {
+                    "type": "integer"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "estimated_time": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ]
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "ouvert",
+                        "en_cours",
+                        "en_attente",
+                        "resolu",
+                        "cloture"
+                    ]
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateTicketRequest": {
+            "type": "object",
+            "properties": {
+                "assignee_ids": {
+                    "description": "Assignés (optionnel)",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "category": {
+                    "description": "Slug de la catégorie (optionnel ; si fourni, doit exister et être active)",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "estimated_time": {
+                    "description": "Temps estimé en minutes (optionnel, résolveurs IT)",
+                    "type": "integer"
+                },
+                "lead_id": {
+                    "description": "Responsable (optionnel)",
+                    "type": "integer"
+                },
+                "parent_id": {
+                    "description": "Ticket parent (optionnel)",
+                    "type": "integer"
+                },
+                "priority": {
+                    "description": "Priorité (optionnel)",
+                    "type": "string",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "critical"
+                    ]
+                },
+                "requester_department": {
+                    "description": "Département du demandeur (optionnel)",
+                    "type": "string"
+                },
+                "requester_id": {
+                    "description": "ID du demandeur (optionnel)",
+                    "type": "integer"
+                },
+                "requester_name": {
+                    "description": "Nom du demandeur (optionnel, fallback)",
+                    "type": "string"
+                },
+                "software_id": {
+                    "description": "ID du logiciel concerné (optionnel)",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "Statut (optionnel, ajout de \"resolu\")",
+                    "type": "string",
+                    "enum": [
+                        "ouvert",
+                        "en_cours",
+                        "en_attente",
+                        "resolu",
+                        "cloture"
+                    ]
+                },
+                "title": {
+                    "description": "Titre (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateTicketSolutionRequest": {
+            "type": "object",
+            "required": [
+                "solution"
+            ],
+            "properties": {
+                "solution": {
+                    "description": "Solution documentée (obligatoire)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateTimeEntryRequest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "description": "Format: YYYY-MM-DD",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "time_spent": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateUserPermissionsRequest": {
+            "type": "object",
+            "required": [
+                "permissions"
+            ],
+            "properties": {
+                "permissions": {
+                    "description": "Liste des permissions (obligatoire)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "department_id": {
+                    "description": "ID du département (optionnel, nil pour supprimer)",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "Email (optionnel, format email si fourni)",
+                    "type": "string"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel, nil pour supprimer)",
+                    "type": "integer"
+                },
+                "first_name": {
+                    "description": "Prénom (optionnel)",
+                    "type": "string"
+                },
+                "is_active": {
+                    "description": "Statut actif (optionnel, pointeur pour distinguer false de non fourni)",
+                    "type": "boolean"
+                },
+                "last_name": {
+                    "description": "Nom (optionnel)",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "Téléphone (optionnel)",
+                    "type": "string"
+                },
+                "role_id": {
+                    "description": "ID du rôle (optionnel)",
+                    "type": "integer"
+                },
+                "username": {
+                    "description": "Nom d'utilisateur (optionnel)",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UserDTO": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "Chemin vers l'avatar",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "department": {
+                    "description": "Département complet (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO"
+                        }
+                    ]
+                },
+                "department_id": {
+                    "description": "ID du département (optionnel)",
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "filiale": {
+                    "description": "Filiale complète (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.FilialeDTO"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "last_login": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "description": "Liste des permissions (optionnelle)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "role": {
+                    "description": "Nom du rôle (ex: \"DSI\", \"TECHNICIEN_IT\")",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UserPermissionsDTO": {
+            "type": "object",
+            "properties": {
+                "permissions": {
+                    "description": "Liste des permissions (ex: [\"tickets.create\", \"tickets.update\"])",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UserSearchResultDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "department": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DepartmentDTO"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "snippet": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.UserStatsDTO": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "integer"
+                },
+                "average_tickets_per_user": {
+                    "type": "number"
+                },
+                "by_role": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.ValidateDelayJustificationRequest": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "description": "Commentaire du validateur (optionnel)",
+                    "type": "string"
+                },
+                "validated": {
+                    "description": "true pour valider, false pour rejeter",
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.ValidateServiceRequestRequest": {
+            "type": "object",
+            "required": [
+                "validated"
+            ],
+            "properties": {
+                "comment": {
+                    "description": "Commentaire de validation (optionnel)",
+                    "type": "string"
+                },
+                "validated": {
+                    "description": "true pour valider, false pour invalider",
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.ValidateTimeEntryRequest": {
+            "type": "object",
+            "required": [
+                "validated"
+            ],
+            "properties": {
+                "validated": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.ValidationHistoryDTO": {
+            "type": "object",
+            "properties": {
+                "entry_id": {
+                    "type": "integer"
+                },
+                "entry_type": {
+                    "description": "time_entry, daily, weekly",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "validated, rejected",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "validated_at": {
+                    "type": "string"
+                },
+                "validated_by": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.ValidationStatusDTO": {
+            "type": "object",
+            "properties": {
+                "validated": {
+                    "type": "boolean"
+                },
+                "validated_at": {
+                    "type": "string"
+                },
+                "validated_by": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.WeeklyDeclarationDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "daily_breakdown": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyBreakdownDTO"
+                    }
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "task_count": {
+                    "type": "integer"
+                },
+                "total_time": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "validated": {
+                    "type": "boolean"
+                },
+                "validated_at": {
+                    "type": "string"
+                },
+                "validated_by": {
+                    "type": "integer"
+                },
+                "validation_comment": {
+                    "type": "string"
+                },
+                "week": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.WeeklySummaryDTO": {
+            "type": "object",
+            "properties": {
+                "end_date": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "task_count": {
+                    "type": "integer"
+                },
+                "total_time": {
+                    "type": "integer"
+                },
+                "validated": {
+                    "type": "boolean"
+                },
+                "week": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.WeeklyTaskDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ticket": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketDTO"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "time_spent": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.WeeklyTaskRequest": {
+            "type": "object",
+            "required": [
+                "date",
+                "ticket_id",
+                "time_spent"
+            ],
+            "properties": {
+                "date": {
+                    "description": "Format: YYYY-MM-DD",
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "time_spent": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.WorkedHoursStatsDTO": {
+            "type": "object",
+            "properties": {
+                "period": {
+                    "type": "string"
+                },
+                "total_hours": {
+                    "type": "number"
+                },
+                "total_minutes": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.WorkloadByAgentDTO": {
+            "type": "object",
+            "properties": {
+                "average_time": {
+                    "description": "Temps moyen de résolution en minutes",
+                    "type": "number"
+                },
+                "delayed_count": {
+                    "description": "Nombre de tickets en retard",
+                    "type": "integer"
+                },
+                "efficiency": {
+                    "description": "Efficacité en % (résolus / total)",
+                    "type": "number"
+                },
+                "in_progress_count": {
+                    "description": "Nombre de tickets en cours",
+                    "type": "integer"
+                },
+                "open_count": {
+                    "description": "Nombre de tickets ouverts",
+                    "type": "integer"
+                },
+                "pending_count": {
+                    "description": "Nombre de tickets en attente",
+                    "type": "integer"
+                },
+                "resolved_count": {
+                    "description": "Nombre de tickets résolus",
+                    "type": "integer"
+                },
+                "ticket_count": {
+                    "description": "Nombre total de tickets assignés",
+                    "type": "integer"
+                },
+                "total_time": {
+                    "description": "Temps total passé en minutes",
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.WorkloadDayDTO": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_dto.WorkloadStatisticsDTO": {
+            "type": "object",
+            "properties": {
+                "average_per_day": {
+                    "type": "number"
+                },
+                "distribution": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.WorkloadDayDTO"
+                    }
+                },
+                "peak_day": {
+                    "type": "string"
+                },
+                "peak_day_count": {
+                    "type": "integer"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "total_tickets": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.Asset": {
+            "type": "object",
+            "properties": {
+                "assigned_to": {
+                    "description": "Utilisateur assigné (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                        }
+                    ]
+                },
+                "assigned_to_id": {
+                    "description": "ID utilisateur assigné (optionnel)",
+                    "type": "integer"
+                },
+                "category": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.AssetCategory"
+                        }
+                    ]
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "filiale": {
+                    "description": "Filiale (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Filiale"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "purchase_date": {
+                    "type": "string"
+                },
+                "serial_number": {
+                    "type": "string"
+                },
+                "software": {
+                    "description": "Logiciels installés",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.AssetSoftware"
+                    }
+                },
+                "status": {
+                    "description": "available, in_use, maintenance, retired",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "warranty_expiry": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.AssetCategory": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.AssetCategory"
+                        }
+                    ]
+                },
+                "parent_id": {
+                    "description": "Catégorie parente (optionnel)",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.AssetSoftware": {
+            "type": "object",
+            "properties": {
+                "asset": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Asset"
+                        }
+                    ]
+                },
+                "asset_id": {
+                    "description": "ID de l'actif (optionnel - permet de créer des logiciels indépendamment)",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "installation_date": {
+                    "description": "Date d'installation",
+                    "type": "string"
+                },
+                "license_key": {
+                    "description": "Clé de licence (optionnel)",
+                    "type": "string"
+                },
+                "notes": {
+                    "description": "Notes optionnelles",
+                    "type": "string"
+                },
+                "software_name": {
+                    "description": "Nom du logiciel (ex: \"Windows 11\", \"Office 365\")",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version (ex: \"11.0\", \"2021\")",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.Department": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code unique du département (obligatoire)",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description (optionnel)",
+                    "type": "string"
+                },
+                "filiale": {
+                    "description": "Relation vers la filiale",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Filiale"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le département est actif",
+                    "type": "boolean"
+                },
+                "is_it_department": {
+                    "description": "Si c'est un département IT (uniquement pour la filiale fournisseur de logiciels)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom du département (obligatoire)",
+                    "type": "string"
+                },
+                "office": {
+                    "description": "Relation vers le siège",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Office"
+                        }
+                    ]
+                },
+                "office_id": {
+                    "description": "ID du siège (optionnel)",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.Filiale": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "Adresse complète",
+                    "type": "string"
+                },
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Asset"
+                    }
+                },
+                "city": {
+                    "description": "Ville",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "Code unique de la filiale (ex: MCI, SEN, TOG)",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "Pays de la filiale",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Department"
+                    }
+                },
+                "deployments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.FilialeSoftware"
+                    }
+                },
+                "email": {
+                    "description": "Email de contact",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si la filiale est active",
+                    "type": "boolean"
+                },
+                "is_software_provider": {
+                    "description": "IsSoftwareProvider : filiale fournisseur de logiciels/IT. Lu depuis la colonne is_mci_care_ci en BDD (rétrocompatibilité).",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom de la filiale",
+                    "type": "string"
+                },
+                "offices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Office"
+                    }
+                },
+                "phone": {
+                    "description": "Téléphone",
+                    "type": "string"
+                },
+                "projects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Project"
+                    }
+                },
+                "tickets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Ticket"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "users": {
+                    "description": "Relations HasMany",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                    }
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.FilialeSoftware": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deployed_at": {
+                    "description": "Date de déploiement",
+                    "type": "string"
+                },
+                "filiale": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Filiale"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le déploiement est actif",
+                    "type": "boolean"
+                },
+                "notes": {
+                    "description": "Notes sur le déploiement",
+                    "type": "string"
+                },
+                "software": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Software"
+                },
+                "software_id": {
+                    "description": "ID du logiciel",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version déployée chez cette filiale",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.Office": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "Adresse complète (optionnel)",
+                    "type": "string"
+                },
+                "city": {
+                    "description": "Ville (obligatoire)",
+                    "type": "string"
+                },
+                "code": {
+                    "description": "Code du siège (optionnel pour compatibilité, mais requis via l'API)",
+                    "type": "string"
+                },
+                "commune": {
+                    "description": "Commune (optionnel)",
+                    "type": "string"
+                },
+                "country": {
+                    "description": "Pays (obligatoire)",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "filiale": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Filiale"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le siège est actif",
+                    "type": "boolean"
+                },
+                "latitude": {
+                    "description": "Latitude (optionnel)",
+                    "type": "number"
+                },
+                "longitude": {
+                    "description": "Longitude (optionnel)",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "Nom du siège (obligatoire)",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.Project": {
+            "type": "object",
+            "properties": {
+                "consumed_time": {
+                    "description": "Temps consommé en minutes (calculé)",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "filiale": {
+                    "description": "Filiale (relation optionnelle)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Filiale"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lead_id": {
+                    "description": "Lead technique ou fonctionnel",
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "project_manager_id": {
+                    "description": "Chef de projet",
+                    "type": "integer"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "active, completed, cancelled",
+                    "type": "string"
+                },
+                "tickets": {
+                    "description": "Relations",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Ticket"
+                    }
+                },
+                "total_budget_time": {
+                    "description": "Budget temps total en minutes (optionnel)",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.Role": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by_id": {
+                    "description": "ID de l'utilisateur qui a créé le rôle (nil pour les rôles système)",
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale à laquelle le rôle appartient (nil pour les rôles globaux)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_system": {
+                    "description": "Rôle système (ne peut pas être supprimé)",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "DSI, RESPONSABLE_IT, TECHNICIEN_IT",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.Software": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code du logiciel (ex: ISA) — unique avec Version",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deployments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.FilialeSoftware"
+                    }
+                },
+                "description": {
+                    "description": "Description",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Si le logiciel est actif",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom du logiciel",
+                    "type": "string"
+                },
+                "tickets": {
+                    "description": "Relations HasMany",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Ticket"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version (ex: 33, 35) — unique avec Code",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.Ticket": {
+            "type": "object",
+            "properties": {
+                "actual_time": {
+                    "description": "Temps réel en minutes (calculé)",
+                    "type": "integer"
+                },
+                "assigned_to": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                        }
+                    ]
+                },
+                "assigned_to_id": {
+                    "description": "ID utilisateur assigné (optionnel)",
+                    "type": "integer"
+                },
+                "assignees": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.TicketAssignee"
+                    }
+                },
+                "attachments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.TicketAttachment"
+                    }
+                },
+                "category": {
+                    "description": "incident, demande, changement, developpement (slug pour compatibilité)",
+                    "type": "string"
+                },
+                "category_id": {
+                    "description": "ID de la catégorie (relation optionnelle)",
+                    "type": "integer"
+                },
+                "category_obj": {
+                    "description": "Catégorie (relation optionnelle)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.TicketCategory"
+                        }
+                    ]
+                },
+                "closed_at": {
+                    "type": "string"
+                },
+                "code": {
+                    "description": "Code unique: TKT-YYYY-NNNN (nullable pour migration)",
+                    "type": "string"
+                },
+                "comments": {
+                    "description": "Relations HasMany",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.TicketComment"
+                    }
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "description": "Créateur du ticket",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                        }
+                    ]
+                },
+                "created_by_id": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "estimated_time": {
+                    "description": "Temps estimé en minutes (optionnel)",
+                    "type": "integer"
+                },
+                "filiale": {
+                    "description": "Filiale (relation optionnelle)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Filiale"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "history": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.TicketHistory"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "parent": {
+                    "description": "Ticket parent (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Ticket"
+                        }
+                    ]
+                },
+                "parent_id": {
+                    "description": "Ticket parent (sous-ticket)",
+                    "type": "integer"
+                },
+                "primary_image": {
+                    "description": "Image principale (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.TicketAttachment"
+                        }
+                    ]
+                },
+                "primary_image_id": {
+                    "description": "ID de l'image principale (optionnel)",
+                    "type": "integer"
+                },
+                "priority": {
+                    "description": "low, medium, high, critical",
+                    "type": "string"
+                },
+                "requester": {
+                    "description": "Demandeur (relation vers users)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                        }
+                    ]
+                },
+                "requester_department": {
+                    "description": "Département du demandeur (ex: DAF)",
+                    "type": "string"
+                },
+                "requester_id": {
+                    "description": "ID du demandeur (relation vers users)",
+                    "type": "integer"
+                },
+                "requester_name": {
+                    "description": "Nom de la personne qui a fait la demande (fallback pour demandeurs externes)",
+                    "type": "string"
+                },
+                "software": {
+                    "description": "Logiciel concerné (relation optionnelle)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Software"
+                        }
+                    ]
+                },
+                "software_id": {
+                    "description": "ID du logiciel concerné (optionnel)",
+                    "type": "integer"
+                },
+                "solutions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.TicketSolution"
+                    }
+                },
+                "source": {
+                    "description": "mail, appel, direct",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "ouvert, en_cours, en_attente, cloture",
+                    "type": "string"
+                },
+                "sub_tickets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Ticket"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "validated_at": {
+                    "description": "Date de validation (optionnel)",
+                    "type": "string"
+                },
+                "validated_by": {
+                    "description": "Utilisateur qui a validé",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                        }
+                    ]
+                },
+                "validated_by_user_id": {
+                    "description": "ID de l'utilisateur qui a validé (optionnel)",
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.TicketAssignee": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_lead": {
+                    "type": "boolean"
+                },
+                "ticket": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Ticket"
+                        }
+                    ]
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.TicketAttachment": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description optionnelle",
+                    "type": "string"
+                },
+                "display_order": {
+                    "description": "Ordre d'affichage (pour les galeries)",
+                    "type": "integer"
+                },
+                "file_name": {
+                    "type": "string"
+                },
+                "file_path": {
+                    "type": "string"
+                },
+                "file_size": {
+                    "description": "Taille en bytes (optionnel)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_image": {
+                    "description": "TRUE si c'est une image",
+                    "type": "boolean"
+                },
+                "mime_type": {
+                    "type": "string"
+                },
+                "thumbnail_path": {
+                    "description": "Chemin vers la miniature (pour les images)",
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "description": "Utilisateur qui a uploadé",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.TicketCategory": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "description": "Couleur associée (ex: red, blue)",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description de la catégorie",
+                    "type": "string"
+                },
+                "display_order": {
+                    "description": "Ordre d'affichage",
+                    "type": "integer"
+                },
+                "icon": {
+                    "description": "Nom de l'icône (ex: AlertTriangle, FileText)",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "description": "Catégorie active ou non",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Nom de la catégorie (ex: incident, demande)",
+                    "type": "string"
+                },
+                "slug": {
+                    "description": "Slug unique (ex: incident, demande, changement)",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.TicketComment": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_internal": {
+                    "description": "Commentaire interne (visible uniquement par l'IT)",
+                    "type": "boolean"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "description": "Utilisateur auteur",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.TicketHistory": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "description": "created, updated, status_changed, assigned, etc.",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "Date de l'action",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description de l'action (optionnel)",
+                    "type": "string"
+                },
+                "field_name": {
+                    "description": "Nom du champ modifié (optionnel)",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "new_value": {
+                    "description": "Nouvelle valeur (optionnel)",
+                    "type": "string"
+                },
+                "old_value": {
+                    "description": "Ancienne valeur (optionnel)",
+                    "type": "string"
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "user": {
+                    "description": "Utilisateur qui a effectué l'action",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.TicketSolution": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.User"
+                },
+                "created_by_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "solution": {
+                    "description": "Solution documentée (Markdown)",
+                    "type": "string"
+                },
+                "ticket": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Ticket"
+                        }
+                    ]
+                },
+                "ticket_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_models.User": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "Chemin vers la photo de profil",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "department": {
+                    "description": "Département de l'utilisateur (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Department"
+                        }
+                    ]
+                },
+                "department_id": {
+                    "description": "ID du département (optionnel)",
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "filiale": {
+                    "description": "Filiale de l'utilisateur (optionnel)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Filiale"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "last_login": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "Numéro de téléphone",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "Relations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Role"
+                        }
+                    ]
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mcicare_itsm-backend_internal_utils.Response": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "description": "Données de la réponse"
+                },
+                "error": {
+                    "description": "Erreur si échec"
+                },
+                "message": {
+                    "description": "Message optionnel",
+                    "type": "string"
+                },
+                "success": {
+                    "description": "Indique si l'opération a réussi",
+                    "type": "boolean"
+                }
+            }
+        },
+        "internal_handlers.auditLogDTO": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "entity_id": {
+                    "type": "integer"
+                },
+                "entity_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ip_address": {
+                    "type": "string"
+                },
+                "new_values": {
+                    "type": "object"
+                },
+                "old_values": {
+                    "type": "object"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "user_agent": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_handlers.auditLogListResponse": {
+            "type": "object",
+            "properties": {
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AuditLogDTO"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PaginationDTO"
+                }
+            }
+        },
+        "internal_handlers.dailyDeclarationDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "task_count": {
+                    "type": "integer"
+                },
+                "tasks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntryDTO"
+                    }
+                },
+                "total_time": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "validated": {
+                    "type": "boolean"
+                },
+                "validated_at": {
+                    "type": "string"
+                },
+                "validated_by": {
+                    "type": "integer"
+                },
+                "validation_comment": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_handlers.efficiencyDTO": {
+            "type": "object",
+            "properties": {
+                "actual_total": {
+                    "description": "Temps réel total en minutes",
+                    "type": "integer"
+                },
+                "efficiency": {
+                    "description": "Efficacité en % (100 = parfait)",
+                    "type": "number"
+                },
+                "estimated_total": {
+                    "description": "Temps estimé total en minutes",
+                    "type": "integer"
+                },
+                "overrun": {
+                    "description": "Temps de dépassement en minutes (si \u003e 0)",
+                    "type": "integer"
+                },
+                "savings": {
+                    "description": "Temps économisé en minutes (peut être négatif si retard)",
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_handlers.globalSearchResultDTO": {
+            "type": "object",
+            "properties": {
+                "articles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.KnowledgeArticleSearchResultDTO"
+                    }
+                },
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.AssetSearchResultDTO"
+                    }
+                },
+                "query": {
+                    "type": "string"
+                },
+                "tickets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketSearchResultDTO"
+                    }
+                },
+                "time_entries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TimeEntrySearchResultDTO"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserSearchResultDTO"
+                    }
+                }
+            }
+        },
+        "internal_handlers.performanceDTO": {
             "type": "object",
             "properties": {
                 "average_time_per_ticket": {
@@ -12868,14 +21632,14 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                 },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "dto.PerformanceRankingDTO": {
+        "internal_handlers.performanceRankingDTO": {
             "type": "object",
             "properties": {
                 "metric": {
@@ -12891,76 +21655,14 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                 },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "dto.PerformanceStatisticsDTO": {
-            "type": "object",
-            "properties": {
-                "average_resolution_time": {
-                    "description": "en minutes",
-                    "type": "number"
-                },
-                "efficiency": {
-                    "description": "en pourcentage",
-                    "type": "number"
-                },
-                "first_response_time": {
-                    "description": "en minutes",
-                    "type": "number"
-                },
-                "period": {
-                    "type": "string"
-                },
-                "productivity": {
-                    "description": "en pourcentage",
-                    "type": "number"
-                },
-                "sla_compliance": {
-                    "description": "en pourcentage",
-                    "type": "number"
-                }
-            }
-        },
-        "dto.PerformanceStatsDTO": {
-            "type": "object",
-            "properties": {
-                "average_efficiency": {
-                    "description": "Efficacité moyenne en %",
-                    "type": "number"
-                },
-                "average_productivity": {
-                    "description": "Productivité moyenne (tickets/heure)",
-                    "type": "number"
-                },
-                "total_tickets_treated": {
-                    "description": "Nombre total de tickets traités",
-                    "type": "integer"
-                },
-                "total_time_spent": {
-                    "description": "Temps total passé en minutes",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.PeriodBreakdownDTO": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "description": "Nombre pour cette période",
-                    "type": "integer"
-                },
-                "date": {
-                    "description": "Date de la période",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.ProductivityDTO": {
+        "internal_handlers.productivityDTO": {
             "type": "object",
             "properties": {
                 "productivity": {
@@ -12980,1708 +21682,14 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                 },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "dto.ProjectTimeBudgetDTO": {
-            "type": "object",
-            "properties": {
-                "budget": {
-                    "type": "integer"
-                },
-                "percentage": {
-                    "type": "number"
-                },
-                "project_id": {
-                    "type": "integer"
-                },
-                "remaining": {
-                    "type": "integer"
-                },
-                "spent": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.QualifyIncidentRequest": {
-            "type": "object",
-            "required": [
-                "impact",
-                "urgency"
-            ],
-            "properties": {
-                "impact": {
-                    "description": "Impact (obligatoire)",
-                    "type": "string",
-                    "enum": [
-                        "low",
-                        "medium",
-                        "high",
-                        "critical"
-                    ]
-                },
-                "urgency": {
-                    "description": "Urgence (obligatoire)",
-                    "type": "string",
-                    "enum": [
-                        "low",
-                        "medium",
-                        "high",
-                        "critical"
-                    ]
-                }
-            }
-        },
-        "dto.RecordChangeResultRequest": {
-            "type": "object",
-            "required": [
-                "description",
-                "result"
-            ],
-            "properties": {
-                "description": {
-                    "description": "Description (obligatoire)",
-                    "type": "string"
-                },
-                "issues": {
-                    "description": "Problèmes rencontrés (optionnel)",
-                    "type": "string"
-                },
-                "result": {
-                    "description": "Résultat (obligatoire)",
-                    "type": "string",
-                    "enum": [
-                        "success",
-                        "partial",
-                        "failed",
-                        "rolled_back"
-                    ]
-                }
-            }
-        },
-        "dto.RefreshTokenRequest": {
-            "type": "object",
-            "required": [
-                "refresh_token"
-            ],
-            "properties": {
-                "refresh_token": {
-                    "description": "Token de rafraîchissement (obligatoire)",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.RegisterRequest": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "email": {
-                    "description": "Email (obligatoire, format email)",
-                    "type": "string"
-                },
-                "first_name": {
-                    "description": "Prénom (optionnel)",
-                    "type": "string"
-                },
-                "last_name": {
-                    "description": "Nom (optionnel)",
-                    "type": "string"
-                },
-                "password": {
-                    "description": "Mot de passe (obligatoire, min 6 caractères)",
-                    "type": "string",
-                    "minLength": 6
-                },
-                "username": {
-                    "description": "Nom d'utilisateur (obligatoire, min 3 caractères)",
-                    "type": "string",
-                    "minLength": 3
-                }
-            }
-        },
-        "dto.RegisterResponse": {
-            "type": "object",
-            "properties": {
-                "refresh_token": {
-                    "description": "Token de rafraîchissement (optionnel)",
-                    "type": "string"
-                },
-                "token": {
-                    "description": "Token JWT d'accès",
-                    "type": "string"
-                },
-                "user": {
-                    "description": "Informations de l'utilisateur créé",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.UserDTO"
-                        }
-                    ]
-                }
-            }
-        },
-        "dto.ReorderTicketAttachmentsRequest": {
-            "type": "object",
-            "required": [
-                "attachment_ids"
-            ],
-            "properties": {
-                "attachment_ids": {
-                    "description": "Liste des IDs dans le nouvel ordre",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "dto.RequestSourceDTO": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_enabled": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.RoleDTO": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_system": {
-                    "description": "Si c'est un rôle système (ne peut pas être modifié/supprimé)",
-                    "type": "boolean"
-                },
-                "name": {
-                    "description": "Nom du rôle (ex: \"DSI\", \"TECHNICIEN_IT\")",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SLAComplianceReportDTO": {
-            "type": "object",
-            "properties": {
-                "by_category": {
-                    "description": "Conformité par catégorie",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "number",
-                        "format": "float64"
-                    }
-                },
-                "by_priority": {
-                    "description": "Conformité par priorité",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "number",
-                        "format": "float64"
-                    }
-                },
-                "generated_at": {
-                    "description": "Date de génération",
-                    "type": "string"
-                },
-                "overall_compliance": {
-                    "description": "Conformité globale en %",
-                    "type": "number"
-                },
-                "period": {
-                    "description": "Période analysée",
-                    "type": "string"
-                },
-                "total_tickets": {
-                    "type": "integer"
-                },
-                "total_violations": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.SLADTO": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_active": {
-                    "description": "Si le SLA est actif",
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "priority": {
-                    "description": "low, medium, high, critical (nil = tous)",
-                    "type": "string"
-                },
-                "target_time": {
-                    "description": "Temps cible en minutes",
-                    "type": "integer"
-                },
-                "ticket_category": {
-                    "description": "incident, demande, changement, developpement",
-                    "type": "string"
-                },
-                "unit": {
-                    "description": "minutes, hours, days",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SLAStatsDTO": {
-            "type": "object",
-            "properties": {
-                "at_risk": {
-                    "description": "Tickets à risque",
-                    "type": "integer"
-                },
-                "by_category": {
-                    "description": "Conformité par catégorie",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "number",
-                        "format": "float64"
-                    }
-                },
-                "by_priority": {
-                    "description": "Conformité par priorité",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "number",
-                        "format": "float64"
-                    }
-                },
-                "overall_compliance": {
-                    "description": "Conformité globale en %",
-                    "type": "number"
-                },
-                "total_violations": {
-                    "description": "Nombre total de violations",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.SLAViolationDTO": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "sla": {
-                    "$ref": "#/definitions/dto.SLADTO"
-                },
-                "sla_id": {
-                    "type": "integer"
-                },
-                "ticket": {
-                    "$ref": "#/definitions/dto.TicketDTO"
-                },
-                "ticket_id": {
-                    "type": "integer"
-                },
-                "unit": {
-                    "description": "minutes",
-                    "type": "string"
-                },
-                "violated_at": {
-                    "description": "Date de violation",
-                    "type": "string"
-                },
-                "violation_time": {
-                    "description": "Temps de violation en minutes",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ServiceRequestDTO": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "deadline": {
-                    "description": "Date limite (optionnel)",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "ticket": {
-                    "description": "Ticket associé (optionnel)",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.TicketDTO"
-                        }
-                    ]
-                },
-                "ticket_id": {
-                    "type": "integer"
-                },
-                "type": {
-                    "description": "Type de demande (optionnel)",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.ServiceRequestTypeDTO"
-                        }
-                    ]
-                },
-                "type_id": {
-                    "description": "ID du type de demande",
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "validated": {
-                    "description": "Si la demande a été validée",
-                    "type": "boolean"
-                },
-                "validated_at": {
-                    "description": "Date de validation (optionnel)",
-                    "type": "string"
-                },
-                "validated_by": {
-                    "description": "ID du validateur (optionnel)",
-                    "type": "integer"
-                },
-                "validation_comment": {
-                    "description": "Commentaire de validation (optionnel)",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.ServiceRequestTypeDTO": {
-            "type": "object",
-            "properties": {
-                "default_deadline": {
-                    "description": "Délai par défaut en heures",
-                    "type": "integer"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_active": {
-                    "description": "Si le type est actif",
-                    "type": "boolean"
-                },
-                "name": {
-                    "description": "Nom du type (ex: \"Installation\", \"Configuration\")",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.SetProjectTimeBudgetRequest": {
-            "type": "object",
-            "required": [
-                "budget"
-            ],
-            "properties": {
-                "budget": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.StatisticsOverviewDTO": {
-            "type": "object",
-            "properties": {
-                "performance": {
-                    "$ref": "#/definitions/dto.PerformanceStatsDTO"
-                },
-                "period": {
-                    "type": "string"
-                },
-                "sla": {
-                    "$ref": "#/definitions/dto.SLAStatsDTO"
-                },
-                "tickets": {
-                    "$ref": "#/definitions/dto.TicketStatsDTO"
-                },
-                "users": {
-                    "$ref": "#/definitions/dto.UserStatsDTO"
-                }
-            }
-        },
-        "dto.TicketAttachmentDTO": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "display_order": {
-                    "type": "integer"
-                },
-                "file_name": {
-                    "type": "string"
-                },
-                "file_path": {
-                    "type": "string"
-                },
-                "file_size": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_image": {
-                    "type": "boolean"
-                },
-                "mime_type": {
-                    "type": "string"
-                },
-                "thumbnail_path": {
-                    "type": "string"
-                },
-                "ticket_id": {
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
-                }
-            }
-        },
-        "dto.TicketCommentDTO": {
-            "type": "object",
-            "properties": {
-                "comment": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_internal": {
-                    "description": "Commentaire interne (visible uniquement par l'IT)",
-                    "type": "boolean"
-                },
-                "ticket_id": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
-                }
-            }
-        },
-        "dto.TicketCountReportDTO": {
-            "type": "object",
-            "properties": {
-                "breakdown": {
-                    "description": "Répartition par sous-période",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.PeriodBreakdownDTO"
-                    }
-                },
-                "count": {
-                    "description": "Nombre total",
-                    "type": "integer"
-                },
-                "period": {
-                    "description": "week, month, etc.",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.TicketDTO": {
-            "type": "object",
-            "properties": {
-                "actual_time": {
-                    "description": "Temps réel en minutes (optionnel)",
-                    "type": "integer"
-                },
-                "assigned_to": {
-                    "description": "Utilisateur assigné (optionnel)",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.UserDTO"
-                        }
-                    ]
-                },
-                "category": {
-                    "description": "incident, demande, changement, developpement",
-                    "type": "string"
-                },
-                "closed_at": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "description": "Créateur du ticket",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.UserDTO"
-                        }
-                    ]
-                },
-                "description": {
-                    "type": "string"
-                },
-                "estimated_time": {
-                    "description": "Temps estimé en minutes (optionnel)",
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "primary_image": {
-                    "description": "Image principale (optionnel)",
-                    "type": "string"
-                },
-                "priority": {
-                    "description": "low, medium, high, critical",
-                    "type": "string"
-                },
-                "source": {
-                    "description": "mail, appel, direct",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "ouvert, en_cours, en_attente, cloture",
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.TicketHistoryDTO": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "description": "created, updated, status_changed, assigned, etc.",
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description de l'action (optionnel)",
-                    "type": "string"
-                },
-                "field_name": {
-                    "description": "Nom du champ modifié (optionnel)",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "new_value": {
-                    "description": "Nouvelle valeur (optionnel)",
-                    "type": "string"
-                },
-                "old_value": {
-                    "description": "Ancienne valeur (optionnel)",
-                    "type": "string"
-                },
-                "ticket_id": {
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
-                }
-            }
-        },
-        "dto.TicketListResponse": {
-            "type": "object",
-            "properties": {
-                "pagination": {
-                    "$ref": "#/definitions/dto.PaginationDTO"
-                },
-                "tickets": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.TicketDTO"
-                    }
-                }
-            }
-        },
-        "dto.TicketSLAStatusDTO": {
-            "type": "object",
-            "properties": {
-                "elapsed_time": {
-                    "description": "Temps écoulé en minutes",
-                    "type": "integer"
-                },
-                "remaining": {
-                    "description": "Temps restant en minutes (peut être négatif)",
-                    "type": "integer"
-                },
-                "sla": {
-                    "description": "SLA (optionnel)",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/dto.SLADTO"
-                        }
-                    ]
-                },
-                "sla_id": {
-                    "description": "ID du SLA appliqué",
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "on_time, at_risk, violated",
-                    "type": "string"
-                },
-                "target_time": {
-                    "description": "Date/heure cible",
-                    "type": "string"
-                },
-                "violated_at": {
-                    "description": "Date de violation (optionnel)",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.TicketSearchResultDTO": {
-            "type": "object",
-            "properties": {
-                "assigned_to": {
-                    "$ref": "#/definitions/dto.UserDTO"
-                },
-                "category": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "created_by": {
-                    "$ref": "#/definitions/dto.UserDTO"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "priority": {
-                    "type": "string"
-                },
-                "snippet": {
-                    "description": "Extrait de la description correspondant",
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.TicketStatsDTO": {
-            "type": "object",
-            "properties": {
-                "average_resolution_time": {
-                    "description": "Temps moyen de résolution en minutes",
-                    "type": "number"
-                },
-                "by_category": {
-                    "description": "Par catégorie",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
-                    }
-                },
-                "by_priority": {
-                    "description": "Par priorité",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
-                    }
-                },
-                "by_status": {
-                    "description": "Par statut",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
-                    }
-                },
-                "closed": {
-                    "description": "Tickets fermés",
-                    "type": "integer"
-                },
-                "delayed": {
-                    "description": "Tickets en retard",
-                    "type": "integer"
-                },
-                "open": {
-                    "description": "Tickets ouverts",
-                    "type": "integer"
-                },
-                "total": {
-                    "description": "Nombre total de tickets",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.TicketTypeDistributionDTO": {
-            "type": "object",
-            "properties": {
-                "changements": {
-                    "description": "Nombre de changements",
-                    "type": "integer"
-                },
-                "demandes": {
-                    "description": "Nombre de demandes",
-                    "type": "integer"
-                },
-                "developpements": {
-                    "description": "Nombre de développements",
-                    "type": "integer"
-                },
-                "incidents": {
-                    "description": "Nombre d'incidents",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.TimeComparisonDTO": {
-            "type": "object",
-            "properties": {
-                "actual_time": {
-                    "type": "integer"
-                },
-                "difference": {
-                    "type": "integer"
-                },
-                "estimated_time": {
-                    "type": "integer"
-                },
-                "percentage": {
-                    "type": "number"
-                },
-                "ticket_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.TimeEntryDTO": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "ticket": {
-                    "$ref": "#/definitions/dto.TicketDTO"
-                },
-                "ticket_id": {
-                    "type": "integer"
-                },
-                "time_spent": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
-                },
-                "user_id": {
-                    "type": "integer"
-                },
-                "validated": {
-                    "type": "boolean"
-                },
-                "validated_at": {
-                    "type": "string"
-                },
-                "validated_by": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.TimesheetHistoryDTO": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "details": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.TimesheetHistoryEntryDTO": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "type": "string"
-                },
-                "changes": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "details": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.TrendDataDTO": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "number"
-                }
-            }
-        },
-        "dto.TrendsStatisticsDTO": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.TrendDataDTO"
-                    }
-                },
-                "forecast": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.TrendDataDTO"
-                    }
-                },
-                "metric": {
-                    "type": "string"
-                },
-                "period": {
-                    "type": "string"
-                },
-                "trend": {
-                    "description": "increasing, decreasing, stable",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UnderloadAlertDTO": {
-            "type": "object",
-            "properties": {
-                "actual_time": {
-                    "type": "integer"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "min_time": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.UnreadCountDTO": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "description": "Nombre de notifications non lues",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.UpdateAssetCategoryRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parent_id": {
-                    "description": "nil pour retirer la catégorie parente",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.UpdateAssetRequest": {
-            "type": "object",
-            "properties": {
-                "assigned_to": {
-                    "description": "nil pour retirer l'assignation",
-                    "type": "integer"
-                },
-                "category_id": {
-                    "type": "integer"
-                },
-                "location": {
-                    "type": "string"
-                },
-                "manufacturer": {
-                    "type": "string"
-                },
-                "model": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "purchase_date": {
-                    "type": "string"
-                },
-                "serial_number": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string",
-                    "enum": [
-                        "available",
-                        "in_use",
-                        "maintenance",
-                        "retired"
-                    ]
-                },
-                "warranty_expiry": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateChangeRequest": {
-            "type": "object",
-            "properties": {
-                "risk": {
-                    "description": "Risque (optionnel)",
-                    "type": "string",
-                    "enum": [
-                        "low",
-                        "medium",
-                        "high",
-                        "critical"
-                    ]
-                },
-                "risk_description": {
-                    "description": "Description du risque (optionnel)",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateDelayJustificationRequest": {
-            "type": "object",
-            "required": [
-                "justification"
-            ],
-            "properties": {
-                "justification": {
-                    "description": "Nouveau texte de justification",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateIncidentRequest": {
-            "type": "object",
-            "properties": {
-                "impact": {
-                    "description": "Impact (optionnel)",
-                    "type": "string",
-                    "enum": [
-                        "low",
-                        "medium",
-                        "high",
-                        "critical"
-                    ]
-                },
-                "urgency": {
-                    "description": "Urgence (optionnel)",
-                    "type": "string",
-                    "enum": [
-                        "low",
-                        "medium",
-                        "high",
-                        "critical"
-                    ]
-                }
-            }
-        },
-        "dto.UpdateKnowledgeArticleRequest": {
-            "type": "object",
-            "properties": {
-                "category_id": {
-                    "type": "integer"
-                },
-                "content": {
-                    "type": "string"
-                },
-                "is_published": {
-                    "description": "Statut de publication (optionnel)",
-                    "type": "boolean"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateKnowledgeCategoryRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parent_id": {
-                    "description": "nil pour retirer la catégorie parente",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.UpdateRequestSourceRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "is_enabled": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateRiskRequest": {
-            "type": "object",
-            "required": [
-                "risk"
-            ],
-            "properties": {
-                "risk": {
-                    "description": "Risque (obligatoire)",
-                    "type": "string",
-                    "enum": [
-                        "low",
-                        "medium",
-                        "high",
-                        "critical"
-                    ]
-                },
-                "risk_description": {
-                    "description": "Description du risque (optionnel)",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateRoleRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "description": "Description (optionnel)",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "Nom (optionnel)",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateSLARequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "target_time": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "unit": {
-                    "type": "string",
-                    "enum": [
-                        "minutes",
-                        "hours",
-                        "days"
-                    ]
-                }
-            }
-        },
-        "dto.UpdateServiceRequestRequest": {
-            "type": "object",
-            "properties": {
-                "deadline": {
-                    "description": "Date limite format \"2006-01-02\" (optionnel)",
-                    "type": "string"
-                },
-                "type_id": {
-                    "description": "ID du type (optionnel)",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.UpdateServiceRequestTypeRequest": {
-            "type": "object",
-            "properties": {
-                "default_deadline": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "description": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "description": "Statut actif (optionnel)",
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateSettingsRequest": {
-            "type": "object",
-            "properties": {
-                "settings": {
-                    "description": "Map de clé-valeur des paramètres à mettre à jour",
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "dto.UpdateTicketAttachmentRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "description": "Description (optionnel)",
-                    "type": "string"
-                },
-                "display_order": {
-                    "description": "Ordre d'affichage (optionnel)",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.UpdateTicketRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "description": "Description (optionnel)",
-                    "type": "string"
-                },
-                "priority": {
-                    "description": "Priorité (optionnel)",
-                    "type": "string",
-                    "enum": [
-                        "low",
-                        "medium",
-                        "high",
-                        "critical"
-                    ]
-                },
-                "status": {
-                    "description": "Statut (optionnel)",
-                    "type": "string",
-                    "enum": [
-                        "ouvert",
-                        "en_cours",
-                        "en_attente",
-                        "cloture"
-                    ]
-                },
-                "title": {
-                    "description": "Titre (optionnel)",
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateTimeEntryRequest": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "description": "Format: YYYY-MM-DD",
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "time_spent": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.UpdateUserPermissionsRequest": {
-            "type": "object",
-            "required": [
-                "permissions"
-            ],
-            "properties": {
-                "permissions": {
-                    "description": "Liste des permissions (obligatoire)",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "dto.UpdateUserRequest": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "description": "Email (optionnel, format email si fourni)",
-                    "type": "string"
-                },
-                "first_name": {
-                    "description": "Prénom (optionnel)",
-                    "type": "string"
-                },
-                "is_active": {
-                    "description": "Statut actif (optionnel, pointeur pour distinguer false de non fourni)",
-                    "type": "boolean"
-                },
-                "last_name": {
-                    "description": "Nom (optionnel)",
-                    "type": "string"
-                },
-                "role_id": {
-                    "description": "ID du rôle (optionnel)",
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.UserDTO": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "description": "Chemin vers l'avatar",
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "last_login": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "role": {
-                    "description": "Nom du rôle (ex: \"DSI\", \"TECHNICIEN_IT\")",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UserPermissionsDTO": {
-            "type": "object",
-            "properties": {
-                "permissions": {
-                    "description": "Liste des permissions (ex: [\"tickets.create\", \"tickets.update\"])",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.UserStatsDTO": {
-            "type": "object",
-            "properties": {
-                "active": {
-                    "type": "integer"
-                },
-                "average_tickets_per_user": {
-                    "type": "number"
-                },
-                "by_role": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "integer"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ValidateDelayJustificationRequest": {
-            "type": "object",
-            "required": [
-                "validated"
-            ],
-            "properties": {
-                "comment": {
-                    "description": "Commentaire du validateur (optionnel)",
-                    "type": "string"
-                },
-                "validated": {
-                    "description": "true pour valider, false pour rejeter",
-                    "type": "boolean"
-                }
-            }
-        },
-        "dto.ValidateServiceRequestRequest": {
-            "type": "object",
-            "required": [
-                "validated"
-            ],
-            "properties": {
-                "comment": {
-                    "description": "Commentaire de validation (optionnel)",
-                    "type": "string"
-                },
-                "validated": {
-                    "description": "true pour valider, false pour invalider",
-                    "type": "boolean"
-                }
-            }
-        },
-        "dto.ValidateTimeEntryRequest": {
-            "type": "object",
-            "required": [
-                "validated"
-            ],
-            "properties": {
-                "validated": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "dto.ValidationHistoryDTO": {
-            "type": "object",
-            "properties": {
-                "entry_id": {
-                    "type": "integer"
-                },
-                "entry_type": {
-                    "description": "time_entry, daily, weekly",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "validated, rejected",
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                },
-                "validated_at": {
-                    "type": "string"
-                },
-                "validated_by": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ValidationStatusDTO": {
-            "type": "object",
-            "properties": {
-                "validated": {
-                    "type": "boolean"
-                },
-                "validated_at": {
-                    "type": "string"
-                },
-                "validated_by": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.WeeklyDeclarationDTO": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "daily_breakdown": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.DailyBreakdownDTO"
-                    }
-                },
-                "end_date": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "start_date": {
-                    "type": "string"
-                },
-                "task_count": {
-                    "type": "integer"
-                },
-                "total_time": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
-                },
-                "user_id": {
-                    "type": "integer"
-                },
-                "validated": {
-                    "type": "boolean"
-                },
-                "validated_at": {
-                    "type": "string"
-                },
-                "validated_by": {
-                    "type": "integer"
-                },
-                "validation_comment": {
-                    "type": "string"
-                },
-                "week": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.WeeklySummaryDTO": {
-            "type": "object",
-            "properties": {
-                "end_date": {
-                    "type": "string"
-                },
-                "start_date": {
-                    "type": "string"
-                },
-                "task_count": {
-                    "type": "integer"
-                },
-                "total_time": {
-                    "type": "integer"
-                },
-                "validated": {
-                    "type": "boolean"
-                },
-                "week": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.WeeklyTaskDTO": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "ticket": {
-                    "$ref": "#/definitions/dto.TicketDTO"
-                },
-                "ticket_id": {
-                    "type": "integer"
-                },
-                "time_spent": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.WeeklyTaskRequest": {
-            "type": "object",
-            "required": [
-                "date",
-                "ticket_id",
-                "time_spent"
-            ],
-            "properties": {
-                "date": {
-                    "type": "string"
-                },
-                "ticket_id": {
-                    "type": "integer"
-                },
-                "time_spent": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.WorkloadByAgentDTO": {
-            "type": "object",
-            "properties": {
-                "average_time": {
-                    "description": "Temps moyen en minutes",
-                    "type": "number"
-                },
-                "ticket_count": {
-                    "description": "Nombre de tickets",
-                    "type": "integer"
-                },
-                "total_time": {
-                    "description": "Temps total en minutes",
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/dto.UserDTO"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.WorkloadDayDTO": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                },
-                "date": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.WorkloadStatisticsDTO": {
-            "type": "object",
-            "properties": {
-                "average_per_day": {
-                    "type": "number"
-                },
-                "distribution": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.WorkloadDayDTO"
-                    }
-                },
-                "peak_day": {
-                    "type": "string"
-                },
-                "peak_day_count": {
-                    "type": "integer"
-                },
-                "period": {
-                    "type": "string"
-                },
-                "total_tickets": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Project": {
+        "internal_handlers.project": {
             "type": "object",
             "properties": {
                 "consumed_time": {
@@ -14697,11 +21705,31 @@ const docTemplate = `{
                 "end_date": {
                     "type": "string"
                 },
+                "filiale": {
+                    "description": "Filiale (relation optionnelle)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Filiale"
+                        }
+                    ]
+                },
+                "filiale_id": {
+                    "description": "ID de la filiale (optionnel)",
+                    "type": "integer"
+                },
                 "id": {
+                    "type": "integer"
+                },
+                "lead_id": {
+                    "description": "Lead technique ou fonctionnel",
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
+                },
+                "project_manager_id": {
+                    "description": "Chef de projet",
+                    "type": "integer"
                 },
                 "start_date": {
                     "type": "string"
@@ -14714,7 +21742,7 @@ const docTemplate = `{
                     "description": "Relations",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Ticket"
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_models.Ticket"
                     }
                 },
                 "total_budget_time": {
@@ -14726,230 +21754,76 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Role": {
+        "internal_handlers.statisticsOverviewDTO": {
             "type": "object",
             "properties": {
-                "created_at": {
+                "performance": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.PerformanceStatsDTO"
+                },
+                "period": {
                     "type": "string"
                 },
-                "description": {
-                    "type": "string"
+                "sla": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.SLAStatsDTO"
                 },
-                "id": {
-                    "type": "integer"
+                "tickets": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.TicketStatsDTO"
                 },
-                "is_system": {
-                    "description": "Rôle système (ne peut pas être supprimé)",
-                    "type": "boolean"
-                },
-                "name": {
-                    "description": "DSI, RESPONSABLE_IT, TECHNICIEN_IT",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
+                "users": {
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserStatsDTO"
                 }
             }
         },
-        "models.Ticket": {
+        "internal_handlers.weeklyDeclarationDTO": {
             "type": "object",
             "properties": {
-                "actual_time": {
-                    "description": "Temps réel en minutes (calculé)",
-                    "type": "integer"
-                },
-                "assigned_to": {
-                    "description": "Relations",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    ]
-                },
-                "assigned_to_id": {
-                    "description": "ID utilisateur assigné (optionnel)",
-                    "type": "integer"
-                },
-                "category": {
-                    "description": "incident, demande, changement, developpement",
-                    "type": "string"
-                },
-                "closed_at": {
-                    "type": "string"
-                },
                 "created_at": {
                     "type": "string"
                 },
-                "created_by": {
-                    "description": "Créateur du ticket",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    ]
+                "daily_breakdown": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.DailyBreakdownDTO"
+                    }
                 },
-                "created_by_id": {
-                    "type": "integer"
-                },
-                "description": {
+                "end_date": {
                     "type": "string"
-                },
-                "estimated_time": {
-                    "description": "Temps estimé en minutes (optionnel)",
-                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "primary_image": {
-                    "description": "Image principale (optionnel)",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/models.TicketAttachment"
-                        }
-                    ]
+                "start_date": {
+                    "type": "string"
                 },
-                "primary_image_id": {
-                    "description": "ID de l'image principale (optionnel)",
+                "task_count": {
                     "type": "integer"
                 },
-                "priority": {
-                    "description": "low, medium, high, critical",
-                    "type": "string"
-                },
-                "source": {
-                    "description": "mail, appel, direct",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "ouvert, en_cours, en_attente, cloture",
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
+                "total_time": {
+                    "type": "integer"
                 },
                 "updated_at": {
                     "type": "string"
-                }
-            }
-        },
-        "models.TicketAttachment": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description optionnelle",
-                    "type": "string"
-                },
-                "display_order": {
-                    "description": "Ordre d'affichage (pour les galeries)",
-                    "type": "integer"
-                },
-                "file_name": {
-                    "type": "string"
-                },
-                "file_path": {
-                    "type": "string"
-                },
-                "file_size": {
-                    "description": "Taille en bytes (optionnel)",
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_image": {
-                    "description": "TRUE si c'est une image",
-                    "type": "boolean"
-                },
-                "mime_type": {
-                    "type": "string"
-                },
-                "thumbnail_path": {
-                    "description": "Chemin vers la miniature (pour les images)",
-                    "type": "string"
-                },
-                "ticket_id": {
-                    "type": "integer"
                 },
                 "user": {
-                    "description": "Utilisateur qui a uploadé",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    ]
+                    "$ref": "#/definitions/github_com_mcicare_itsm-backend_internal_dto.UserDTO"
                 },
                 "user_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.User": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "description": "Chemin vers la photo de profil",
-                    "type": "string"
                 },
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_active": {
+                "validated": {
                     "type": "boolean"
                 },
-                "last_login": {
+                "validated_at": {
                     "type": "string"
                 },
-                "last_name": {
-                    "type": "string"
-                },
-                "role": {
-                    "description": "Relations",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/models.Role"
-                        }
-                    ]
-                },
-                "role_id": {
+                "validated_by": {
                     "type": "integer"
                 },
-                "updated_at": {
+                "validation_comment": {
                     "type": "string"
                 },
-                "username": {
+                "week": {
                     "type": "string"
-                }
-            }
-        },
-        "utils.Response": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "description": "Données de la réponse"
-                },
-                "error": {
-                    "description": "Erreur si échec"
-                },
-                "message": {
-                    "description": "Message optionnel",
-                    "type": "string"
-                },
-                "success": {
-                    "description": "Indique si l'opération a réussi",
-                    "type": "boolean"
                 }
             }
         }
@@ -14971,7 +21845,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "ITSM Backend API",
-	Description:      "API REST pour la gestion des services IT (ITSM) - MCI CARE CI",
+	Description:      "API REST pour la gestion des services IT (ITSM)",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

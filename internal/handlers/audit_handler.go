@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mcicare/itsm-backend/internal/dto"
 	"github.com/mcicare/itsm-backend/internal/services"
 	"github.com/mcicare/itsm-backend/internal/utils"
 )
@@ -22,6 +23,12 @@ func NewAuditHandler(auditService services.AuditService) *AuditHandler {
 	}
 }
 
+// Types alias pour la doc Swagger (évite "cannot find type definition: dto.AuditLogListResponse")
+type (
+	auditLogListResponse = dto.AuditLogListResponse
+	auditLogDTO          = dto.AuditLogDTO
+)
+
 // GetAll récupère tous les logs d'audit
 // @Summary Liste des logs d'audit
 // @Description Récupère la liste des logs d'audit avec pagination et filtres
@@ -33,7 +40,7 @@ func NewAuditHandler(auditService services.AuditService) *AuditHandler {
 // @Param userId query int false "Filtrer par ID utilisateur"
 // @Param action query string false "Filtrer par action"
 // @Param entityType query string false "Filtrer par type d'entité"
-// @Success 200 {object} dto.AuditLogListResponse
+// @Success 200 {object} auditLogListResponse
 // @Failure 500 {object} utils.Response
 // @Router /audit-logs [get]
 func (h *AuditHandler) GetAll(c *gin.Context) {
@@ -62,7 +69,10 @@ func (h *AuditHandler) GetAll(c *gin.Context) {
 		}
 	}
 
-	logs, err := h.auditService.GetAll(page, limit, userID, action, entityType)
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	logs, err := h.auditService.GetAll(queryScope, page, limit, userID, action, entityType)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des logs d'audit")
 		return
@@ -78,7 +88,7 @@ func (h *AuditHandler) GetAll(c *gin.Context) {
 // @Security BearerAuth
 // @Produce json
 // @Param id path int true "ID du log d'audit"
-// @Success 200 {object} dto.AuditLogDTO
+// @Success 200 {object} auditLogDTO
 // @Failure 404 {object} utils.Response
 // @Router /audit-logs/{id} [get]
 func (h *AuditHandler) GetByID(c *gin.Context) {
@@ -107,7 +117,7 @@ func (h *AuditHandler) GetByID(c *gin.Context) {
 // @Param userId path int true "ID de l'utilisateur"
 // @Param startDate query string false "Date de début (format: 2006-01-02)"
 // @Param endDate query string false "Date de fin (format: 2006-01-02)"
-// @Success 200 {array} dto.AuditLogDTO
+// @Success 200 {array} auditLogDTO
 // @Failure 400 {object} utils.Response
 // @Router /audit-logs/by-user/{userId} [get]
 func (h *AuditHandler) GetByUserID(c *gin.Context) {
@@ -135,7 +145,10 @@ func (h *AuditHandler) GetByUserID(c *gin.Context) {
 		}
 	}
 
-	logs, err := h.auditService.GetByUserID(uint(userID), startDate, endDate)
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	logs, err := h.auditService.GetByUserID(queryScope, uint(userID), startDate, endDate)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return
@@ -151,7 +164,7 @@ func (h *AuditHandler) GetByUserID(c *gin.Context) {
 // @Security BearerAuth
 // @Produce json
 // @Param action path string true "Type d'action (create, update, delete, etc.)"
-// @Success 200 {array} dto.AuditLogDTO
+// @Success 200 {array} auditLogDTO
 // @Failure 500 {object} utils.Response
 // @Router /audit-logs/by-action/{action} [get]
 func (h *AuditHandler) GetByAction(c *gin.Context) {
@@ -161,7 +174,10 @@ func (h *AuditHandler) GetByAction(c *gin.Context) {
 		return
 	}
 
-	logs, err := h.auditService.GetByAction(action)
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	logs, err := h.auditService.GetByAction(queryScope, action)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des logs d'audit")
 		return
@@ -178,7 +194,7 @@ func (h *AuditHandler) GetByAction(c *gin.Context) {
 // @Produce json
 // @Param entityType path string true "Type d'entité (ticket, user, asset, etc.)"
 // @Param entityId path int true "ID de l'entité"
-// @Success 200 {array} dto.AuditLogDTO
+// @Success 200 {array} auditLogDTO
 // @Failure 400 {object} utils.Response
 // @Router /audit-logs/by-entity/{entityType}/{entityId} [get]
 func (h *AuditHandler) GetByEntity(c *gin.Context) {
@@ -191,7 +207,10 @@ func (h *AuditHandler) GetByEntity(c *gin.Context) {
 		return
 	}
 
-	logs, err := h.auditService.GetByEntity(entityType, uint(entityID))
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	logs, err := h.auditService.GetByEntity(queryScope, entityType, uint(entityID))
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return
@@ -207,7 +226,7 @@ func (h *AuditHandler) GetByEntity(c *gin.Context) {
 // @Security BearerAuth
 // @Produce json
 // @Param id path int true "ID du ticket"
-// @Success 200 {array} dto.AuditLogDTO
+// @Success 200 {array} auditLogDTO
 // @Failure 400 {object} utils.Response
 // @Router /tickets/{id}/audit-trail [get]
 func (h *AuditHandler) GetTicketAuditTrail(c *gin.Context) {
@@ -218,7 +237,10 @@ func (h *AuditHandler) GetTicketAuditTrail(c *gin.Context) {
 		return
 	}
 
-	logs, err := h.auditService.GetTicketAuditTrail(uint(ticketID))
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	logs, err := h.auditService.GetTicketAuditTrail(queryScope, uint(ticketID))
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return

@@ -96,7 +96,10 @@ func (h *IncidentHandler) GetByID(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /incidents [get]
 func (h *IncidentHandler) GetAll(c *gin.Context) {
-	incidents, err := h.incidentService.GetAll()
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	incidents, err := h.incidentService.GetAll(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des incidents")
 		return
@@ -407,8 +410,11 @@ func (h *IncidentHandler) GetLinkedAssets(c *gin.Context) {
 // @Router /incidents/by-impact/{impact} [get]
 func (h *IncidentHandler) GetByImpact(c *gin.Context) {
 	impact := c.Param("impact")
+	
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
 
-	incidents, err := h.incidentService.GetByImpact(impact)
+	incidents, err := h.incidentService.GetByImpact(queryScope, impact)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return
@@ -429,8 +435,11 @@ func (h *IncidentHandler) GetByImpact(c *gin.Context) {
 // @Router /incidents/by-urgency/{urgency} [get]
 func (h *IncidentHandler) GetByUrgency(c *gin.Context) {
 	urgency := c.Param("urgency")
+	
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
 
-	incidents, err := h.incidentService.GetByUrgency(urgency)
+	incidents, err := h.incidentService.GetByUrgency(queryScope, urgency)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return

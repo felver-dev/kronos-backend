@@ -55,7 +55,9 @@ func (r *settingsRepository) FindByKey(key string) (*models.Setting, error) {
 // FindAll récupère tous les paramètres
 func (r *settingsRepository) FindAll() ([]models.Setting, error) {
 	var settings []models.Setting
-	err := database.DB.Preload("UpdatedBy").Order("category ASC, key ASC").Find(&settings).Error
+	// Ne pas utiliser Preload pour éviter les erreurs si UpdatedBy n'existe pas
+	// Les paramètres peuvent être récupérés sans la relation UpdatedBy
+	err := database.DB.Order("category ASC, key ASC").Find(&settings).Error
 	return settings, err
 }
 

@@ -4,11 +4,39 @@ import "time"
 
 // DashboardDTO représente le tableau de bord complet
 type DashboardDTO struct {
-	Tickets     TicketStatsDTO      `json:"tickets"`     // Statistiques des tickets
-	SLA         SLAStatsDTO         `json:"sla"`         // Statistiques SLA
-	Performance PerformanceStatsDTO `json:"performance"` // Statistiques de performance
-	Alerts      []AlertDTO          `json:"alerts"`      // Alertes en cours
-	Period      string              `json:"period"`      // Période (week, month, etc.)
+	Tickets       TicketStatsDTO        `json:"tickets"`        // Statistiques des tickets (normaux)
+	SLA           SLAStatsDTO           `json:"sla"`            // Statistiques SLA
+	Performance   PerformanceStatsDTO   `json:"performance"`    // Statistiques de performance
+	Alerts        []AlertDTO            `json:"alerts"`         // Alertes en cours
+	Period        string                `json:"period"`         // Période (week, month, etc.)
+	Users         UserStatsDTO          `json:"users"`           // Statistiques des utilisateurs
+	Assets        AssetStatsDTO         `json:"assets"`         // Statistiques des actifs
+	WorkedHours   WorkedHoursStatsDTO    `json:"worked_hours"`    // Heures travaillées (API, non affichées au board)
+	Message       string                `json:"message,omitempty"` // Ex: "Aucun département associé à votre compte"
+	TicketInternes *TicketInternalStatsDTO `json:"ticket_internes,omitempty"` // Stats tickets internes (rempli seulement si l'utilisateur a les permissions tickets_internes)
+}
+
+// TicketInternalStatsDTO représente les statistiques des tickets internes pour le tableau de bord
+type TicketInternalStatsDTO struct {
+	Total    int            `json:"total"`
+	ByStatus map[string]int `json:"by_status"`
+	ByPriority map[string]int `json:"by_priority,omitempty"`
+	Open     int            `json:"open"`
+	Closed   int            `json:"closed"`
+}
+
+// WorkedHoursStatsDTO représente les heures travaillées (données conservées, non affichées au board)
+type WorkedHoursStatsDTO struct {
+	TotalMinutes int     `json:"total_minutes"`
+	TotalHours   float64 `json:"total_hours"`
+	Period       string  `json:"period"`
+}
+
+// AssetStatsDTO représente les statistiques des actifs
+type AssetStatsDTO struct {
+	Total      int            `json:"total"`       // Nombre total d'actifs
+	ByStatus   map[string]int `json:"by_status"`   // Par statut
+	ByCategory map[string]int `json:"by_category"` // Par catégorie
 }
 
 // TicketStatsDTO représente les statistiques des tickets
@@ -56,10 +84,15 @@ type TicketCountReportDTO struct {
 	Breakdown []PeriodBreakdownDTO `json:"breakdown"` // Répartition par sous-période
 }
 
-// PeriodBreakdownDTO représente la répartition par sous-période
+// PeriodBreakdownDTO représente la répartition par sous-période (alignée sur les statuts en base)
 type PeriodBreakdownDTO struct {
-	Date  time.Time `json:"date"`  // Date de la période
-	Count int       `json:"count"` // Nombre pour cette période
+	Date       time.Time `json:"date"`        // Date de la période
+	Count      int       `json:"count"`      // Nombre total de tickets pour cette période
+	Open       int       `json:"open"`       // ouvert
+	InProgress int       `json:"in_progress"` // en_cours
+	Pending    int       `json:"pending"`    // en_attente
+	Resolved   int       `json:"resolved"`   // resolu (validé)
+	Closed     int       `json:"closed"`     // cloture (fermé)
 }
 
 // TicketTypeDistributionDTO représente la répartition des tickets par type
@@ -68,6 +101,8 @@ type TicketTypeDistributionDTO struct {
 	Demandes       int `json:"demandes"`       // Nombre de demandes
 	Changements    int `json:"changements"`    // Nombre de changements
 	Developpements int `json:"developpements"` // Nombre de développements
+	Assistance     int `json:"assistance"`     // Nombre d'assistances
+	Support        int `json:"support"`         // Nombre de supports
 }
 
 // AverageResolutionTimeDTO représente le temps moyen de résolution
@@ -79,11 +114,17 @@ type AverageResolutionTimeDTO struct {
 
 // WorkloadByAgentDTO représente la charge de travail par agent
 type WorkloadByAgentDTO struct {
-	UserID      uint     `json:"user_id"`
-	User        *UserDTO `json:"user,omitempty"`
-	TicketCount int      `json:"ticket_count"` // Nombre de tickets
-	AverageTime float64  `json:"average_time"` // Temps moyen en minutes
-	TotalTime   int      `json:"total_time"`   // Temps total en minutes
+	UserID        uint     `json:"user_id"`
+	User          *UserDTO `json:"user,omitempty"`
+	TicketCount   int      `json:"ticket_count"`     // Nombre total de tickets assignés
+	ResolvedCount int      `json:"resolved_count"`   // Nombre de tickets résolus
+	InProgressCount int    `json:"in_progress_count"` // Nombre de tickets en cours
+	PendingCount  int      `json:"pending_count"`    // Nombre de tickets en attente
+	OpenCount     int      `json:"open_count"`       // Nombre de tickets ouverts
+	DelayedCount  int      `json:"delayed_count"`    // Nombre de tickets en retard
+	AverageTime   float64  `json:"average_time"`      // Temps moyen de résolution en minutes
+	TotalTime     int      `json:"total_time"`       // Temps total passé en minutes
+	Efficiency    float64  `json:"efficiency"`       // Efficacité en % (résolus / total)
 }
 
 // CustomReportRequest représente la requête pour un rapport personnalisé
@@ -117,4 +158,21 @@ type IndividualPerformanceReportDTO struct {
 	Productivity          float64                `json:"productivity"`            // Productivité (tickets/heure)
 	TotalTimeSpent        int                    `json:"total_time_spent"`        // Temps total passé en minutes
 	Breakdown             map[string]interface{} `json:"breakdown,omitempty"`     // Répartition détaillée
+}
+
+// AssetReportDTO représente le résumé des actifs
+type AssetReportDTO struct {
+	Period     string         `json:"period"`
+	Total      int            `json:"total"`
+	ByStatus   map[string]int `json:"by_status"`
+	ByCategory map[string]int `json:"by_category"`
+}
+
+// KnowledgeReportDTO représente le résumé de la base de connaissances
+type KnowledgeReportDTO struct {
+	Period     string         `json:"period"`
+	Total      int            `json:"total"`
+	Published  int            `json:"published"`
+	Draft      int            `json:"draft"`
+	ByCategory map[string]int `json:"by_category"`
 }

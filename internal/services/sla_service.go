@@ -20,16 +20,18 @@ type SLAService interface {
 	Delete(id uint) error
 	GetTicketSLAStatus(ticketID uint) (*dto.TicketSLAStatusDTO, error)
 	GetCompliance(slaID uint) (*dto.SLAComplianceDTO, error)
-	GetViolations(slaID uint) ([]dto.SLAViolationDTO, error)
-	GetAllViolations(period, category string) ([]dto.SLAViolationDTO, error)
+	GetViolations(scope interface{}, slaID uint) ([]dto.SLAViolationDTO, error) // scope peut être *scope.QueryScope ou nil
+	GetAllViolations(scope interface{}, period, category string) ([]dto.SLAViolationDTO, error) // scope peut être *scope.QueryScope ou nil
 	GetComplianceReport(period, format string) (*dto.SLAComplianceReportDTO, error)
+	RecalculateSLAStatuses() (int, error) // Recalcule les statuts SLA pour tous les tickets ouverts
 }
 
 // slaService implémente SLAService
 type slaService struct {
-	slaRepo       repositories.SLARepository
-	ticketSLARepo repositories.TicketSLARepository
-	ticketRepo    repositories.TicketRepository
+	slaRepo            repositories.SLARepository
+	ticketSLARepo      repositories.TicketSLARepository
+	ticketRepo         repositories.TicketRepository
+	ticketCategoryRepo repositories.TicketCategoryRepository
 }
 
 // NewSLAService crée une nouvelle instance de SLAService
@@ -37,16 +39,24 @@ func NewSLAService(
 	slaRepo repositories.SLARepository,
 	ticketSLARepo repositories.TicketSLARepository,
 	ticketRepo repositories.TicketRepository,
+	ticketCategoryRepo repositories.TicketCategoryRepository,
 ) SLAService {
 	return &slaService{
-		slaRepo:       slaRepo,
-		ticketSLARepo: ticketSLARepo,
-		ticketRepo:    ticketRepo,
+		slaRepo:            slaRepo,
+		ticketSLARepo:      ticketSLARepo,
+		ticketRepo:         ticketRepo,
+		ticketCategoryRepo: ticketCategoryRepo,
 	}
 }
 
 // Create crée un nouveau SLA
 func (s *slaService) Create(req dto.CreateSLARequest, createdByID uint) (*dto.SLADTO, error) {
+	// Vérifier que la catégorie de ticket existe
+	_, err := s.ticketCategoryRepo.FindBySlug(req.TicketCategory)
+	if err != nil {
+		return nil, errors.New("catégorie de ticket introuvable: " + req.TicketCategory)
+	}
+
 	// Définir l'unité par défaut
 	unit := req.Unit
 	if unit == "" {
@@ -243,7 +253,9 @@ func (s *slaService) GetCompliance(slaID uint) (*dto.SLAComplianceDTO, error) {
 	}
 
 	// Récupérer tous les tickets SLA associés à ce SLA
-	ticketSLAs, err := s.ticketSLARepo.FindBySLAID(slaID)
+	// Note: GetCompliance est utilisé en interne, donc on passe nil pour le scope
+	// Si nécessaire, on pourrait ajouter un paramètre scope à GetCompliance
+	ticketSLAs, err := s.ticketSLARepo.FindBySLAID(nil, slaID)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des tickets SLA")
 	}
@@ -277,9 +289,9 @@ func (s *slaService) GetCompliance(slaID uint) (*dto.SLAComplianceDTO, error) {
 }
 
 // GetViolations récupère les violations d'un SLA
-func (s *slaService) GetViolations(slaID uint) ([]dto.SLAViolationDTO, error) {
+func (s *slaService) GetViolations(scopeParam interface{}, slaID uint) ([]dto.SLAViolationDTO, error) {
 	// Récupérer tous les tickets SLA violés pour ce SLA
-	ticketSLAs, err := s.ticketSLARepo.FindBySLAID(slaID)
+	ticketSLAs, err := s.ticketSLARepo.FindBySLAID(scopeParam, slaID)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des violations")
 	}
@@ -318,9 +330,10 @@ func (s *slaService) GetViolations(slaID uint) ([]dto.SLAViolationDTO, error) {
 }
 
 // GetAllViolations récupère toutes les violations de SLA
-func (s *slaService) GetAllViolations(period, category string) ([]dto.SLAViolationDTO, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *slaService) GetAllViolations(scopeParam interface{}, period, category string) ([]dto.SLAViolationDTO, error) {
 	// Récupérer tous les tickets SLA violés
-	allTicketSLAs, err := s.ticketSLARepo.FindAll()
+	allTicketSLAs, err := s.ticketSLARepo.FindAll(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des violations")
 	}
@@ -429,6 +442,64 @@ func (s *slaService) GetComplianceReport(period, format string) (*dto.SLAComplia
 		Period:            period,
 		GeneratedAt:       time.Now(),
 	}, nil
+}
+
+// RecalculateSLAStatuses recalcule les statuts SLA pour tous les tickets ouverts
+func (s *slaService) RecalculateSLAStatuses() (int, error) {
+	// Récupérer tous les tickets SLA
+	// Note: RecalculateSLAStatuses est utilisé en interne, donc on passe nil pour le scope
+	allTicketSLAs, err := s.ticketSLARepo.FindAll(nil)
+	if err != nil {
+		return 0, errors.New("erreur lors de la récupération des tickets SLA")
+	}
+
+	updatedCount := 0
+	now := time.Now()
+
+	for _, ticketSLA := range allTicketSLAs {
+		// Récupérer le ticket associé
+		ticket, err := s.ticketRepo.FindByID(ticketSLA.TicketID)
+		if err != nil || ticket == nil {
+			continue
+		}
+
+		// Ne recalculer que pour les tickets non clôturés
+		if ticket.Status == "cloture" {
+			continue
+		}
+
+		// Recalculer le statut
+		oldStatus := ticketSLA.Status
+		newStatus := "on_time"
+
+		if now.After(ticketSLA.TargetTime) {
+			newStatus = "violated"
+			// Calculer le temps de violation en minutes
+			violationMinutes := int(now.Sub(ticketSLA.TargetTime).Minutes())
+			ticketSLA.ViolationTime = &violationMinutes
+		} else {
+			// Vérifier si on est à risque (moins de 25% du temps restant)
+			totalDuration := ticketSLA.TargetTime.Sub(ticket.CreatedAt)
+			if totalDuration > 0 {
+				remainingPercent := float64(ticketSLA.TargetTime.Sub(now)) / float64(totalDuration)
+				if remainingPercent < 0.25 {
+					newStatus = "at_risk"
+				}
+			}
+			ticketSLA.ViolationTime = nil
+		}
+
+		// Mettre à jour seulement si le statut a changé
+		if newStatus != oldStatus {
+			ticketSLA.Status = newStatus
+			if err := s.ticketSLARepo.Update(&ticketSLA); err != nil {
+				continue // Ignorer les erreurs individuelles
+			}
+			updatedCount++
+		}
+	}
+
+	return updatedCount, nil
 }
 
 // slaToDTO convertit un modèle SLA en DTO

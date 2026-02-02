@@ -87,3 +87,67 @@ type UpdateAssetCategoryRequest struct {
 	Description string `json:"description,omitempty"`
 	ParentID    *uint  `json:"parent_id,omitempty"` // nil pour retirer la catégorie parente
 }
+
+// DeleteAssetCategoryRequest représente la requête de suppression d'une catégorie d'actif
+type DeleteAssetCategoryRequest struct {
+	ConfirmName string `json:"confirm_name,omitempty"` // Nom de confirmation pour suppression en cascade
+}
+
+// AssetCategoryListResponse représente la réponse de liste de catégories avec pagination
+type AssetCategoryListResponse struct {
+	Categories []AssetCategoryDTO `json:"categories"`
+	Pagination PaginationDTO      `json:"pagination"`
+}
+
+// AssetSoftwareDTO représente un logiciel installé sur un actif
+type AssetSoftwareDTO struct {
+	ID              uint       `json:"id"`
+	AssetID         *uint      `json:"asset_id,omitempty"`                                      // ID de l'actif (optionnel)
+	SoftwareName    string     `json:"software_name"`
+	Version         string     `json:"version,omitempty"`
+	LicenseKey      string     `json:"license_key,omitempty"`
+	InstallationDate *time.Time `json:"installation_date,omitempty"`
+	Notes           string     `json:"notes,omitempty"`
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
+	Asset           *AssetDTO  `json:"asset,omitempty"`
+}
+
+// CreateAssetSoftwareRequest représente la requête de création d'un logiciel installé
+type CreateAssetSoftwareRequest struct {
+	AssetID         *uint   `json:"asset_id,omitempty"`                                          // ID de l'actif (optionnel - permet de créer des logiciels indépendamment)
+	SoftwareName    string  `json:"software_name" binding:"required"`
+	Version         string  `json:"version,omitempty"`
+	LicenseKey      string  `json:"license_key,omitempty"`
+	InstallationDate *string `json:"installation_date,omitempty"` // Format "2006-01-02"
+	Notes           string  `json:"notes,omitempty"`
+}
+
+// UpdateAssetSoftwareRequest représente la requête de mise à jour d'un logiciel installé
+type UpdateAssetSoftwareRequest struct {
+	SoftwareName    string  `json:"software_name,omitempty"`
+	Version         string  `json:"version,omitempty"`
+	LicenseKey      string  `json:"license_key,omitempty"`
+	InstallationDate *string `json:"installation_date,omitempty"` // Format "2006-01-02"
+	Notes           string  `json:"notes,omitempty"`
+}
+
+// AssetSoftwareStatisticsDTO représente les statistiques sur les logiciels installés
+type AssetSoftwareStatisticsDTO struct {
+	BySoftware     []SoftwareCountDTO `json:"by_software"`
+	BySoftwareName []SoftwareNameCountDTO `json:"by_software_name"`
+}
+
+// SoftwareCountDTO représente le nombre d'actifs ayant un logiciel spécifique
+type SoftwareCountDTO struct {
+	SoftwareName string `json:"software_name"`
+	Version      string `json:"version"`
+	Count        int64  `json:"count"`
+	CategoryName string `json:"category_name"`
+}
+
+// SoftwareNameCountDTO représente le nombre d'actifs ayant un logiciel (toutes versions)
+type SoftwareNameCountDTO struct {
+	SoftwareName string `json:"software_name"`
+	Count        int64  `json:"count"`
+}

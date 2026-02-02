@@ -96,7 +96,10 @@ func (h *AssetHandler) GetByID(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /assets [get]
 func (h *AssetHandler) GetAll(c *gin.Context) {
-	assets, err := h.assetService.GetAll()
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	assets, err := h.assetService.GetAll(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des actifs")
 		return
@@ -302,7 +305,10 @@ func (h *AssetHandler) GetByCategory(c *gin.Context) {
 		return
 	}
 
-	assets, err := h.assetService.GetByCategory(uint(categoryID))
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	assets, err := h.assetService.GetByCategory(queryScope, uint(categoryID))
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return
@@ -348,7 +354,10 @@ func (h *AssetHandler) GetByUser(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /assets/inventory [get]
 func (h *AssetHandler) GetInventory(c *gin.Context) {
-	inventory, err := h.assetService.GetInventory()
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	inventory, err := h.assetService.GetInventory(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération de l'inventaire")
 		return

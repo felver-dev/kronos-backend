@@ -96,7 +96,10 @@ func (h *ChangeHandler) GetByID(c *gin.Context) {
 // @Failure 500 {object} utils.Response
 // @Router /changes [get]
 func (h *ChangeHandler) GetAll(c *gin.Context) {
-	changes, err := h.changeService.GetAll()
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	changes, err := h.changeService.GetAll(queryScope)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des changements")
 		return
@@ -346,8 +349,11 @@ func (h *ChangeHandler) GetResult(c *gin.Context) {
 // @Router /changes/by-risk/{riskLevel} [get]
 func (h *ChangeHandler) GetByRisk(c *gin.Context) {
 	riskLevel := c.Param("riskLevel")
+	
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
 
-	changes, err := h.changeService.GetByRisk(riskLevel)
+	changes, err := h.changeService.GetByRisk(queryScope, riskLevel)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return
@@ -374,7 +380,10 @@ func (h *ChangeHandler) GetByResponsible(c *gin.Context) {
 		return
 	}
 
-	changes, err := h.changeService.GetByResponsible(uint(userID))
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	changes, err := h.changeService.GetByResponsible(queryScope, uint(userID))
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return

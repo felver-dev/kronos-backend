@@ -18,6 +18,8 @@ func SetupReportRoutes(router *gin.RouterGroup, reportHandler *handlers.ReportHa
 		reports.GET("/tickets/by-agent", reportHandler.GetWorkloadByAgent)
 		reports.GET("/tickets/delayed", reportHandler.GetDelayedTicketsReport)
 		reports.GET("/sla/compliance", reportHandler.GetSLAComplianceReport)
+		reports.GET("/assets/summary", reportHandler.GetAssetSummary)
+		reports.GET("/knowledge/summary", reportHandler.GetKnowledgeSummary)
 		reports.GET("/performance/individual/:userId", reportHandler.GetIndividualPerformanceReport)
 		reports.GET("/export/:format", reportHandler.ExportReport)
 		reports.POST("/custom", reportHandler.GenerateCustomReport)

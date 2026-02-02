@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/mcicare/itsm-backend/database"
 	"github.com/mcicare/itsm-backend/internal/models"
+	"github.com/mcicare/itsm-backend/internal/scope"
 )
 
 // ChangeRepository interface pour les opérations sur les changements
@@ -10,9 +11,9 @@ type ChangeRepository interface {
 	Create(change *models.Change) error
 	FindByID(id uint) (*models.Change, error)
 	FindByTicketID(ticketID uint) (*models.Change, error)
-	FindAll() ([]models.Change, error)
-	FindByRisk(risk string) ([]models.Change, error)
-	FindByResponsible(responsibleID uint) ([]models.Change, error)
+	FindAll(scope interface{}) ([]models.Change, error) // scope peut être *scope.QueryScope ou nil
+	FindByRisk(scope interface{}, risk string) ([]models.Change, error)
+	FindByResponsible(scope interface{}, responsibleID uint) ([]models.Change, error) // scope peut être *scope.QueryScope ou nil
 	Update(change *models.Change) error
 	Delete(id uint) error
 }
@@ -51,23 +52,64 @@ func (r *changeRepository) FindByTicketID(ticketID uint) (*models.Change, error)
 }
 
 // FindAll récupère tous les changements
-func (r *changeRepository) FindAll() ([]models.Change, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *changeRepository) FindAll(scopeParam interface{}) ([]models.Change, error) {
 	var changes []models.Change
-	err := database.DB.Preload("Ticket").Preload("Responsible").Find(&changes).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.Change{}).
+		Preload("Ticket").Preload("Responsible")
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyChangeScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&changes).Error
 	return changes, err
 }
 
 // FindByRisk récupère les changements par niveau de risque
-func (r *changeRepository) FindByRisk(risk string) ([]models.Change, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *changeRepository) FindByRisk(scopeParam interface{}, risk string) ([]models.Change, error) {
 	var changes []models.Change
-	err := database.DB.Preload("Ticket").Preload("Responsible").Where("risk = ?", risk).Find(&changes).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.Change{}).
+		Preload("Ticket").Preload("Responsible").
+		Where("changes.risk = ?", risk)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyChangeScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&changes).Error
 	return changes, err
 }
 
 // FindByResponsible récupère les changements par responsable
-func (r *changeRepository) FindByResponsible(responsibleID uint) ([]models.Change, error) {
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (r *changeRepository) FindByResponsible(scopeParam interface{}, responsibleID uint) ([]models.Change, error) {
 	var changes []models.Change
-	err := database.DB.Preload("Ticket").Preload("Responsible").Where("responsible_id = ?", responsibleID).Find(&changes).Error
+	
+	// Construire la requête de base
+	query := database.DB.Model(&models.Change{}).
+		Preload("Ticket").Preload("Responsible").
+		Where("changes.responsible_id = ?", responsibleID)
+	
+	// Appliquer le scope si fourni
+	if scopeParam != nil {
+		if queryScope, ok := scopeParam.(*scope.QueryScope); ok {
+			query = scope.ApplyChangeScope(query, queryScope)
+		}
+	}
+	
+	err := query.Find(&changes).Error
 	return changes, err
 }
 

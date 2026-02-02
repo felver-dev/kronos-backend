@@ -4,8 +4,17 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mcicare/itsm-backend/internal/dto"
 	"github.com/mcicare/itsm-backend/internal/services"
 	"github.com/mcicare/itsm-backend/internal/utils"
+)
+
+// Aliases pour la doc Swagger (évite "cannot find type definition: dto.XXX")
+type (
+	performanceDTO     = dto.PerformanceDTO
+	efficiencyDTO      = dto.EfficiencyDTO
+	productivityDTO    = dto.ProductivityDTO
+	performanceRankingDTO = dto.PerformanceRankingDTO
 )
 
 // PerformanceHandler gère les handlers des performances
@@ -28,7 +37,7 @@ func NewPerformanceHandler(performanceService services.PerformanceService) *Perf
 // @Accept json
 // @Produce json
 // @Param user_id path int true "ID de l'utilisateur"
-// @Success 200 {object} dto.PerformanceDTO
+// @Success 200 {object} performanceDTO
 // @Failure 400 {object} utils.Response
 // @Failure 404 {object} utils.Response
 // @Router /performance/users/{user_id} [get]
@@ -57,7 +66,7 @@ func (h *PerformanceHandler) GetPerformanceByUserID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_id path int true "ID de l'utilisateur"
-// @Success 200 {object} dto.EfficiencyDTO
+// @Success 200 {object} efficiencyDTO
 // @Failure 400 {object} utils.Response
 // @Failure 404 {object} utils.Response
 // @Router /performance/users/{user_id}/efficiency [get]
@@ -86,7 +95,7 @@ func (h *PerformanceHandler) GetEfficiencyByUserID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_id path int true "ID de l'utilisateur"
-// @Success 200 {object} dto.ProductivityDTO
+// @Success 200 {object} productivityDTO
 // @Failure 400 {object} utils.Response
 // @Failure 404 {object} utils.Response
 // @Router /performance/users/{user_id}/productivity [get]
@@ -115,7 +124,7 @@ func (h *PerformanceHandler) GetProductivityByUserID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param limit query int false "Nombre de résultats (défaut: 10, max: 100)"
-// @Success 200 {array} dto.PerformanceRankingDTO
+// @Success 200 {array} performanceRankingDTO
 // @Failure 500 {object} utils.Response
 // @Router /performance/ranking [get]
 func (h *PerformanceHandler) GetPerformanceRanking(c *gin.Context) {

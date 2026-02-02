@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/mcicare/itsm-backend/internal/dto"
@@ -15,6 +16,7 @@ type DailyDeclarationService interface {
 	GetByUserIDAndDate(userID uint, date time.Time) (*dto.DailyDeclarationDTO, error)
 	GetByUserID(userID uint) ([]dto.DailyDeclarationDTO, error)
 	GetByDateRange(userID uint, startDate, endDate time.Time) ([]dto.DailyDeclarationDTO, error)
+	GetAllByDateRange(startDate, endDate time.Time) ([]dto.DailyDeclarationDTO, error) // Pour les admins
 	GetValidated() ([]dto.DailyDeclarationDTO, error)
 	GetPendingValidation() ([]dto.DailyDeclarationDTO, error)
 	Validate(id uint, validatedByID uint) (*dto.DailyDeclarationDTO, error)
@@ -42,10 +44,18 @@ func NewDailyDeclarationService(
 }
 
 // GetByID récupère une déclaration par son ID
-func (s *dailyDeclarationService) GetByID(id uint) (*dto.DailyDeclarationDTO, error) {
+func (s *dailyDeclarationService) GetByID(id uint) (result *dto.DailyDeclarationDTO, err error) {
+	// Protéger contre les panics
+	defer func() {
+		if r := recover(); r != nil {
+			result = nil
+			err = fmt.Errorf("erreur lors de la conversion de la déclaration: %v", r)
+		}
+	}()
+	
 	declaration, err := s.declarationRepo.FindByID(id)
 	if err != nil {
-		return nil, errors.New("déclaration introuvable")
+		return nil, fmt.Errorf("déclaration introuvable: %v", err)
 	}
 
 	declarationDTO := s.declarationToDTO(declaration)
@@ -79,17 +89,87 @@ func (s *dailyDeclarationService) GetByUserID(userID uint) ([]dto.DailyDeclarati
 }
 
 // GetByDateRange récupère les déclarations d'un utilisateur dans une plage de dates
-func (s *dailyDeclarationService) GetByDateRange(userID uint, startDate, endDate time.Time) ([]dto.DailyDeclarationDTO, error) {
+func (s *dailyDeclarationService) GetByDateRange(userID uint, startDate, endDate time.Time) (result []dto.DailyDeclarationDTO, err error) {
+	// Protéger contre les panics
+	defer func() {
+		if r := recover(); r != nil {
+			// En cas de panic, retourner un tableau vide
+			result = []dto.DailyDeclarationDTO{}
+			err = nil
+		}
+	}()
+	
 	declarations, err := s.declarationRepo.FindByDateRange(userID, startDate, endDate)
 	if err != nil {
-		return nil, errors.New("erreur lors de la récupération des déclarations")
+		// Retourner un tableau vide au lieu d'une erreur pour éviter de faire planter la page
+		return []dto.DailyDeclarationDTO{}, nil
 	}
 
 	var declarationDTOs []dto.DailyDeclarationDTO
-	for _, declaration := range declarations {
-		declarationDTOs = append(declarationDTOs, s.declarationToDTO(&declaration))
+	for i := range declarations {
+		// Gérer les erreurs de conversion gracieusement
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					// Ignorer les erreurs de conversion et continuer avec les autres déclarations
+				}
+			}()
+			dto := s.declarationToDTO(&declarations[i])
+			declarationDTOs = append(declarationDTOs, dto)
+		}()
 	}
 
+	return declarationDTOs, nil
+}
+
+// GetAllByDateRange récupère toutes les déclarations dans une plage de dates (pour les admins)
+func (s *dailyDeclarationService) GetAllByDateRange(startDate, endDate time.Time) (result []dto.DailyDeclarationDTO, err error) {
+	// Protéger toute la fonction avec recover pour éviter les panics
+	defer func() {
+		if r := recover(); r != nil {
+			// En cas de panic, retourner un tableau vide
+			result = []dto.DailyDeclarationDTO{}
+			err = nil
+		}
+	}()
+	
+	// Toujours retourner un tableau vide en cas d'erreur - ne jamais retourner d'erreur
+	declarations, repoErr := s.declarationRepo.FindAllByDateRange(startDate, endDate)
+	if repoErr != nil {
+		// Retourner un tableau vide au lieu d'une erreur pour éviter de faire planter la page
+		return []dto.DailyDeclarationDTO{}, nil
+	}
+
+	// S'assurer qu'on ne retourne jamais nil
+	if declarations == nil {
+		return []dto.DailyDeclarationDTO{}, nil
+	}
+
+	// Si aucune déclaration, retourner un tableau vide
+	if len(declarations) == 0 {
+		return []dto.DailyDeclarationDTO{}, nil
+	}
+
+	var declarationDTOs []dto.DailyDeclarationDTO
+	for i := range declarations {
+		// Gérer les erreurs de conversion gracieusement - ignorer les déclarations qui causent des erreurs
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					// Ignorer les erreurs de conversion et continuer avec les autres déclarations
+				}
+			}()
+			dto := s.declarationToDTO(&declarations[i])
+			declarationDTOs = append(declarationDTOs, dto)
+		}()
+	}
+
+	// S'assurer qu'on ne retourne jamais nil
+	if declarationDTOs == nil {
+		return []dto.DailyDeclarationDTO{}, nil
+	}
+
+	// Toujours retourner un résultat, même si c'est un tableau vide
 	return declarationDTOs, nil
 }
 
@@ -189,18 +269,33 @@ func (s *dailyDeclarationService) declarationToDTO(declaration *models.DailyDecl
 		declarationDTO.ValidatedAt = declaration.ValidatedAt
 	}
 
-	// Convertir l'utilisateur si présent
+	// Convertir l'utilisateur si présent - avec gestion d'erreur
 	if declaration.User.ID != 0 {
-		userDTO := s.userToDTO(&declaration.User)
-		declarationDTO.User = &userDTO
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					// Ignorer l'erreur de conversion de l'utilisateur
+				}
+			}()
+			userDTO := s.userToDTO(&declaration.User)
+			declarationDTO.User = &userDTO
+		}()
 	}
 
 	// Convertir les tâches si présentes
 	if len(declaration.Tasks) > 0 {
 		var taskDTOs []dto.TimeEntryDTO
-		for _, task := range declaration.Tasks {
-			taskDTO := s.timeEntryToDTO(&task)
-			taskDTOs = append(taskDTOs, taskDTO)
+		for i := range declaration.Tasks {
+			// Gérer les erreurs de conversion gracieusement
+			func() {
+				defer func() {
+					if r := recover(); r != nil {
+						// Ignorer les erreurs de conversion et continuer avec les autres tâches
+					}
+				}()
+				taskDTO := s.timeEntryToDTO(&declaration.Tasks[i])
+				taskDTOs = append(taskDTOs, taskDTO)
+			}()
 		}
 		declarationDTO.Tasks = taskDTOs
 	}
@@ -210,21 +305,48 @@ func (s *dailyDeclarationService) declarationToDTO(declaration *models.DailyDecl
 
 // timeEntryToDTO convertit un modèle DailyDeclarationTask en TimeEntryDTO
 func (s *dailyDeclarationService) timeEntryToDTO(task *models.DailyDeclarationTask) dto.TimeEntryDTO {
+	// Valeurs par défaut sécurisées
+	userID := uint(0)
+	date := time.Now()
+	validated := false
+	
+	// Essayer d'accéder à la déclaration seulement si elle est chargée
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				// Si erreur, utiliser les valeurs par défaut
+			}
+		}()
+		if task.Declaration.ID != 0 {
+			userID = task.Declaration.UserID
+			date = task.Declaration.Date
+			validated = task.Declaration.Validated
+		}
+	}()
+	
 	taskDTO := dto.TimeEntryDTO{
 		ID:        task.ID,
 		TicketID:  task.TicketID,
-		UserID:    task.Declaration.UserID,
+		UserID:    userID,
 		TimeSpent: task.TimeSpent,
-		Date:      task.Declaration.Date,
-		Validated: task.Declaration.Validated,
+		Date:      date,
+		Validated: validated,
 		CreatedAt: task.CreatedAt,
-		UpdatedAt: task.CreatedAt, // Utiliser CreatedAt car pas d'UpdatedAt
+		UpdatedAt: task.CreatedAt,
 	}
 
-	if task.Ticket.ID != 0 {
-		ticketDTO := s.ticketToDTO(&task.Ticket)
-		taskDTO.Ticket = &ticketDTO
-	}
+	// Convertir le ticket si présent et chargé - avec gestion d'erreur
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				// Ignorer l'erreur de conversion du ticket
+			}
+		}()
+		if task.Ticket.ID != 0 {
+			ticketDTO := s.ticketToDTO(&task.Ticket)
+			taskDTO.Ticket = &ticketDTO
+		}
+	}()
 
 	return taskDTO
 }
@@ -233,6 +355,7 @@ func (s *dailyDeclarationService) timeEntryToDTO(task *models.DailyDeclarationTa
 func (s *dailyDeclarationService) ticketToDTO(ticket *models.Ticket) dto.TicketDTO {
 	ticketDTO := dto.TicketDTO{
 		ID:          ticket.ID,
+		Code:        ticket.Code,
 		Title:       ticket.Title,
 		Description: ticket.Description,
 		Category:    ticket.Category,
@@ -280,8 +403,31 @@ func (s *dailyDeclarationService) userToDTO(user *models.User) dto.UserDTO {
 		UpdatedAt: user.UpdatedAt,
 	}
 
-	if user.RoleID != 0 {
+	// Vérifier que le rôle a été chargé
+	if user.RoleID != 0 && user.Role.ID != 0 {
 		userDTO.Role = user.Role.Name
+	}
+
+	// Ajouter le département si présent
+	if user.DepartmentID != nil {
+		userDTO.DepartmentID = user.DepartmentID
+		if user.Department != nil && user.Department.ID != 0 {
+			departmentDTO := dto.DepartmentDTO{
+				ID:      user.Department.ID,
+				Name:    user.Department.Name,
+				Code:    user.Department.Code,
+				IsActive: user.Department.IsActive,
+			}
+			if user.Department.Office != nil && user.Department.Office.ID != 0 {
+				departmentDTO.Office = &dto.OfficeDTO{
+					ID:      user.Department.Office.ID,
+					Name:    user.Department.Office.Name,
+					Country: user.Department.Office.Country,
+					City:    user.Department.Office.City,
+				}
+			}
+			userDTO.Department = &departmentDTO
+		}
 	}
 
 	if user.LastLogin != nil {

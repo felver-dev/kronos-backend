@@ -13,12 +13,14 @@ import (
 // AuthHandler gère les handlers d'authentification
 type AuthHandler struct {
 	authService services.AuthService
+	userService services.UserService
 }
 
 // NewAuthHandler crée une nouvelle instance de AuthHandler
-func NewAuthHandler(authService services.AuthService) *AuthHandler {
+func NewAuthHandler(authService services.AuthService, userService services.UserService) *AuthHandler {
 	return &AuthHandler{
 		authService: authService,
+		userService: userService,
 	}
 }
 
@@ -138,18 +140,14 @@ func (h *AuthHandler) GetMe(c *gin.Context) {
 		return
 	}
 
-	// Récupérer les informations depuis le contexte
-	username, _ := c.Get("username")
-	role, _ := c.Get("role")
-
-	// Construire la réponse avec les informations du contexte
-	userInfo := gin.H{
-		"id":       userID,
-		"username": username,
-		"role":     role,
+	// Récupérer l'utilisateur complet depuis la base de données
+	user, err := h.userService.GetByID(userID.(uint))
+	if err != nil {
+		utils.UnauthorizedResponse(c, "Utilisateur introuvable")
+		return
 	}
 
-	utils.SuccessResponse(c, userInfo, "Informations utilisateur récupérées")
+	utils.SuccessResponse(c, user, "Informations utilisateur récupérées")
 }
 
 // Register gère l'inscription d'un nouvel utilisateur

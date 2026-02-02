@@ -14,9 +14,9 @@ type ChangeService interface {
 	Create(req dto.CreateChangeRequest, createdByID uint) (*dto.ChangeDTO, error)
 	GetByID(id uint) (*dto.ChangeDTO, error)
 	GetByTicketID(ticketID uint) (*dto.ChangeDTO, error)
-	GetAll() ([]dto.ChangeDTO, error)
-	GetByRisk(risk string) ([]dto.ChangeDTO, error)
-	GetByResponsible(responsibleID uint) ([]dto.ChangeDTO, error)
+	GetAll(scope interface{}) ([]dto.ChangeDTO, error) // scope peut être *scope.QueryScope ou nil
+	GetByRisk(scope interface{}, risk string) ([]dto.ChangeDTO, error)
+	GetByResponsible(scope interface{}, responsibleID uint) ([]dto.ChangeDTO, error) // scope peut être *scope.QueryScope ou nil
 	Update(id uint, req dto.UpdateChangeRequest, updatedByID uint) (*dto.ChangeDTO, error)
 	AssignResponsible(id uint, req dto.AssignResponsibleRequest, assignedByID uint) (*dto.ChangeDTO, error)
 	UpdateRisk(id uint, req dto.UpdateRiskRequest, updatedByID uint) (*dto.ChangeDTO, error)
@@ -107,8 +107,9 @@ func (s *changeService) GetByTicketID(ticketID uint) (*dto.ChangeDTO, error) {
 }
 
 // GetAll récupère tous les changements
-func (s *changeService) GetAll() ([]dto.ChangeDTO, error) {
-	changes, err := s.changeRepo.FindAll()
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *changeService) GetAll(scopeParam interface{}) ([]dto.ChangeDTO, error) {
+	changes, err := s.changeRepo.FindAll(scopeParam)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des changements")
 	}
@@ -122,8 +123,9 @@ func (s *changeService) GetAll() ([]dto.ChangeDTO, error) {
 }
 
 // GetByRisk récupère les changements par niveau de risque
-func (s *changeService) GetByRisk(risk string) ([]dto.ChangeDTO, error) {
-	changes, err := s.changeRepo.FindByRisk(risk)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *changeService) GetByRisk(scopeParam interface{}, risk string) ([]dto.ChangeDTO, error) {
+	changes, err := s.changeRepo.FindByRisk(scopeParam, risk)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des changements")
 	}
@@ -137,8 +139,9 @@ func (s *changeService) GetByRisk(risk string) ([]dto.ChangeDTO, error) {
 }
 
 // GetByResponsible récupère les changements par responsable
-func (s *changeService) GetByResponsible(responsibleID uint) ([]dto.ChangeDTO, error) {
-	changes, err := s.changeRepo.FindByResponsible(responsibleID)
+// Le scope est utilisé pour filtrer automatiquement selon les permissions de l'utilisateur
+func (s *changeService) GetByResponsible(scopeParam interface{}, responsibleID uint) ([]dto.ChangeDTO, error) {
+	changes, err := s.changeRepo.FindByResponsible(scopeParam, responsibleID)
 	if err != nil {
 		return nil, errors.New("erreur lors de la récupération des changements")
 	}
@@ -349,15 +352,16 @@ func (s *changeService) ticketToDTO(ticket *models.Ticket) dto.TicketDTO {
 // userToDTO convertit un modèle User en DTO (méthode helper)
 func (s *changeService) userToDTO(user *models.User) dto.UserDTO {
 	userDTO := dto.UserDTO{
-		ID:        user.ID,
-		Username:  user.Username,
-		Email:     user.Email,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Avatar:    user.Avatar,
-		IsActive:  user.IsActive,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+		ID:         user.ID,
+		Username:   user.Username,
+		Email:      user.Email,
+		FirstName:  user.FirstName,
+		LastName:   user.LastName,
+		DepartmentID: user.DepartmentID,
+		Avatar:     user.Avatar,
+		IsActive:   user.IsActive,
+		CreatedAt:  user.CreatedAt,
+		UpdatedAt:  user.UpdatedAt,
 	}
 
 	if user.RoleID != 0 {
@@ -366,6 +370,36 @@ func (s *changeService) userToDTO(user *models.User) dto.UserDTO {
 
 	if user.LastLogin != nil {
 		userDTO.LastLogin = user.LastLogin
+	}
+
+	// Inclure le département complet si présent
+	if user.Department != nil {
+		departmentDTO := dto.DepartmentDTO{
+			ID:          user.Department.ID,
+			Name:        user.Department.Name,
+			Code:        user.Department.Code,
+			Description: user.Department.Description,
+			OfficeID:    user.Department.OfficeID,
+			IsActive:    user.Department.IsActive,
+			CreatedAt:   user.Department.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			UpdatedAt:   user.Department.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		}
+		if user.Department.Office != nil {
+			departmentDTO.Office = &dto.OfficeDTO{
+				ID:        user.Department.Office.ID,
+				Name:      user.Department.Office.Name,
+				Country:   user.Department.Office.Country,
+				City:      user.Department.Office.City,
+				Commune:   user.Department.Office.Commune,
+				Address:   user.Department.Office.Address,
+				Longitude: user.Department.Office.Longitude,
+				Latitude:  user.Department.Office.Latitude,
+				IsActive:  user.Department.Office.IsActive,
+				CreatedAt: user.Department.Office.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+				UpdatedAt: user.Department.Office.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			}
+		}
+		userDTO.Department = &departmentDTO
 	}
 
 	return userDTO

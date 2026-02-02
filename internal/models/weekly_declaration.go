@@ -7,6 +7,7 @@ import "time"
 type WeeklyDeclaration struct {
 	ID                uint           `gorm:"primaryKey" json:"id"`
 	UserID            uint           `gorm:"not null;index" json:"user_id"`
+	FilialeID         *uint          `gorm:"index" json:"filiale_id,omitempty"`              // ID de la filiale (optionnel)
 	Week              string         `gorm:"type:varchar(10);not null;index" json:"week"` // Format ISO: "2024-W03"
 	StartDate         time.Time      `gorm:"type:date;not null" json:"start_date"`         // Date de début de la semaine
 	EndDate           time.Time      `gorm:"type:date;not null" json:"end_date"`           // Date de fin de la semaine
@@ -21,6 +22,7 @@ type WeeklyDeclaration struct {
 
 	// Relations
 	User        User                  `gorm:"foreignKey:UserID" json:"user,omitempty"` // Utilisateur
+	Filiale     *Filiale              `gorm:"foreignKey:FilialeID" json:"filiale,omitempty"` // Filiale (optionnel)
 	ValidatedBy *User                 `gorm:"foreignKey:ValidatedByID" json:"validated_by,omitempty"` // Validateur (optionnel)
 	Tasks       []WeeklyDeclarationTask `gorm:"foreignKey:DeclarationID;constraint:OnDelete:CASCADE" json:"tasks,omitempty"` // Tâches déclarées
 }

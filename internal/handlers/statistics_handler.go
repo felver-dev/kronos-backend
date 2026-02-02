@@ -5,8 +5,18 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mcicare/itsm-backend/internal/dto"
 	"github.com/mcicare/itsm-backend/internal/services"
 	"github.com/mcicare/itsm-backend/internal/utils"
+)
+
+// Aliases pour la doc Swagger (évite "cannot find type definition: dto.XXX")
+type (
+	statisticsOverviewDTO   = dto.StatisticsOverviewDTO
+	workloadStatisticsDTO   = dto.WorkloadStatisticsDTO
+	performanceStatisticsDTO = dto.PerformanceStatisticsDTO
+	trendsStatisticsDTO     = dto.TrendsStatisticsDTO
+	kpiStatisticsDTO        = dto.KPIStatisticsDTO
 )
 
 // StatisticsHandler gère les handlers des statistiques
@@ -28,13 +38,16 @@ func NewStatisticsHandler(statisticsService services.StatisticsService) *Statist
 // @Security BearerAuth
 // @Produce json
 // @Param period query string false "Période (week, month, quarter, year) - défaut: month"
-// @Success 200 {object} dto.StatisticsOverviewDTO
+// @Success 200 {object} statisticsOverviewDTO
 // @Failure 500 {object} utils.Response
 // @Router /stats/overview [get]
 func (h *StatisticsHandler) GetOverview(c *gin.Context) {
 	period := c.DefaultQuery("period", "month")
+	
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
 
-	overview, err := h.statisticsService.GetOverview(period)
+	overview, err := h.statisticsService.GetOverview(queryScope, period)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des statistiques")
 		return
@@ -67,7 +80,10 @@ func (h *StatisticsHandler) GetWorkload(c *gin.Context) {
 		}
 	}
 
-	workload, err := h.statisticsService.GetWorkload(period, userID)
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	workload, err := h.statisticsService.GetWorkload(queryScope, period, userID)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération de la charge de travail")
 		return
@@ -88,8 +104,11 @@ func (h *StatisticsHandler) GetWorkload(c *gin.Context) {
 // @Router /stats/performance [get]
 func (h *StatisticsHandler) GetPerformance(c *gin.Context) {
 	period := c.DefaultQuery("period", "month")
+	
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
 
-	performance, err := h.statisticsService.GetPerformance(period)
+	performance, err := h.statisticsService.GetPerformance(queryScope, period)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des statistiques de performance")
 		return
@@ -119,7 +138,10 @@ func (h *StatisticsHandler) GetTrends(c *gin.Context) {
 
 	period := c.DefaultQuery("period", "3months")
 
-	trends, err := h.statisticsService.GetTrends(metric, period)
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
+	
+	trends, err := h.statisticsService.GetTrends(queryScope, metric, period)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des tendances")
 		return
@@ -140,8 +162,11 @@ func (h *StatisticsHandler) GetTrends(c *gin.Context) {
 // @Router /stats/kpi [get]
 func (h *StatisticsHandler) GetKPI(c *gin.Context) {
 	period := c.DefaultQuery("period", "month")
+	
+	// Extraire le QueryScope du contexte (injecté par AuthMiddleware)
+	queryScope := utils.GetScopeFromContext(c)
 
-	kpi, err := h.statisticsService.GetKPI(period)
+	kpi, err := h.statisticsService.GetKPI(queryScope, period)
 	if err != nil {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des KPI")
 		return

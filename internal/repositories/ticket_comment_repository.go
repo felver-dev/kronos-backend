@@ -9,6 +9,7 @@ import (
 type TicketCommentRepository interface {
 	Create(comment *models.TicketComment) error
 	FindByID(id uint) (*models.TicketComment, error)
+	FindByIDWithUser(id uint) (*models.TicketComment, error)
 	FindByTicketID(ticketID uint) ([]models.TicketComment, error)
 	FindByUserID(userID uint) ([]models.TicketComment, error)
 	FindInternalByTicketID(ticketID uint) ([]models.TicketComment, error)
@@ -33,7 +34,17 @@ func (r *ticketCommentRepository) Create(comment *models.TicketComment) error {
 // FindByID trouve un commentaire par son ID
 func (r *ticketCommentRepository) FindByID(id uint) (*models.TicketComment, error) {
 	var comment models.TicketComment
-	err := database.DB.Preload("Ticket").Preload("User").Preload("User.Role").First(&comment, id).Error
+	err := database.DB.Preload("Ticket").Preload("User").First(&comment, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &comment, nil
+}
+
+// FindByIDWithUser retourne un commentaire avec son auteur uniquement (réponse légère)
+func (r *ticketCommentRepository) FindByIDWithUser(id uint) (*models.TicketComment, error) {
+	var comment models.TicketComment
+	err := database.DB.Preload("User").First(&comment, id).Error
 	if err != nil {
 		return nil, err
 	}
