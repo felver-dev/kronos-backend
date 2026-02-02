@@ -91,14 +91,14 @@ var AppConfig *Config
 // Le fichier .env doit être à la racine du projet (même niveau que .gitignore)
 func loadEnvFile() {
 	wd, _ := os.Getwd()
-	
+
 	// Chercher le fichier .env en remontant depuis le répertoire courant
 	// jusqu'à trouver un fichier .gitignore (indicateur de la racine du projet)
 	currentDir := wd
 	for i := 0; i < 10; i++ { // Limiter à 10 niveaux pour éviter une boucle infinie
 		envPath := filepath.Join(currentDir, ".env")
 		gitignorePath := filepath.Join(currentDir, ".gitignore")
-		
+
 		// Si on trouve .gitignore, on est probablement à la racine
 		if _, err := os.Stat(gitignorePath); err == nil {
 			if _, err := os.Stat(envPath); err == nil {
@@ -107,13 +107,13 @@ func loadEnvFile() {
 				if err == nil {
 					// Supprimer le BOM UTF-8 s'il existe
 					content = bytes.TrimPrefix(content, []byte("\xef\xbb\xbf"))
-					
+
 					// Écrire dans un fichier temporaire pour godotenv.Load()
 					tmpFile, err := os.CreateTemp("", "*.env")
 					if err == nil {
 						defer os.Remove(tmpFile.Name())
 						defer tmpFile.Close()
-						
+
 						if _, err := tmpFile.Write(content); err == nil {
 							tmpFile.Close()
 							if err := godotenv.Load(tmpFile.Name()); err == nil {
@@ -125,7 +125,7 @@ func loadEnvFile() {
 				}
 			}
 		}
-		
+
 		// Remonter d'un niveau
 		parentDir := filepath.Dir(currentDir)
 		if parentDir == currentDir {
@@ -133,7 +133,7 @@ func loadEnvFile() {
 		}
 		currentDir = parentDir
 	}
-	
+
 	log.Printf("⚠️  Aucun fichier .env trouvé à la racine du projet, utilisation des valeurs par défaut")
 }
 
@@ -160,7 +160,7 @@ func Load() (*Config, error) {
 			ConnMaxIdleTime: getEnvAsDuration("DB_CONN_MAX_IDLE_TIME", 10*time.Minute),
 		},
 		Server: ServerConfig{
-			Port:         getEnv("APP_PORT", "8080"),
+			Port:         getEnv("APP_PORT", "3001"),
 			ReadTimeout:  getEnvAsDuration("SERVER_READ_TIMEOUT", 15*time.Second),
 			WriteTimeout: getEnvAsDuration("SERVER_WRITE_TIMEOUT", 15*time.Second),
 			IdleTimeout:  getEnvAsDuration("SERVER_IDLE_TIMEOUT", 60*time.Second),
@@ -168,7 +168,7 @@ func Load() (*Config, error) {
 		App: ApplicationConfig{
 			Name:                     getEnv("APP_NAME", "ITSM Backend"),
 			Environment:              env,
-			URL:                      getEnv("APP_URL", "http://localhost:8080"),
+			URL:                      getEnv("APP_URL", "http://localhost:3001"),
 			LogLevel:                 getEnv("LOG_LEVEL", getDefaultLogLevel(env)),
 			JWTSecret:                getEnv("JWT_SECRET", "your-super-secret-jwt-key-change-in-production"),
 			JWTExpirationHours:       getEnvAsInt("JWT_EXPIRATION_HOURS", 24),
