@@ -40,8 +40,10 @@ func main() {
 
 	// Exécuter le seeding si demandé
 	if *seed {
-		// TODO: Implémenter le seeding si nécessaire
-		log.Println("ℹ️  Le seeding n'est pas encore implémenté")
+		log.Println("🌱 Exécution du seeding...")
+		if err := database.SeedDemoData(); err != nil {
+			log.Printf("⚠️  Erreur lors du seeding: %v", err)
+		}
 	}
 
 	log.Println("✨ Migrations terminées avec succès!")
