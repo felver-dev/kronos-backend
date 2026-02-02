@@ -47,26 +47,16 @@ func main() {
 	}
 	defer database.Close()
 
+	// Exécuter les migrations complètes au démarrage (tables + migrations personnalisées)
+	if err := database.AutoMigrate(); err != nil {
+		log.Fatalf("❌ Erreur lors des migrations: %v", err)
+	}
+
 	// Initialiser le checker de table assignees pour le package scope
 	// Cela évite les cycles d'importation
 	scope.SetAssigneesTableChecker(func() bool {
 		return database.DB.Migrator().HasTable(&models.TicketAssignee{})
 	})
-
-	// S'assurer que la table audit_logs existe
-	if err := database.DB.AutoMigrate(&models.AuditLog{}); err != nil {
-		log.Printf("⚠️  Avertissement: Impossible de migrer audit_logs: %v", err)
-	}
-
-	// S'assurer que les tables pour assignations et sous-tickets existent
-	if err := database.DB.AutoMigrate(&models.Ticket{}, &models.TicketAssignee{}); err != nil {
-		log.Printf("⚠️  Avertissement: Impossible de migrer ticket_assignees: %v", err)
-	}
-
-	// S'assurer que les tables de retards existent
-	if err := database.DB.AutoMigrate(&models.Delay{}, &models.DelayJustification{}); err != nil {
-		log.Printf("⚠️  Avertissement: Impossible de migrer delays: %v", err)
-	}
 
 	// Initialiser tous les repositories
 	roleRepo := repositories.NewRoleRepository()
