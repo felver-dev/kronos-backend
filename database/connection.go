@@ -73,7 +73,10 @@ func InitDB(cfg *config.Config) (*gorm.DB, error) {
 	}
 
 	gormConfig := &gorm.Config{
-		Logger: logger.Default.LogMode(logLevel),
+		Logger:                           logger.Default.LogMode(logLevel),
+		SkipDefaultTransaction:           true,
+		PrepareStmt:                      true,
+		DisableForeignKeyConstraintWhenMigrating: true, // Désactiver la création automatique de contraintes FK
 		NowFunc: func() time.Time {
 			return time.Now().UTC()
 		},
