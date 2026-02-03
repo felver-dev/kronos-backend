@@ -73,6 +73,20 @@ func (h *RoleHandler) GetAll(c *gin.Context) {
 		utils.InternalServerErrorResponse(c, "Erreur lors de la récupération des rôles")
 		return
 	}
+	// Inclure aussi les rôles délégués (créés par l'utilisateur) pour qu'ils soient sélectionnables dans le modal utilisateur
+	delegated, errDeleg := h.roleService.GetMyDelegations(scope.UserID)
+	if errDeleg == nil && len(delegated) > 0 {
+		seen := make(map[uint]bool)
+		for _, r := range roles {
+			seen[r.ID] = true
+		}
+		for _, r := range delegated {
+			if !seen[r.ID] {
+				roles = append(roles, r)
+				seen[r.ID] = true
+			}
+		}
+	}
 	utils.SuccessResponse(c, roles, "Rôles récupérés avec succès")
 }
 
