@@ -20,12 +20,12 @@ type TicketSolutionService interface {
 
 // ticketSolutionService implémente TicketSolutionService
 type ticketSolutionService struct {
-	solutionRepo    repositories.TicketSolutionRepository
-	ticketRepo      repositories.TicketRepository
-	userRepo        repositories.UserRepository
-	roleRepo        repositories.RoleRepository
-	kbArticleRepo   repositories.KnowledgeArticleRepository
-	kbCategoryRepo  repositories.KnowledgeCategoryRepository
+	solutionRepo   repositories.TicketSolutionRepository
+	ticketRepo     repositories.TicketRepository
+	userRepo       repositories.UserRepository
+	roleRepo       repositories.RoleRepository
+	kbArticleRepo  repositories.KnowledgeArticleRepository
+	kbCategoryRepo repositories.KnowledgeCategoryRepository
 }
 
 // NewTicketSolutionService crée une nouvelle instance de TicketSolutionService
@@ -49,14 +49,14 @@ func NewTicketSolutionService(
 
 // Create crée une nouvelle solution pour un ticket
 func (s *ticketSolutionService) Create(ticketID uint, req dto.CreateTicketSolutionRequest, createdByID uint) (*dto.TicketSolutionDTO, error) {
-	// Vérifier que le ticket existe et est cloturé
+	// Vérifier que le ticket existe et est résolu ou clôturé (résolveurs/assignés peuvent documenter dès que le ticket est résolu)
 	ticket, err := s.ticketRepo.FindByID(ticketID)
 	if err != nil {
 		return nil, errors.New("ticket introuvable")
 	}
 
-	if ticket.Status != "cloture" {
-		return nil, errors.New("seuls les tickets cloturés peuvent avoir des solutions documentées")
+	if ticket.Status != "resolu" && ticket.Status != "cloture" {
+		return nil, errors.New("seuls les tickets résolus ou clôturés peuvent avoir des solutions documentées")
 	}
 
 	// Vérifier que l'utilisateur est assigné ou admin
